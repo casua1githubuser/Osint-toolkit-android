@@ -15,6 +15,7 @@ w.scrollTo = () => {};
 let count = 0;
 const calls = [],
   records = [];
+let searchCancels = 0;
 w.NativeOSINT = {
   history() {
     queueMicrotask(() => w.receiveNative("history", { items: records }));
@@ -25,7 +26,17 @@ w.NativeOSINT = {
   dns(query) {
     calls.push({ kind: "dns", query });
   },
+  cancelSearch() {
+    searchCancels++;
+  },
+  historyEntry(id) {
+    calls.push({ kind: "historyEntry", id });
+  },
+  openUrl(url) {
+    calls.push({ kind: "openUrl", url });
+  },
 };
+w.eval(fs.readFileSync(path.join(assets, "source-catalog.js"), "utf8"));
 w.eval(code + "\nwindow.__testState = state;");
 const tick = () => new Promise((r) => setTimeout(r, 0));
 const go = async (page) => {
@@ -70,6 +81,7 @@ const submit = () =>
     calls.length === 0 && d.querySelector('[role="alert"]'),
   );
   setQuery("example-user");
+  d.querySelector('[data-source-bulk="none"]').click();
   d.querySelectorAll("[name=source]").forEach((x, i) => {
     x.checked = i < 3;
     x.dispatchEvent(new w.Event("change"));
@@ -88,6 +100,7 @@ const submit = () =>
         site: "GitHub",
         url: "https://github.com/example-user",
         state: "candidate",
+        evidence: "presence_marker",
         status: 200,
       },
       {
@@ -118,12 +131,12 @@ const submit = () =>
       d.querySelectorAll(".result-card").length === 3,
   );
   ok(
-    "Candidate, negative and unknown remain distinct",
-    d.querySelector("main").textContent.includes("Кандидат") &&
-      d.querySelector("main").textContent.includes("Не найдено") &&
-      d.querySelector("main").textContent.includes("Не определено"),
+    "Success, review and unsuccessful results remain distinct",
+    d.querySelector("main").textContent.includes("Успех") &&
+      d.querySelector("main").textContent.includes("Неуспех") &&
+      d.querySelector("main").textContent.includes("Проверьте вручную"),
   );
-  d.querySelector("#result-filter").value = "unknown";
+  d.querySelector("#result-filter").value = "review";
   d.querySelector("#result-filter").dispatchEvent(new w.Event("change"));
   ok(
     "Status filter excludes other outcomes",
@@ -215,7 +228,7 @@ const submit = () =>
   d.querySelector('[data-db="sources"]').click();
   ok(
     "Available source list remains separate",
-    d.querySelectorAll(".row").length === 5 &&
+    d.querySelectorAll("#source-list .source-row").length === 12 &&
       !d.querySelector("main").textContent.includes("Sherlock"),
   );
   await go("search");
@@ -232,6 +245,196 @@ const submit = () =>
   ok(
     "No preview fixture labels shipped",
     !html.includes("Пример данных") && !code.includes("Пример данных"),
+  );
+  const nativeCatalog = JSON.parse(
+    fs.readFileSync(path.join(assets, "source-catalog.json"), "utf8"),
+  );
+  ok(
+    "UI and native catalog share 1000 unique names",
+    state().sources.length === 1000 &&
+      new Set(state().sources).size === 1000 &&
+      JSON.stringify(state().sources) ===
+        JSON.stringify(nativeCatalog.sites.map((s) => s.name)),
+  );
+  ok(
+    "Only twelve source checkboxes are rendered at a time",
+    d.querySelectorAll('[name="source"]').length === 12,
+  );
+  const sourceFilter = d.querySelector("#source-filter");
+  const lastName = state().sources.at(-1);
+  sourceFilter.focus();
+  sourceFilter.value = lastName;
+  sourceFilter.dispatchEvent(new w.Event("input"));
+  d.querySelector('[data-source-bulk="all"]').click();
+  ok(
+    "Filtering can select a source beyond the first page",
+    state().selected.includes(lastName) &&
+      d.querySelector("#source-filter") === sourceFilter,
+  );
+  d.querySelector('[data-source-bulk="none"]').click();
+  ok(
+    "Filtered deselection preserves other selected sources",
+    !state().selected.includes(lastName) && state().selected.includes("GitHub"),
+  );
+  sourceFilter.value = "";
+  sourceFilter.dispatchEvent(new w.Event("input"));
+  const category = d.querySelector("#source-category");
+  category.value = "Игры";
+  category.dispatchEvent(new w.Event("change"));
+  d.querySelector('[data-source-bulk="all"]').click();
+  ok(
+    "Category bulk selection covers all matching pages",
+    w.OSINT_SOURCE_CATALOG.sites
+      .filter((s) => s.category === "Игры")
+      .every((s) => state().selected.includes(s.name)),
+  );
+  category.value = "";
+  category.dispatchEvent(new w.Event("change"));
+  d.querySelector('[data-source-bulk="all"]').click();
+  setQuery("catalog_fixture");
+  submit();
+  ok(
+    "All 1000 selected sources reach the native bridge",
+    calls.at(-1).selected.length === 1000,
+  );
+  w.receiveNative("searchProgress", { completed: 8, total: 1000 });
+  ok(
+    "Live progress updates without rebuilding the form",
+    d.querySelector("#search-progress progress").value === 8 &&
+      d.querySelector("#source-picker") === null,
+  );
+  d.querySelector('[data-action="cancel-search"]').click();
+  ok(
+    "Stop button requests native cancellation",
+    searchCancels === 1 && state().busy.search,
+  );
+  const many = {
+    query: "catalog_fixture",
+    total: 1000,
+    completed: 1000,
+    cancelled: false,
+    items: state().sources.map((site, i) => ({
+      site,
+      url: "https://example.org/profile/" + i,
+      status: 200,
+      state: i % 3 === 0 ? "candidate" : i % 3 === 1 ? "unknown" : "not_found",
+      evidence: i % 3 === 0 ? "presence_marker" : "none",
+      detail: i % 3 === 0 ? "Requires review" : "Fixture insufficient markers",
+    })),
+  };
+  w.receiveNative("search", {
+    ...many,
+    items: many.items.slice(0, 7),
+    completed: 7,
+    cancelled: true,
+  });
+  await tick();
+  ok(
+    "Cancelled run shows only processed sources and its partial count",
+    d.querySelector("main").textContent.includes("7 из 1000") &&
+      d.querySelectorAll(".result-card").length === 7,
+  );
+  await go("search");
+  w.receiveNative("search", many);
+  await tick();
+  ok(
+    "Large result sets render only 24 cards",
+    d.querySelectorAll(".result-card").length === 24,
+  );
+  d.querySelector("#result-order").value = "review";
+  d.querySelector("#result-order").dispatchEvent(new w.Event("change"));
+  ok(
+    "Sorting can put review results first",
+    d.querySelector(".result-card .badge").textContent === "Проверьте вручную",
+  );
+  for (const group of ["success", "review", "not_found"]) {
+    d.querySelector("#result-filter").value = group;
+    d.querySelector("#result-filter").dispatchEvent(new w.Event("change"));
+    const link = d.querySelector("a.result-card");
+    const click = new w.MouseEvent("click", {
+      bubbles: true,
+      cancelable: true,
+    });
+    link.dispatchEvent(click);
+    ok(
+      `Every ${group} card opens its HTTPS URL in the external browser`,
+      click.defaultPrevented &&
+        calls.at(-1).kind === "openUrl" &&
+        calls.at(-1).url === link.href &&
+        link.target === "_blank" &&
+        link.rel.includes("noopener"),
+    );
+  }
+  d.querySelector("#result-order").value = "success";
+  d.querySelector("#result-order").dispatchEvent(new w.Event("change"));
+  d.querySelector("#result-filter").value = "all";
+  d.querySelector("#result-filter").dispatchEvent(new w.Event("change"));
+  d.querySelector('[data-result-page="1"]').click();
+  ok(
+    "Result pagination reaches subsequent sources",
+    d.querySelector(".result-card h2").textContent === many.items[72].site,
+  );
+  d.querySelector("#result-filter").value = "success";
+  d.querySelector("#result-filter").dispatchEvent(new w.Event("change"));
+  ok(
+    "Changing status filter resets result pagination",
+    state().resultPage === 0 &&
+      [...d.querySelectorAll(".result-card .badge")].every(
+        (e) => e.textContent === "Успех",
+      ),
+  );
+  await go("graph");
+  ok(
+    "Graph is bounded and discloses omitted sources",
+    d.querySelectorAll("[data-node]").length === 8 &&
+      d.querySelector("main").textContent.includes("первые 8"),
+  );
+  records.push({
+    id: 77,
+    kind: "username",
+    query: "summary-only",
+    created: Date.now(),
+    count: 1000,
+  });
+  await go("history");
+  w.receiveNative("history", { items: records });
+  d.querySelector(`[data-history="${records.length - 1}"]`).click();
+  ok(
+    "History loads a single large entry on demand",
+    calls.at(-1).kind === "historyEntry" &&
+      calls.at(-1).id === 77 &&
+      state().historyLoading,
+  );
+  w.receiveNative("historyEntry", { id: 77, kind: "username", result: many });
+  await tick();
+  ok(
+    "On-demand history preserves the full result while paging its UI",
+    state().search.items.length === 1000 &&
+      d.querySelectorAll(".result-card").length === 24,
+  );
+  const viewed = state().viewedResult;
+  const statusOnly = {
+    query: "later-background",
+    items: [
+      {
+        site: "StatusOnly",
+        url: "https://example.org/status-only",
+        status: 200,
+        state: "candidate",
+      },
+    ],
+  };
+  w.receiveNative("search", statusOnly);
+  ok(
+    "A background search does not replace an explicitly viewed saved result",
+    state().viewedResult === viewed,
+  );
+  await go("search");
+  w.receiveNative("search", statusOnly);
+  await tick();
+  ok(
+    "HTTP 200 without profile evidence stays in manual review",
+    d.querySelector(".result-card .badge").textContent === "Проверьте вручную",
   );
   const motions = [];
   const motionEnds = [];

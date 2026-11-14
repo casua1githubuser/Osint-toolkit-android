@@ -2022,3 +2022,125 @@ details[open] summary .ui-icon {
   height: 24px;
   color: #f6f8fa;
 }
+
+.catalog-controls {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin: 16px 0;
+}
+.catalog-controls label {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+  font-size: 13px;
+}
+.catalog-controls input,
+.catalog-controls select {
+  width: 100%;
+  min-width: 0;
+  min-height: 44px;
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  padding: 8px;
+  background: #f3f5f6;
+  font-size: 13px;
+}
+.source-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 12px;
+  margin-bottom: 12px;
+}
+.source-actions > span {
+  flex-basis: 100%;
+  font-size: 13px;
+}
+.source-actions .text-button {
+  padding: 8px 0;
+  font-size: 13px;
+}
+#source-list {
+  min-width: 0;
+}
+.source-title {
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.source-title small {
+  display: block;
+  margin-top: 3px;
+  font-size: 12px;
+}
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin: 14px 0 24px;
+  font-size: 13px;
+}
+.pagination .secondary {
+  min-width: 44px;
+  min-height: 44px;
+  margin: 0;
+  padding: 8px 12px;
+}
+.pagination .previous-icon {
+  transform: rotate(180deg);
+}
+.search-progress {
+  margin-top: 18px;
+  padding: 14px;
+  background: var(--muted);
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+}
+.search-progress progress {
+  display: block;
+  width: 100%;
+  height: 9px;
+  margin: 12px 0;
+  accent-color: var(--accent);
+}
+.result-card[data-profile-url] {
+  display: block;
+  color: var(--ink);
+  text-decoration: none;
+}
+.result-card[data-profile-url]:hover,
+.result-card[data-profile-url]:active {
+  border-color: var(--accent);
+}
+.result-open {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+}
+.result-open .ui-icon {
+  width: 20px;
+  height: 18px;
+}
+.badge.positive {
+  background: #bedbea;
+  color: #173a4d;
+}
+.query-actions .primary {
+  margin: 14px 0 6px;
+}
+.query-actions small {
+  display: block;
+  margin-bottom: 16px;
+}
+@media (max-width: 440px) {
+  main:has(#result-order) .catalog-controls { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 374px) {
+  .catalog-controls {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

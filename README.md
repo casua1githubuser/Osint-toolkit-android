@@ -1,44 +1,66 @@
 # OSINT Toolkit / 2002 — Android Java alpha
 
-**Standalone Android app**: no Termux, Python or local HTTP server.
-Java WebView bridge, Android SQLite, direct HTTPS profile checks, DNS A/AAAA resolution.
+Standalone Android WebView app with SQLite history, direct HTTPS username checks
+and DNS A/AAAA resolution. No Termux, Python service or local server is required.
 
-## Build
-1. Push this complete project to GitHub (keep the `app/` and `gradle/` directories).
-2. Actions → Android APK → Run workflow.
-3. Download artifact `OSINT-Toolkit-Java-Alpha-APK` and extract `app-debug.apk`.
+## Search
 
-For a local build, install JDK 17 and Android SDK platform 35 / build-tools 35.0.0.
-Set `ANDROID_HOME` to the SDK directory (or set `sdk.dir` in untracked `local.properties`).
-Run `./gradlew :app:assembleDebug :app:lintDebug` on Linux/macOS or
-`gradlew.bat :app:assembleDebug :app:lintDebug` on Windows.
-The Gradle 8.11.1 wrapper downloads and verifies Gradle automatically.
-The APK is written to `app/build/outputs/apk/debug/app-debug.apk`.
+Version **0.11.0-alpha** bundles **1,000 sources** in nine categories using a
+compatible subset of Maigret's catalog. Search by source name/tag, filter by
+category, select groups, and run up to eight checks concurrently. Progress and
+stop controls are next to the username input. Cancelled runs preserve processed
+results. Catalog rules, source attribution and limitations are documented in
+[docs/source-catalog.md](docs/source-catalog.md).
 
-## Important limits
-- This is an **alpha prototype**, NOT a port of all Python features.
-- Search checks GitHub, GitLab, Reddit, Pinterest, TikTok by HTTP status; HTTP 200 is a **candidate only**, not proof that the profile exists.
-- DNS supports A/AAAA address resolution only. No MX/TXT/DKIM yet.
-- The OSINT / 2002 design is implemented as bundled HTML/CSS/JavaScript in the native WebView: home, search, DNS, results, local databases, history, settings, and a provisional graph.
-- The graph visualizes only query-to-checked-source or domain-to-DNS-answer relationships. It does not infer account ownership or personal relationships.
-- External catalogs (Sherlock/Maigret), CSV/XLSX import, phone/email searches, and a remote backend are not integrated. No demo records are bundled.
-- Debug APK signed by a *new ephemeral GitHub runner debug key on each build*. Updates may require uninstall; **do not uninstall an existing installation without backing up data**. For release use a persisted secure signing key.
-- `applicationId` is `com.osinttoolkit.app`, versionCode 7, versionName `0.6.0-alpha`, minSdk 26, targetSdk 35.
-- Installation on a real Nothing Phone (3) has **not been verified**.
+Results are sortable/filterable as **Успех**, **Проверьте вручную**, **Неуспех**.
+Positive markers count as a successful check; HTTP 200 alone remains manual
+review. Redirects, access restrictions and network failures stay ambiguous.
+A matching username never proves account ownership or personal identity.
+Every result card opens its HTTPS profile URL in an external browser.
 
-## Verification
-GitHub Actions builds the debug APK and runs Android Lint on pushes to `main`,
-pull requests, and manual runs. Check the run result before installing its APK.
-On-device installation and behavior remain unverified.
+Sources and results are paged; history loads full entries only on demand.
+The provisional graph shows only query-to-checked-source or domain-to-address
+relationships and explicitly limits the number of displayed nodes.
 
-## Interface revision
+## Build and verify
 
-- Bundled Unbounded with Cyrillic support (SIL Open Font License in `app/src/main/assets/fonts/Unbounded-OFL.txt`). Extended geometric headings use a restrained oblique style inspired by the supplied type reference; URLs and timestamps retain system monospace.
-- Separate images for profile search, graph and DNS. The search header is an interior view of the pedestrian bridge shown in its lower photo strip. Database/settings strips use different storage and curved-architecture images; DNS uses network detail. No decorative technical footer.
-- Five equal navigation slots: Search, Graph, Home, Databases, Settings. Home is geometrically centered; History is reachable from Home and storage, with an explicit storage breadcrumb. Large text wraps and the page reserves the menu's measured height.
-- Page changes use a short opacity crossfade through View Transitions when available, with an opacity-only fallback for older WebViews. No page translation or animated geometry. Rapid navigation skips stale updates. The in-app animation switch is removed; the OS motion preference remains supported.
-- Sparse outline squares grow, shrink and fade on 9–14s cycles. Home has three near the eye and three in its lower mist; other screens use two per decorative region with a fainter treatment. Position changes happen only at transparent cycle boundaries. Hidden tabs and offscreen regions pause, and there is no JavaScript per-frame loop or video. Actual phone CPU/battery usage has not been measured.
-- Content gutters and row/action padding are larger, typography has more weight, and database/settings photo strips are 160–200px tall. Home has a quiet lower mist region.
-- History is stored query results, not a collection/tag editor. External catalogs and imports are static availability descriptions, not clickable features. DNS always checks both address types; A/AAAA labels are not selectors.
-- A native parent layout reserves system-bar, cutout and keyboard insets around the WebView. This changes the actual viewport so fixed navigation and scrolling content cannot occupy those inset regions.
-- Functional regression checks: `npm ci --prefix tests` followed by `npm test --prefix tests`. GitHub Actions runs these before the Android build. Test fixtures live under `tests/` and are not APK assets.
+Use JDK 17, Android SDK 35 and build-tools 35.0.0. Set ANDROID_HOME or sdk.dir in
+untracked local.properties. The verified Gradle 8.11.1 wrapper is included.
+
+    npm ci --prefix tests
+    npm test --prefix tests
+    ./gradlew :app:testDebugUnitTest :app:assembleDebug :app:lintDebug
+
+Use gradlew.bat on Windows. GitHub Actions runs these checks on main pushes,
+pull requests and workflow_dispatch, and uploads the APK and Lint report.
+APK path: app/build/outputs/apk/debug/app-debug.apk.
+
+A self-contained HTML preview is generated with:
+
+    python tools/package-preview.py OUTPUT_DIRECTORY
+
+Photographs, fonts, the source picker and all app scripts are embedded directly.
+No test records or native mock bridge are shipped in the APK/production preview.
+
+## Interface
+
+Cold blue photographic design with distinct page images, OSINT Wide typography
+and shared 2px SVG icons. Five navigation destinations keep Home centered, with
+16:9 selection plates. Interruptible outgoing-page dissolves avoid resetting the
+new page's opacity. Decorative squares and orthogonal vectors pause offscreen;
+system reduced-motion preference is respected. Insets reserve Android system
+bars, keyboard and cutouts around the WebView.
+
+## Limits
+
+- Alpha; on-device behavior and battery usage have not been verified.
+- ASCII username checks only; source-specific formats may produce manual review.
+- DNS resolves A/AAAA only. WHOIS, MX/TXT, phone/email search, Sherlock, file import
+  and remote APIs are not integrated. The bundled Maigret catalog is supported;
+  the Python engine and its custom activation/proxy features are not included.
+- Third-party site accessibility and matching rules can change.
+- GitHub runner debug signing is ephemeral. Installing over a differently signed
+  build may require uninstalling it; uninstalling removes local history.
+- applicationId com.osinttoolkit.app; versionCode 21; minSdk 26; targetSdk 35.
+
+Fonts, icon sources/licenses and generation prompts are retained in the repo.

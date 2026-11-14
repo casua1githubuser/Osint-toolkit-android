@@ -22,10 +22,14 @@ public class MainActivity extends Activity {
  private SQLiteDatabase db;
  private volatile boolean destroyed;
  private final ExecutorService workers=Executors.newFixedThreadPool(3);
- private static final String[] SITES={"https://github.com/","https://gitlab.com/","https://www.reddit.com/user/","https://www.pinterest.com/","https://www.tiktok.com/@"};
- private static final String[] NAMES={"GitHub","GitLab","Reddit","Pinterest","TikTok"};
+ private final ExecutorService sourceWorkers=Executors.newFixedThreadPool(8);
+ private final Object searchLock=new Object();
+ private volatile ProfileChecker.Session activeSearch;
+ private SourceCatalog catalog;
  @Override public void onCreate(Bundle b) {
   super.onCreate(b);
+  try(InputStream input=getAssets().open("source-catalog.json")){catalog=new SourceCatalog(input);}
+  catch(Exception error){throw new IllegalStateException("Invalid bundled source catalog",error);}
   db=openOrCreateDatabase("osint.db",MODE_PRIVATE,null);
   db.execSQL("CREATE TABLE IF NOT EXISTS history(id INTEGER PRIMARY KEY AUTOINCREMENT,kind TEXT,query TEXT,results TEXT,created INTEGER)");
   web=new WebView(this);
@@ -84,6 +88,7 @@ public class MainActivity extends Activity {
      case "index.html":mime="text/html";break;
      case "style.css":mime="text/css";break;
      case "app.js":mime="application/javascript";break;
+     case "source-catalog.js":mime="application/javascript";break;
      case "images/editorial-atlas.png":mime="image/png";break;
      case "images/module-scenes.png":mime="image/png";break;
      case "images/page-scenes.png":mime="image/png";break;
@@ -121,48 +126,58 @@ public class MainActivity extends Activity {
   ContentValues v=new ContentValues();v.put("kind",kind);v.put("query",query);v.put("results",result);v.put("created",System.currentTimeMillis());
   synchronized(db){if(db.isOpen())db.insert("history",null,v);}
  }
- private int status(String url) throws Exception {
-  HttpURLConnection c=(HttpURLConnection)new URL(url).openConnection();
-  c.setInstanceFollowRedirects(false);c.setConnectTimeout(6500);c.setReadTimeout(6500);
-  c.setRequestProperty("User-Agent","Mozilla/5.0 (compatible; OSINTToolkit/0.2)");
-  try{return c.getResponseCode();}finally{c.disconnect();}
+ private void runSearch(String username,java.util.List<SourceCatalog.Source> selected,ProfileChecker.Session session){
+  java.util.Map<String,JSONObject> found=new java.util.HashMap<>();
+  java.util.concurrent.CompletionService<JSONObject> completed=new java.util.concurrent.ExecutorCompletionService<>(sourceWorkers);
+  try{
+   ProfileChecker checker=new ProfileChecker();
+   for(SourceCatalog.Source source:selected){if(session.cancelled.get())break;session.futures.add(completed.submit(()->checker.check(source,username,session)));}
+   long lastUpdate=0;
+   while(found.size()<session.futures.size()&&!session.cancelled.get()){
+    java.util.concurrent.Future<JSONObject> next=completed.poll(200,java.util.concurrent.TimeUnit.MILLISECONDS);if(next==null)continue;
+    if(session.cancelled.get())break; JSONObject item;try{item=next.get();}catch(java.util.concurrent.CancellationException cancelled){if(session.cancelled.get())break;else continue;}if(session.cancelled.get())break;found.put(item.getString("site"),item);
+    long now=System.nanoTime();
+    if(found.size()%8==0||now-lastUpdate>250_000_000L){send("searchProgress",new JSONObject().put("completed",found.size()).put("total",selected.size()));lastUpdate=now;}
+   }
+   JSONArray items=new JSONArray();for(SourceCatalog.Source source:selected)if(found.containsKey(source.name))items.put(found.get(source.name));
+   JSONObject result=new JSONObject().put("query",username).put("items",items).put("total",selected.size()).put("completed",items.length()).put("cancelled",session.cancelled.get());
+   save("username",username,result.toString());send("search",result);
+  }catch(Exception error){if(!destroyed)send("search",err(error));}
+  finally{session.cancel();synchronized(searchLock){if(activeSearch==session)activeSearch=null;}}
  }
  public final class Bridge {
+  @JavascriptInterface public void openUrl(String address){
+   final String url;
+   try{url=SourceCatalog.browserUrl(address);}catch(Exception error){return;}
+   runOnUiThread(()->{if(destroyed)return;try{
+    android.content.Intent probe=new android.content.Intent(android.content.Intent.ACTION_VIEW,android.net.Uri.parse("https://example.org"));probe.addCategory(android.content.Intent.CATEGORY_BROWSABLE);
+    android.content.pm.PackageManager packages=getPackageManager();
+    java.util.List<android.content.Intent> targets=new java.util.ArrayList<>();java.util.Set<String> seen=new java.util.HashSet<>();
+    android.content.pm.ResolveInfo preferred=packages.resolveActivity(probe,android.content.pm.PackageManager.MATCH_DEFAULT_ONLY);
+    for(android.content.pm.ResolveInfo info:packages.queryIntentActivities(probe,android.content.pm.PackageManager.MATCH_DEFAULT_ONLY)){
+     String pkg=info.activityInfo.packageName;if(!seen.add(pkg))continue;
+     android.content.Intent target=new android.content.Intent(android.content.Intent.ACTION_VIEW,android.net.Uri.parse(url));target.addCategory(android.content.Intent.CATEGORY_BROWSABLE);target.setPackage(pkg);
+     if(preferred!=null&&pkg.equals(preferred.activityInfo.packageName)){startActivity(target);return;}targets.add(target);
+    }
+    if(targets.isEmpty())throw new android.content.ActivityNotFoundException();
+    if(targets.size()==1){startActivity(targets.get(0));return;}
+    android.content.Intent chooser=android.content.Intent.createChooser(targets.remove(0),"Открыть в браузере");chooser.putExtra(android.content.Intent.EXTRA_INITIAL_INTENTS,targets.toArray(new android.content.Intent[0]));startActivity(chooser);
+   }catch(android.content.ActivityNotFoundException error){android.widget.Toast.makeText(MainActivity.this,"Браузер не найден",android.widget.Toast.LENGTH_SHORT).show();}});
+  }
   @JavascriptInterface public void search(String name){
-   searchSelected(name,new JSONArray(java.util.Arrays.asList(NAMES)).toString());
+   JSONArray names=new JSONArray();for(SourceCatalog.Source site:catalog.sites)names.put(site.name);searchSelected(name,names.toString());
   }
   @JavascriptInterface public void searchSelected(String name,String selectedJson){
    if(destroyed)return;
-   if(name==null||!name.matches("[A-Za-z0-9_.-]{1,40}")){send("search",err(new IllegalArgumentException("Ник: 1–40 символов A-Z, 0-9, _ . -")));return;}
-   final java.util.Set<String> selected=new java.util.HashSet<>();
-   try{
-    JSONArray a=new JSONArray(selectedJson);
-    for(int i=0;i<a.length();i++){
-     String site=a.getString(i);
-     if(!java.util.Arrays.asList(NAMES).contains(site))throw new IllegalArgumentException("Неизвестный источник");
-     selected.add(site);
-    }
-    if(selected.isEmpty())throw new IllegalArgumentException("Выберите источник");
-   }catch(Exception e){send("search",err(e));return;}
-   workers.execute(()->{
-    try{
-     JSONArray a=new JSONArray();
-     for(int i=0;i<SITES.length;i++){
-      if(!selected.contains(NAMES[i]))continue;
-      JSONObject o=new JSONObject();o.put("site",NAMES[i]);o.put("url",SITES[i]+name);
-      try{
-       int code=status(SITES[i]+name);
-       o.put("status",code);
-       // HTTP 200 is only a candidate: many sites return soft-404 or anti-bot pages.
-       o.put("state",code==404?"not_found":(code==200?"candidate":"unknown"));
-      }catch(Exception e){o.put("state","unknown");o.put("detail",e.getClass().getSimpleName());}
-      a.put(o);
-     }
-     JSONObject result=new JSONObject();result.put("query",name);result.put("items",a);
-     save("username",name,result.toString());send("search",result);
-    }catch(Exception e){send("search",err(e));}
-   });
+   if(name==null||(!name.matches("[A-Za-z0-9_.-]{1,40}")||name.equals(".")||name.equals(".."))){send("search",err(new IllegalArgumentException("Ник: 1–40 символов A-Z, 0-9, _ . -")));return;}
+   final java.util.List<SourceCatalog.Source> selected;
+   try{selected=catalog.select(new JSONArray(selectedJson));}catch(Exception error){send("search",err(error));return;}
+   ProfileChecker.Session session=new ProfileChecker.Session();
+   synchronized(searchLock){if(activeSearch!=null)return;activeSearch=session;}
+   try{workers.execute(()->runSearch(name,selected,session));}
+   catch(java.util.concurrent.RejectedExecutionException error){synchronized(searchLock){if(activeSearch==session)activeSearch=null;}}
   }
+  @JavascriptInterface public void cancelSearch(){ProfileChecker.Session session=activeSearch;if(session!=null)session.cancel();}
   @JavascriptInterface public void dns(String domain){
    if(destroyed)return;
    if(domain==null||!domain.matches("(?i)(?=.{1,253}$)(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?")){send("dns",err(new IllegalArgumentException("Неверный домен")));return;}
@@ -178,18 +193,32 @@ public class MainActivity extends Activity {
   @JavascriptInterface public void history(){
    if(destroyed)return;
    workers.execute(()->{
-    JSONArray a=new JSONArray();
+    JSONArray entries=new JSONArray();
     synchronized(db){
      if(!db.isOpen())return;
-     try(Cursor c=db.rawQuery("SELECT kind,query,results,created FROM history ORDER BY id DESC LIMIT 30",null)){
-      while(c.moveToNext()){JSONObject o=new JSONObject();try{
-       o.put("kind",c.getString(0));o.put("query",c.getString(1));o.put("result",new JSONObject(c.getString(2)));o.put("created",c.getLong(3));
-      }catch(Exception ignored){}a.put(o);}
+     try(Cursor cursor=db.rawQuery("SELECT id,kind,query,results,created FROM history ORDER BY id DESC LIMIT 30",null)){
+      while(cursor.moveToNext())try{
+       JSONObject result=new JSONObject(cursor.getString(3));JSONArray items=result.optJSONArray("items");
+       entries.put(new JSONObject().put("id",cursor.getInt(0)).put("kind",cursor.getString(1)).put("query",cursor.getString(2)).put("created",cursor.getLong(4)).put("count",items==null?0:items.length()).put("cancelled",result.optBoolean("cancelled",false)));
+      }catch(Exception ignored){}
      }
     }
-    JSONObject o=new JSONObject();try{o.put("items",a);}catch(Exception ignored){}send("history",o);
+    try{send("history",new JSONObject().put("items",entries));}catch(Exception error){send("history",err(error));}
    });
   }
+  @JavascriptInterface public void historyEntry(int id){
+   if(destroyed)return;
+   workers.execute(()->{
+    synchronized(db){
+     if(!db.isOpen())return;
+     try(Cursor cursor=db.rawQuery("SELECT kind,results FROM history WHERE id=?",new String[]{String.valueOf(id)})){
+      if(!cursor.moveToFirst())throw new IllegalArgumentException("Запись истории не найдена");
+      send("historyEntry",new JSONObject().put("id",id).put("kind",cursor.getString(0)).put("result",new JSONObject(cursor.getString(1))));
+     }catch(Exception error){send("historyEntry",err(error));}
+    }
+   });
+  }
+
  }
- @Override protected void onDestroy(){destroyed=true;workers.shutdownNow();if(db!=null){synchronized(db){db.close();}}if(web!=null)web.destroy();super.onDestroy();}
+ @Override protected void onDestroy(){destroyed=true;if(activeSearch!=null)activeSearch.cancel();sourceWorkers.shutdownNow();workers.shutdownNow();if(db!=null){synchronized(db){db.close();}}if(web!=null)web.destroy();super.onDestroy();}
 }

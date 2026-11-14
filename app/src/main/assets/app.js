@@ -1,4 +1,9 @@
 "use strict";
+const CATALOG = window.OSINT_SOURCE_CATALOG;
+const SOURCE_PAGE_SIZE = 12,
+  RESULT_PAGE_SIZE = 24;
+if (!CATALOG || CATALOG.sites.length !== CATALOG.count)
+  throw new Error("Каталог источников не загружен");
 const $ = (id) => document.getElementById(id);
 const esc = (s) =>
   String(s ?? "").replace(
@@ -88,8 +93,17 @@ const state = {
   errors: { search: "", dns: "" },
   query: "",
   domain: "",
-  sources: ["GitHub", "GitLab", "Reddit", "Pinterest", "TikTok"],
-  selected: ["GitHub", "GitLab", "Reddit", "Pinterest", "TikTok"],
+  sources: CATALOG.sites.map((s) => s.name),
+  selected: CATALOG.sites.map((s) => s.name),
+  sourceFilter: "",
+  sourceCategory: "",
+  sourcePage: 0,
+  resultPage: 0,
+  resultOrder: "success",
+  viewedResult: null,
+  searchProgress: null,
+  historyLoading: false,
+  historyEntryError: "",
   filter: "all",
   dbTab: "local",
   zoom: 1,
@@ -137,6 +151,143 @@ function requestHistory() {
     state.historyError = e.message;
   }
 }
+function refreshSelectionSummary() {
+  if ($("query-source-count"))
+    $("query-source-count").textContent =
+      `Источников: ${state.selected.length} / ${CATALOG.count}`;
+}
+function filteredSources() {
+  const needle = state.sourceFilter.toLocaleLowerCase();
+  return CATALOG.sites.filter(
+    (s) =>
+      (!state.sourceCategory || s.category === state.sourceCategory) &&
+      (!needle ||
+        `${s.name} ${s.category} ${s.tags.join(" ")}`
+          .toLocaleLowerCase()
+          .includes(needle)),
+  );
+}
+function sourceRows(selectable) {
+  const found = filteredSources(),
+    pages = Math.max(1, Math.ceil(found.length / SOURCE_PAGE_SIZE));
+  state.sourcePage = Math.max(0, Math.min(state.sourcePage, pages - 1));
+  const selected = new Set(state.selected),
+    slice = found.slice(
+      state.sourcePage * SOURCE_PAGE_SIZE,
+      (state.sourcePage + 1) * SOURCE_PAGE_SIZE,
+    );
+  return `<fieldset id="source-list" class="source-list" ${state.busy.search && selectable ? "disabled" : ""}><legend class="sr-only">${selectable ? "Выберите источники для поиска" : "Каталог источников"}</legend>${slice.map((s) => (selectable ? `<label class="source-row"><input type="checkbox" name="source" value="${esc(s.name)}" ${selected.has(s.name) ? "checked" : ""}><span class="source-title">${esc(s.name)}<small>${esc(s.category)}</small></span></label>` : `<div class="source-row">${icon("globe")}<span class="source-title">${esc(s.name)}<small>${esc(s.category)}</small></span></div>`)).join("") || '<p class="empty">Источники не найдены.</p>'}</fieldset>`;
+}
+function sourcePager() {
+  const total = filteredSources().length,
+    start = total ? state.sourcePage * SOURCE_PAGE_SIZE + 1 : 0,
+    end = Math.min(total, (state.sourcePage + 1) * SOURCE_PAGE_SIZE);
+  return `<button type="button" class="secondary" data-source-page="-1" ${state.sourcePage === 0 ? "disabled" : ""} aria-label="Предыдущие источники">${icon("arrow", "previous-icon")}</button><span>${start}–${end} / ${total}</span><button type="button" class="secondary" data-source-page="1" ${end >= total ? "disabled" : ""} aria-label="Следующие источники">${icon("arrow")}</button>`;
+}
+function sourcePicker(selectable = true) {
+  if (selectable && state.busy.search)
+    return `<p class="notice">Выбрано ${state.selected.length} источников. Проверки выполняются на устройстве.</p>`;
+  return `<div id="source-picker" data-selectable="${selectable}"><div class="catalog-controls"><label>Найти площадку<input id="source-filter" type="search" value="${esc(state.sourceFilter)}" placeholder="Название или тег" autocomplete="off"></label><label>Категория<select id="source-category"><option value="">Все категории</option>${[
+    ...new Set(CATALOG.sites.map((s) => s.category)),
+  ]
+    .sort()
+    .map(
+      (c) =>
+        `<option ${c === state.sourceCategory ? "selected" : ""} value="${esc(c)}">${esc(c)}</option>`,
+    )
+    .join(
+      "",
+    )}</select></label></div>${selectable ? `<div class="source-actions"><span id="source-selected">Выбрано ${state.selected.length} / ${CATALOG.count}</span><button type="button" class="text-button" data-source-bulk="all" ${state.busy.search ? "disabled" : ""}>Выбрать найденные</button><button type="button" class="text-button" data-source-bulk="none" ${state.busy.search ? "disabled" : ""}>Снять найденные</button></div>` : ""}${sourceRows(selectable)}<div id="source-pagination" class="pagination">${sourcePager()}</div></div>`;
+}
+function bindSourcePicker() {
+  const picker = $("source-picker");
+  if (!picker) return;
+  const selectable = picker.dataset.selectable === "true";
+  const bindRows = () => {
+    picker.querySelectorAll('[name="source"]').forEach(
+      (input) =>
+        (input.onchange = () => {
+          const chosen = new Set(state.selected);
+          input.checked ? chosen.add(input.value) : chosen.delete(input.value);
+          state.selected = state.sources.filter((name) => chosen.has(name));
+          refreshSelectionSummary();
+          if ($("source-selected"))
+            $("source-selected").textContent =
+              `Выбрано ${state.selected.length} / ${CATALOG.count}`;
+        }),
+    );
+    picker.querySelectorAll("[data-source-page]").forEach(
+      (button) =>
+        (button.onclick = () => {
+          state.sourcePage += Number(button.dataset.sourcePage);
+          refresh();
+        }),
+    );
+  };
+  const refresh = () => {
+    $("source-list").outerHTML = sourceRows(selectable);
+    $("source-pagination").innerHTML = sourcePager();
+    if ($("source-selected"))
+      $("source-selected").textContent =
+        `Выбрано ${state.selected.length} / ${CATALOG.count}`;
+    bindRows();
+  };
+  $("source-filter").oninput = (e) => {
+    state.sourceFilter = e.target.value;
+    state.sourcePage = 0;
+    refresh();
+  };
+  $("source-filter").onkeydown = (e) => {
+    if (e.key === "Enter") e.preventDefault();
+  };
+  $("source-category").onchange = (e) => {
+    state.sourceCategory = e.target.value;
+    state.sourcePage = 0;
+    refresh();
+  };
+  picker.querySelectorAll("[data-source-bulk]").forEach(
+    (button) =>
+      (button.onclick = () => {
+        const chosen = new Set(state.selected);
+        filteredSources().forEach((s) =>
+          button.dataset.sourceBulk === "all"
+            ? chosen.add(s.name)
+            : chosen.delete(s.name),
+        );
+        state.selected = state.sources.filter((name) => chosen.has(name));
+        refreshSelectionSummary();
+        refresh();
+      }),
+  );
+  bindRows();
+}
+function searchProgress() {
+  const p = state.searchProgress || {
+    completed: 0,
+    total: state.selected.length,
+  };
+  return `<div id="search-progress" class="search-progress" aria-live="polite"><p>Проверено <strong>${p.completed}</strong> из ${p.total}</p><progress max="${Math.max(1, p.total)}" value="${p.completed}" aria-label="Проверенные источники"></progress><small>До 8 проверок одновременно. Можно перейти в другой раздел.</small></div><button type="button" class="secondary" data-action="cancel-search">Остановить и сохранить результаты</button>`;
+}
+function resultPager(total) {
+  const end = Math.min(total, (state.resultPage + 1) * RESULT_PAGE_SIZE);
+  return total > RESULT_PAGE_SIZE
+    ? `<div class="pagination"><button class="secondary" type="button" data-result-page="-1" ${state.resultPage === 0 ? "disabled" : ""}>Назад</button><span>${state.resultPage * RESULT_PAGE_SIZE + 1}–${end} / ${total}</span><button class="secondary" type="button" data-result-page="1" ${end >= total ? "disabled" : ""}>Далее</button></div>`
+    : "";
+}
+function openSavedResult(kind, result) {
+  const key = kind === "dns" ? "dns" : "search";
+  state[key] = result;
+  state.viewedResult = result;
+  state.resultOrder = "success";
+  state.resultKind = key;
+  state.filter = "all";
+  state.resultPage = 0;
+  state.graphDetail = null;
+  state.zoom = 1;
+  state.historyLoading = false;
+  navigate("results");
+}
+
 function historyRows(limit) {
   if (state.historyError) return notice(state.historyError, true);
   if (!native())
@@ -210,9 +361,64 @@ function home() {
 function searchPage(dns = false) {
   const kind = dns ? "dns" : "search";
   const busy = state.busy[kind];
-  return `${banner(dns ? "ДОМЕНЫ / DNS" : "ПОИСК", dns ? "Network footprint" : "Search engine", kind)}<form id="query-form" data-kind="${kind}"><label class="form-label" for="query">${dns ? "Домен для проверки" : "Никнейм для поиска"}</label><div class="query-field">${icon(dns ? "globe" : "search")}<input id="query" name="query" value="${esc(dns ? state.domain : state.query)}" placeholder="${dns ? "example.org" : "Введите никнейм"}" autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="search" maxlength="${dns ? "253" : "40"}" ${busy ? "readonly" : ""}><button class="clear-button" type="button" data-action="clear" aria-label="Очистить запрос" ${busy ? "disabled" : ""}>${icon("close")}</button></div><div class="section-heading"><h2>Тип запроса</h2></div><div class="chips"><a class="chip ${dns ? "" : "selected"}" href="#search" ${dns ? "" : 'aria-current="page"'}>${icon("user")}Аккаунт</a><a class="chip ${dns ? "selected" : ""}" href="#dns" ${dns ? 'aria-current="page"' : ""}>${icon("globe")}Домен</a></div>${dns ? `<div class="section-heading"><h2>Тип проверки</h2></div><div class="supported-records"><div>${icon("check")}<span>A — IPv4</span></div><div>${icon("check")}<span>AAAA — IPv6</span></div></div><p class="hint">Оба типа адресов запрашиваются через системный DNS.</p>` : `<div class="section-heading"><h2>Источники</h2><span class="meta">HTTPS / ${state.sources.length}</span></div><fieldset class="source-list" ${busy ? "disabled" : ""}><legend class="sr-only">Выберите источники для поиска</legend>${state.sources.map((site, i) => `<label class="source-row"><input type="checkbox" name="source" value="${site}" ${state.selected.includes(site) ? "checked" : ""}><span>${site}</span><span class="meta">${String(i + 1).padStart(2, "0")}</span></label>`).join("")}</fieldset>`}<div id="form-message" aria-live="polite">${state.errors[kind] ? notice(state.errors[kind], true) : ""}${busy ? notice(dns ? "Запрашиваем DNS…" : "Проверяем выбранные источники. Это может занять до минуты.") + '<div class="working" aria-hidden="true"></div>' : ""}</div><button class="primary" type="submit" ${busy ? "disabled" : ""}>${icon("play")}<span>${busy ? "Выполняется…" : dns ? "Проверить домен" : "Запустить поиск"}</span></button><p class="hint">${dns ? "Публичные IP-адреса не подтверждают владельца домена." : "HTTP 200 — кандидат, а не подтверждение аккаунта. Ошибки и блокировки остаются неопределёнными."}</p>${dns ? notice("WHOIS, MX и TXT пока не подключены.") : ""}</form>${strip()}`;
+  return `${banner(dns ? "ДОМЕНЫ / DNS" : "ПОИСК", dns ? "Network footprint" : "Search engine", kind)}<form id="query-form" data-kind="${kind}"><label class="form-label" for="query">${dns ? "Домен для проверки" : "Никнейм для поиска"}</label><div class="query-field">${icon(dns ? "globe" : "search")}<input id="query" name="query" value="${esc(dns ? state.domain : state.query)}" placeholder="${dns ? "example.org" : "Введите никнейм"}" autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="search" maxlength="${dns ? "253" : "40"}" ${busy ? "readonly" : ""}><button class="clear-button" type="button" data-action="clear" aria-label="Очистить запрос" ${busy ? "disabled" : ""}>${icon("close")}</button></div><div class="query-actions"><button class="primary" type="submit" ${busy ? "disabled" : ""}>${icon("play")}<span>${busy ? "Выполняется…" : dns ? "Проверить домен" : "Запустить поиск"}</span></button>${dns ? "" : `<small id="query-source-count">Источников: ${state.selected.length} / ${CATALOG.count}</small>`}</div><div id="form-message" aria-live="polite">${state.errors[kind] ? notice(state.errors[kind], true) : ""}${busy ? (dns ? notice("Запрашиваем DNS…") + '<div class="working" aria-hidden="true"></div>' : searchProgress()) : ""}</div><div class="section-heading"><h2>Тип запроса</h2></div><div class="chips"><a class="chip ${dns ? "" : "selected"}" href="#search" ${dns ? "" : 'aria-current="page"'}>${icon("user")}Аккаунт</a><a class="chip ${dns ? "selected" : ""}" href="#dns" ${dns ? 'aria-current="page"' : ""}>${icon("globe")}Домен</a></div>${dns ? `<div class="section-heading"><h2>Тип проверки</h2></div><div class="supported-records"><div>${icon("check")}<span>A — IPv4</span></div><div>${icon("check")}<span>AAAA — IPv6</span></div></div><p class="hint">Оба типа адресов запрашиваются через системный DNS.</p>` : `<div class="section-heading"><h2>Источники</h2><span class="meta">HTTPS / ${state.sources.length}</span></div>${sourcePicker()}`}<p class="hint">${dns ? "Публичные IP-адреса не подтверждают владельца домена." : "Совпадение — кандидат, а не подтверждение аккаунта. Проверяем HTTP и признаки страницы. Блокировки и редиректы остаются неопределёнными."}</p>${dns ? notice("WHOIS, MX и TXT пока не подключены.") : ""}</form>${strip()}`;
 }
 
+function resultGroup(item) {
+  if (
+    item.state === "resolved" ||
+    (item.state === "candidate" && item.evidence === "presence_marker")
+  )
+    return "success";
+  return item.state === "not_found" ? "not_found" : "review";
+}
+function profileHref(value) {
+  try {
+    const url = new URL(value);
+    if (
+      url.protocol !== "https:" ||
+      url.username ||
+      url.password ||
+      !url.hostname.includes(".")
+    )
+      return null;
+    return url.href;
+  } catch (_) {
+    return null;
+  }
+}
+function resultControls(items) {
+  const labels = {
+    all: "Все",
+    success: "Успех",
+    review: "Проверьте вручную",
+    not_found: "Неуспех",
+  };
+  return `<div class="catalog-controls"><label>Результат<select id="result-filter">${Object.entries(
+    labels,
+  )
+    .map(
+      ([key, label]) =>
+        `<option value="${key}" ${state.filter === key ? "selected" : ""}>${label} (${key === "all" ? items.length : items.filter((x) => resultGroup(x) === key).length})</option>`,
+    )
+    .join(
+      "",
+    )}</select></label><label>Сортировка<select id="result-order">${Object.entries(
+    {
+      success: "Успех сначала",
+      review: "Проверьте вручную сначала",
+      not_found: "Неуспех сначала",
+      source: "По источнику",
+    },
+  )
+    .map(
+      ([key, label]) =>
+        `<option value="${key}" ${state.resultOrder === key ? "selected" : ""}>${label}</option>`,
+    )
+    .join(
+      "",
+    )}</select></label></div><p class="hint">Успех — совпали признаки профиля. Проверьте вручную — ответ неоднозначен. Неуспех — профиль не найден. Совпадение никнейма не подтверждает личность.</p>`;
+}
 function results() {
   const kind = state.resultKind || "search",
     data = state[kind];
@@ -226,39 +432,64 @@ function results() {
         state: "resolved",
       }))
     : data.items;
-  const filtered = items.filter(
-    (x) => state.filter === "all" || x.state === state.filter,
+  const groups = [
+    state.resultOrder,
+    ...["success", "review", "not_found"].filter(
+      (key) => key !== state.resultOrder,
+    ),
+  ];
+  const ordered =
+    state.resultOrder === "source"
+      ? [...items].sort((a, b) => a.site.localeCompare(b.site, "ru"))
+      : [...items].sort(
+          (a, b) =>
+            groups.indexOf(resultGroup(a)) - groups.indexOf(resultGroup(b)),
+        );
+  const filtered = ordered.filter(
+    (x) => state.filter === "all" || resultGroup(x) === state.filter,
   );
-  return `${banner("РЕЗУЛЬТАТЫ", "Search results", "results")}<a class="back-link" href="#${dns ? "dns" : "search"}">${icon("arrow")}Новый запрос</a><p class="query-context">ЗАПРОС: <b>${esc(dns ? data.domain : data.query)}</b><br>${dns ? "Системный DNS / A, AAAA" : "Проверка публичных URL / HTTPS"}</p>${dns ? "" : `<label class="filter-label">Статус<select id="result-filter"><option value="all">Все результаты</option><option value="candidate" ${state.filter === "candidate" ? "selected" : ""}>Кандидаты</option><option value="not_found" ${state.filter === "not_found" ? "selected" : ""}>Не найдено</option><option value="unknown" ${state.filter === "unknown" ? "selected" : ""}>Не определено</option></select></label>`}<p class="results-count">${dns ? "АДРЕСОВ" : "ПРОВЕРЕНО ИСТОЧНИКОВ"}: ${items.length} · ПОКАЗАНО: ${filtered.length}</p>${
+  state.resultPage = Math.max(
+    0,
+    Math.min(
+      state.resultPage,
+      Math.ceil(filtered.length / RESULT_PAGE_SIZE) - 1,
+    ),
+  );
+  return `${banner("РЕЗУЛЬТАТЫ", "Search results", "results")}${!dns && data.cancelled ? notice(`Проверка остановлена: ${data.completed} из ${data.total}. Ниже только обработанные источники.`) : ""}<a class="back-link" href="#${dns ? "dns" : "search"}">${icon("arrow")}Новый запрос</a><p class="query-context">ЗАПРОС: <b>${esc(dns ? data.domain : data.query)}</b><br>${dns ? "Системный DNS / A, AAAA" : "Проверка публичных URL / HTTPS"}</p>${dns ? "" : resultControls(items)}<p class="results-count">${dns ? "АДРЕСОВ" : "ПРОВЕРЕНО ИСТОЧНИКОВ"}: ${items.length} · ПОКАЗАНО: ${filtered.length}</p>${
     filtered
+      .slice(
+        state.resultPage * RESULT_PAGE_SIZE,
+        (state.resultPage + 1) * RESULT_PAGE_SIZE,
+      )
       .map((x) => {
-        const text =
-          {
-            candidate: "Кандидат",
-            not_found: "Не найдено",
-            unknown: "Не определено",
-            resolved: "DNS-ответ",
-          }[x.state] || "Не определено";
-        return `<article class="result-card"><div class="result-head"><span class="entity-icon">${icon(dns ? "globe" : "user")}</span><h2>${esc(x.site)}</h2><span class="badge ${x.state === "unknown" ? "unknown" : x.state === "not_found" ? "negative" : ""}">${text}</span></div><p class="result-url">${esc(x.url)}</p><p class="result-detail">${dns ? "Системное разрешение имени домена" : x.status ? "HTTP " + esc(x.status) + (x.state === "candidate" ? " · Требуется ручная проверка профиля." : "") : esc(x.detail || "Источник не ответил. Статус неизвестен.")}</p></article>`;
+        const group = resultGroup(x),
+          text = {
+            success: "Успех",
+            review: "Проверьте вручную",
+            not_found: "Неуспех",
+          }[group];
+        const href = profileHref(x.url),
+          tag = href ? "a" : "article";
+        return `<${tag} class="result-card" ${href ? `href="${esc(href)}" data-profile-url="${esc(href)}" target="_blank" rel="noopener noreferrer"` : ""}><div class="result-head"><span class="entity-icon">${icon(dns ? "globe" : "user")}</span><h2>${esc(x.site)}</h2><span class="badge ${group === "review" ? "unknown" : group === "not_found" ? "negative" : "positive"}">${text}</span></div><p class="result-url">${esc(x.url)}</p><p class="result-detail">${dns ? "Системное разрешение имени домена" : esc([x.status ? "HTTP " + x.status : "", x.detail || (x.state === "candidate" ? "Требуется ручная проверка профиля." : "Статус неизвестен.")].filter(Boolean).join(" · "))}</p><small class="result-open">Открыть в браузере ${icon("arrow")}</small></${tag}>`;
       })
       .join("") || '<p class="empty">Нет результатов с этим статусом.</p>'
-  }<p class="hint">Результат сохранён в истории на этом устройстве.</p><a class="primary" href="#graph">${icon("graph")}ОТКРЫТЬ ГРАФ ${icon("arrow")}</a>${strip()}`;
+  }${resultPager(filtered.length)}<p class="hint">Результат сохранён в истории на этом устройстве.</p><a class="primary" href="#graph">${icon("graph")}ОТКРЫТЬ ГРАФ ${icon("arrow")}</a>${strip()}`;
 }
 function databases() {
-  return `${banner("БАЗЫ ДАННЫХ", "Local workspace", "db")}<div class="chips"><button class="chip" data-db="local" aria-pressed="${state.dbTab === "local"}">${icon("db")}Хранилище</button><button class="chip" data-db="sources" aria-pressed="${state.dbTab === "sources"}">${icon("layers")}Источники</button></div>${state.dbTab === "local" ? `<div class="section-heading"><h2>На этом устройстве</h2></div><a class="row linked-row" href="#history">${icon("clock")}<div class="row-content"><strong>История запросов</strong><small>Результаты проверок · SQLite</small></div></a><div class="section-heading"><h2>Внешние каталоги</h2></div><div class="unavailable-row"><strong>Sherlock / Maigret</strong><span>Не подключены</span></div><div class="unavailable-row"><strong>Импорт CSV / XLSX</strong><span>Пока недоступен</span></div><p class="hint">Каталоги сайтов и импорт файлов не входят в локальную историю.</p>` : `<div class="section-heading"><h2>Проверяемые сайты</h2><span class="meta">${state.sources.length} URL</span></div>${state.sources.map((site) => `<div class="row">${icon("globe")}<div class="row-content"><strong>${site}</strong><small>HTTP-проверка публичного профиля</small></div></div>`).join("")}<p class="hint">Это список сайтов для проверки, а не база аккаунтов или утечек.</p><a class="secondary" href="#search">Выбрать источники ${icon("arrow")}</a>`}${strip()}`;
+  return `${banner("БАЗЫ ДАННЫХ", "Local workspace", "db")}<div class="chips"><button class="chip" data-db="local" aria-pressed="${state.dbTab === "local"}">${icon("db")}Хранилище</button><button class="chip" data-db="sources" aria-pressed="${state.dbTab === "sources"}">${icon("layers")}Источники</button></div>${state.dbTab === "local" ? `<div class="section-heading"><h2>На этом устройстве</h2></div><a class="row linked-row" href="#history">${icon("clock")}<div class="row-content"><strong>История запросов</strong><small>Результаты проверок · SQLite</small></div></a><div class="section-heading"><h2>Внешние каталоги</h2></div><button type="button" class="row" data-db="sources">${icon("db")}<span class="row-content"><strong>Каталог Maigret</strong><small>${CATALOG.count} площадок · встроен в приложение</small></span></button><div class="unavailable-row"><strong>Sherlock</strong><span>Не подключён</span></div><div class="unavailable-row"><strong>Импорт CSV / XLSX</strong><span>Пока недоступен</span></div><p class="hint">Каталоги сайтов и импорт файлов не входят в локальную историю.</p>` : `<div class="section-heading"><h2>Проверяемые сайты</h2><span class="meta">${state.sources.length} URL</span></div>${sourcePicker(false)}<p class="hint">Это список сайтов для проверки, а не база аккаунтов или утечек.</p><a class="secondary" href="#search">Выбрать источники ${icon("arrow")}</a>`}${strip()}`;
 }
 
 function graph() {
-  const data = state[state.resultKind || "search"];
+  const data = state.viewedResult || state[state.resultKind || "search"];
   const dns = state.resultKind === "dns";
   const entities = data
     ? dns
-      ? data.addresses.map((a) => ({
+      ? data.addresses.slice(0, 8).map((a) => ({
           title: a,
           detail: "DNS-ответ A / AAAA",
           icon: "globe",
         }))
-      : data.items.map((x) => ({
+      : data.items.slice(0, 8).map((x) => ({
           title: x.site,
           detail:
             x.url +
@@ -277,10 +508,10 @@ function graph() {
     x: 150 + 102 * Math.cos(-Math.PI / 2 + (i * 2 * Math.PI) / entities.length),
     y: 155 + 100 * Math.sin(-Math.PI / 2 + (i * 2 * Math.PI) / entities.length),
   }));
-  return `${banner("ГРАФ СВЯЗЕЙ", "Relationship graph", "graph")}<p class="hint" style="margin-bottom:16px">Предварительный макет · ${data ? "связи текущего запроса" : "без данных"}</p><div class="graph-field"><div class="graph-label">N: ${data ? nodes.length + 1 : 0}<br>E: ${nodes.length}</div>${data ? `<svg class="graph-svg" viewBox="0 0 300 310" role="group" aria-label="Запрос и проверенные источники"><g transform="translate(150 155) scale(${state.zoom}) translate(-150 -155)">${nodes.map((n) => `<path d="M150 155L${n.x} ${n.y}" stroke="#7697a0" stroke-dasharray="3 3"/>`).join("")}<rect x="115" y="120" width="70" height="70" rx="10" fill="#285e7c"/>${icon(dns ? "globe" : "user", "graph-query-icon", 'x="134" y="130" width="32" height="24"')}<text x="150" y="178" text-anchor="middle" stroke="none" fill="#f6f8fa" font-size="11">${dns ? "ДОМЕН" : "ЗАПРОС"}</text>${nodes.map((n, i) => `<g class="graph-hit" role="button" tabindex="0" aria-label="${esc(n.title)}" data-node="${i}"><rect x="${n.x - 30}" y="${n.y - 30}" width="60" height="60" rx="7" fill="#f0f2f3"/><text x="${n.x}" y="${n.y + 4}" text-anchor="middle" stroke="none" fill="#123b49" font-size="12">${esc(n.title.length > 10 ? n.title.slice(0, 9) + "…" : n.title)}</text></g>`).join("")}</g></svg>` : `<div class="graph-center"><span class="graph-node">${icon("user")}</span><p class="graph-empty">Выполните поиск, чтобы увидеть запрос и проверенные источники.</p></div>`}<div class="graph-controls"><button data-zoom="in" aria-label="Увеличить" ${!data || state.zoom >= 1.6 ? "disabled" : ""}>${icon("plus")}</button><button data-zoom="out" aria-label="Уменьшить" ${!data || state.zoom <= 0.6 ? "disabled" : ""}>${icon("minus")}</button><button data-zoom="fit" aria-label="По размеру поля" ${data ? "" : "disabled"}>${icon("fit")}</button></div></div><p class="graph-legend">- - - ${dns ? "Домен → адрес из DNS-ответа" : "Запрос → проверенный URL"}.<br>Личные связи и владение аккаунтами не установлены.</p><div class="result-card"><div class="result-head"><span class="entity-icon">${icon(dns ? "globe" : "user")}</span><h2 class="mono">${esc(state.graphDetail !== null && nodes[state.graphDetail] ? nodes[state.graphDetail].title : center)}</h2></div><p class="result-detail">${esc(state.graphDetail !== null && nodes[state.graphDetail] ? nodes[state.graphDetail].detail : data ? "Источник связей — результаты последней проверки." : "Выберите существующий запрос из истории или начните новый поиск.")}</p></div><a class="secondary" href="#${data ? "results" : "search"}">${data ? "К результатам" : "Перейти к поиску"} ${icon("arrow")}</a>${strip()}`;
+  return `${banner("ГРАФ СВЯЗЕЙ", "Relationship graph", "graph")}<p class="hint" style="margin-bottom:16px">Предварительный макет · ${data ? "связи текущего запроса" : "без данных"}</p>${data && (dns ? data.addresses : data.items).length > 8 ? notice("В графе показаны первые 8 источников. Полный список — в результатах.") : ""}<div class="graph-field"><div class="graph-label">N: ${data ? nodes.length + 1 : 0}<br>E: ${nodes.length}</div>${data ? `<svg class="graph-svg" viewBox="0 0 300 310" role="group" aria-label="Запрос и проверенные источники"><g transform="translate(150 155) scale(${state.zoom}) translate(-150 -155)">${nodes.map((n) => `<path d="M150 155L${n.x} ${n.y}" stroke="#7697a0" stroke-dasharray="3 3"/>`).join("")}<rect x="115" y="120" width="70" height="70" rx="10" fill="#285e7c"/>${icon(dns ? "globe" : "user", "graph-query-icon", 'x="134" y="130" width="32" height="24"')}<text x="150" y="178" text-anchor="middle" stroke="none" fill="#f6f8fa" font-size="11">${dns ? "ДОМЕН" : "ЗАПРОС"}</text>${nodes.map((n, i) => `<g class="graph-hit" role="button" tabindex="0" aria-label="${esc(n.title)}" data-node="${i}"><rect x="${n.x - 30}" y="${n.y - 30}" width="60" height="60" rx="7" fill="#f0f2f3"/><text x="${n.x}" y="${n.y + 4}" text-anchor="middle" stroke="none" fill="#123b49" font-size="12">${esc(n.title.length > 10 ? n.title.slice(0, 9) + "…" : n.title)}</text></g>`).join("")}</g></svg>` : `<div class="graph-center"><span class="graph-node">${icon("user")}</span><p class="graph-empty">Выполните поиск, чтобы увидеть запрос и проверенные источники.</p></div>`}<div class="graph-controls"><button data-zoom="in" aria-label="Увеличить" ${!data || state.zoom >= 1.6 ? "disabled" : ""}>${icon("plus")}</button><button data-zoom="out" aria-label="Уменьшить" ${!data || state.zoom <= 0.6 ? "disabled" : ""}>${icon("minus")}</button><button data-zoom="fit" aria-label="По размеру поля" ${data ? "" : "disabled"}>${icon("fit")}</button></div></div><p class="graph-legend">- - - ${dns ? "Домен → адрес из DNS-ответа" : "Запрос → проверенный URL"}.<br>Личные связи и владение аккаунтами не установлены.</p><div class="result-card"><div class="result-head"><span class="entity-icon">${icon(dns ? "globe" : "user")}</span><h2 class="mono">${esc(state.graphDetail !== null && nodes[state.graphDetail] ? nodes[state.graphDetail].title : center)}</h2></div><p class="result-detail">${esc(state.graphDetail !== null && nodes[state.graphDetail] ? nodes[state.graphDetail].detail : data ? "Источник связей — результаты последней проверки." : "Выберите существующий запрос из истории или начните новый поиск.")}</p></div><a class="secondary" href="#${data ? "results" : "search"}">${data ? "К результатам" : "Перейти к поиску"} ${icon("arrow")}</a>${strip()}`;
 }
 function settings() {
-  return `${banner("НАСТРОЙКИ", "System preferences")}<div class="section-heading"><h2 class="section-title">О приложении</h2></div><div class="row"><span class="row-content"><strong>OSINT / 2002</strong><small>Android · 0.10.0-alpha</small></span></div><p class="notice">${native() ? "Поиск профилей, системный DNS и SQLite работают на устройстве." : "Открыт браузерный макет. Нативные проверки доступны в APK."}</p><details><summary>${icon("chevron")}Данные и хранение</summary><p>Запросы и ответы сохраняются в SQLite на устройстве. Для проверки профилей приложение обращается к выбранным сайтам. Удалённый API и облачная синхронизация не подключены.</p></details><details><summary>${icon("chevron")}Возможности текущей версии</summary><p>Проверка публичных URL, DNS A / AAAA, история запросов. Граф показывает связь запроса с проверенными источниками. Поиск телефонов и почты, импорт файлов, WHOIS, Sherlock и Maigret не подключены.</p></details>${strip()}`;
+  return `${banner("НАСТРОЙКИ", "System preferences")}<div class="section-heading"><h2 class="section-title">О приложении</h2></div><div class="row"><span class="row-content"><strong>OSINT / 2002</strong><small>Android · 0.11.0-alpha</small></span></div><p class="notice">${native() ? "Поиск профилей, системный DNS и SQLite работают на устройстве." : "Открыт браузерный макет. Нативные проверки доступны в APK."}</p><details><summary>${icon("chevron")}Данные и хранение</summary><p>Запросы и ответы сохраняются в SQLite на устройстве. Для проверки профилей приложение обращается к выбранным сайтам. Удалённый API и облачная синхронизация не подключены.</p></details><details><summary>${icon("chevron")}Возможности текущей версии</summary><p>Проверка публичных URL, DNS A / AAAA, история запросов. Граф показывает связь запроса с проверенными источниками. Каталог Maigret: ${CATALOG.count} площадок, категории, прогресс и остановка проверки. Поиск телефонов и почты, импорт файлов, WHOIS и Sherlock не подключены.</p></details>${strip()}`;
 }
 function render() {
   const page = location.hash.slice(1) || "home";
@@ -305,7 +536,7 @@ function render() {
     graph,
     databases,
     history: () =>
-      `${banner("ИСТОРИЯ", "Query history", "history")}<a class="back-link" href="#databases">${icon("arrow")}Хранилище / история</a><div class="section-heading"><h2>Сохранённые запросы</h2><button class="text-button" data-action="refresh">Обновить</button></div><div id="history-list">${historyRows(30)}</div>${strip()}`,
+      `${banner("ИСТОРИЯ", "Query history", "history")}<a class="back-link" href="#databases">${icon("arrow")}Хранилище / история</a><div class="section-heading"><h2>Сохранённые запросы</h2><button class="text-button" data-action="refresh">Обновить</button></div><div id="history-message">${state.historyLoading ? notice("Читаем результат…") : state.historyEntryError ? notice(state.historyEntryError, true) : ""}</div><div id="history-list">${historyRows(30)}</div>${strip()}`,
     settings,
     splash: () =>
       `<div class="splash">${logo()}${strip()}<p class="eyebrow">Рабочее пространство</p><p class="hint">Локальный режим · Android</p><a class="secondary" href="#home">Открыть ${icon("arrow")}</a></div>`,
@@ -342,13 +573,6 @@ function bind() {
     $("query").addEventListener("input", (e) => {
       state[state.page === "dns" ? "domain" : "query"] = e.target.value;
     });
-    form.querySelectorAll("[name=source]").forEach((c) =>
-      c.addEventListener("change", () => {
-        state.selected = [
-          ...form.querySelectorAll("[name=source]:checked"),
-        ].map((c) => c.value);
-      }),
-    );
   }
   document.querySelectorAll("[data-action]").forEach(
     (b) =>
@@ -357,10 +581,34 @@ function bind() {
           $("query").value = "";
           state[state.page === "dns" ? "domain" : "query"] = "";
           $("query").focus();
+        } else if (b.dataset.action === "cancel-search") {
+          bridge("cancelSearch");
         } else requestHistory();
       }),
   );
+  document.querySelectorAll("[data-profile-url]").forEach((link) => {
+    if (native())
+      link.onclick = (e) => {
+        e.preventDefault();
+        bridge("openUrl", link.dataset.profileUrl);
+      };
+  });
+  if ($("result-order"))
+    $("result-order").onchange = (e) => {
+      state.resultOrder = e.target.value;
+      state.resultPage = 0;
+      render();
+    };
+  bindSourcePicker();
   bindHistory();
+  document.querySelectorAll("[data-result-page]").forEach(
+    (b) =>
+      (b.onclick = () => {
+        state.resultPage += Number(b.dataset.resultPage);
+        render();
+        scrollTo(0, 0);
+      }),
+  );
   document.querySelectorAll("[data-db]").forEach(
     (b) =>
       (b.onclick = () => {
@@ -371,6 +619,7 @@ function bind() {
   if ($("result-filter"))
     $("result-filter").onchange = (e) => {
       state.filter = e.target.value;
+      state.resultPage = 0;
       render();
     };
   document.querySelectorAll("[data-zoom]").forEach(
@@ -405,16 +654,25 @@ function bind() {
 }
 function bindHistory() {
   document.querySelectorAll("[data-history]").forEach(
-    (b) =>
-      (b.onclick = () => {
-        const h = state.history[Number(b.dataset.history)];
-        const k = h.kind === "dns" ? "dns" : "search";
-        state[k] = h.result;
-        state.resultKind = k;
-        state.filter = "all";
-        state.zoom = 1;
-        state.graphDetail = null;
-        navigate("results");
+    (button) =>
+      (button.onclick = () => {
+        const entry = state.history[Number(button.dataset.history)];
+        if (entry.result) {
+          openSavedResult(entry.kind, entry.result);
+          return;
+        }
+        state.pendingHistoryId = entry.id;
+        state.pendingHistoryPage = state.page;
+        state.historyLoading = true;
+        state.historyEntryError = "";
+        render();
+        try {
+          bridge("historyEntry", entry.id);
+        } catch (error) {
+          state.historyLoading = false;
+          state.historyEntryError = error.message;
+          render();
+        }
       }),
   );
 }
@@ -425,7 +683,10 @@ function submit(e) {
   const q = $("query").value.trim();
   state.errors[kind] = "";
   state[kind === "dns" ? "domain" : "query"] = q;
-  if (kind === "search" && !/^[A-Za-z0-9_.-]{1,40}$/.test(q))
+  if (
+    kind === "search" &&
+    (!/^[A-Za-z0-9_.-]{1,40}$/.test(q) || q === "." || q === "..")
+  )
     state.errors[kind] = "Никнейм: от 1 до 40 символов A–Z, 0–9, _ . -";
   if (
     kind === "dns" &&
@@ -443,6 +704,8 @@ function submit(e) {
     return;
   }
   state.busy[kind] = true;
+  if (kind === "search")
+    state.searchProgress = { completed: 0, total: state.selected.length };
   render();
   try {
     if (kind === "search")
@@ -455,6 +718,29 @@ function submit(e) {
   }
 }
 window.receiveNative = (event, data) => {
+  if (event === "searchProgress") {
+    if (!state.busy.search) return;
+    state.searchProgress = data;
+    const field = $("search-progress");
+    if (field) {
+      field.querySelector("strong").textContent = data.completed;
+      field.querySelector("progress").value = data.completed;
+    }
+    return;
+  }
+  if (event === "historyEntry") {
+    if (data.id !== undefined && data.id !== state.pendingHistoryId) return;
+    state.historyLoading = false;
+    if (data.error) {
+      state.historyEntryError = data.error;
+      if (state.page === state.pendingHistoryPage) render();
+      return;
+    }
+    const show = state.page === state.pendingHistoryPage;
+    if (show) openSavedResult(data.kind, data.result);
+    state.pendingHistoryId = null;
+    return;
+  }
   if (event === "history") {
     if (data.error) state.historyError = data.error;
     else {
@@ -480,7 +766,10 @@ window.receiveNative = (event, data) => {
   state[event] = data;
   if (state.page === event || !state.resultKind) {
     state.resultKind = event;
+    state.viewedResult = data;
+    state.resultOrder = "success";
     state.filter = "all";
+    state.resultPage = 0;
     state.graphDetail = null;
     state.zoom = 1;
   }

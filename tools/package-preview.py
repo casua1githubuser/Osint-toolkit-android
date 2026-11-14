@@ -11,10 +11,11 @@ assets=root/'app/src/main/assets'
 output=Path(sys.argv[1]).resolve() if len(sys.argv)>1 else root/'build/preview'
 output.mkdir(parents=True,exist_ok=True)
 html=(assets/'index.html').read_text(encoding='utf-8')
-icon_license=assets/'TABLER-LICENSE.txt'
-if icon_license.exists():
-    notice=icon_license.read_text(encoding='utf-8').replace('--','- -')
-    html=html.replace('<head>', '<head>\n<!-- Tabler icon attribution\n'+notice+'\n-->')
+for filename in ['TABLER-LICENSE.txt','MAIGRET-LICENSE.txt']:
+    license_file=assets/filename
+    if license_file.exists():
+        notice=license_file.read_text(encoding='utf-8').replace('--','- -')
+        html=html.replace('<head>', '<head>\n<!-- '+filename+'\n'+notice+'\n-->')
 css=(assets/'style.css').read_text(encoding='utf-8')
 images={}
 
@@ -55,6 +56,8 @@ def embed_asset(match):
 css=re.sub(r'url\(([^)]+)\)',embed_asset,css)
 html=re.sub(r'<link\s+rel="stylesheet"\s+href="style.css"\s*/?>',lambda _: '<style>'+css+'</style>',html)
 js=(assets/'app.js').read_text(encoding='utf-8')
+catalog_js=(assets/'source-catalog.js').read_text(encoding='utf-8')
+html=html.replace('<script src="source-catalog.js"></script>','<script>'+catalog_js+'</script>')
 html=html.replace('<script src="app.js"></script>','<script>'+js+'</script>')
 assert set(images)=={'--photo','--module-photo','--page-photo'},'All photographic assets must be embedded'
 assert 'src="app.js"' not in html and 'href="style.css"' not in html
