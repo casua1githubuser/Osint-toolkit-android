@@ -470,14 +470,40 @@ function randomizeVector(vector, initial = false) {
   const field = vector.parentElement;
   const width = field.clientWidth || 360;
   const height = field.clientHeight || 180;
-  const side = Number(vector.dataset.side);
-  const x = Math.round(width * (0.25 + Math.random() * 0.5));
-  const y = Math.round(height * (0.25 + Math.random() * 0.5));
+  const straight = vector.dataset.straight === "true";
+  const previousSide = vector.dataset.entrySide;
+  const side = straight
+    ? previousSide === undefined
+      ? Math.floor(Math.random() * 3)
+      : (Number(previousSide) + 1 + Math.floor(Math.random() * 2)) % 3
+    : Number(vector.dataset.side);
+  vector.dataset.entrySide = String(side);
+  // Alternate coordinate bands so repeated cycles visibly move, even with a
+  // similar random sample. Changing paths happens only at zero opacity.
+  const lowBand = vector.dataset.band !== "low";
+  vector.dataset.band = lowBand ? "low" : "high";
+  const coordinate = () => (lowBand ? 0.18 : 0.62) + Math.random() * 0.2;
+  const x = Math.round(width * coordinate());
+  const y = Math.round(height * coordinate());
   const footer = field.dataset.zone === "footer";
   // Each region has left/right/top entries (bottom instead of top in the footer).
   // Vector zero is always straight; the others use only horizontal/vertical legs.
-  const points =
-    side === 0
+  const points = straight
+    ? side === 0
+      ? [
+          [-16, y],
+          [width + 16, y],
+        ]
+      : side === 1
+        ? [
+            [width + 16, y],
+            [-16, y],
+          ]
+        : [
+            [x, footer ? height + 16 : -16],
+            [x, footer ? -16 : height + 16],
+          ]
+    : side === 0
       ? [
           [-16, y],
           [width + 16, y],

@@ -359,10 +359,23 @@ const submit = () =>
       leftSquares.length >= 2,
     );
     const vector = vectors[0];
-    for (let i = 0; i < 10; i++)
+    let lastSide = vector.dataset.entrySide;
+    let lastBand = vector.dataset.band;
+    let changedEveryCycle = true;
+    for (let i = 0; i < 10; i++) {
       vector
         .querySelector("path")
         .dispatchEvent(new w.Event("animationiteration"));
+      changedEveryCycle &&=
+        vector.dataset.entrySide !== lastSide &&
+        vector.dataset.band !== lastBand;
+      lastSide = vector.dataset.entrySide;
+      lastBand = vector.dataset.band;
+    }
+    ok(
+      "Straight vector changes entry side and coordinate band every cycle",
+      changedEveryCycle,
+    );
     ok(
       "Vector cycles reuse existing elements",
       field.querySelectorAll(".ambient-vector").length === 3,
