@@ -1887,6 +1887,37 @@ summary {
   line-height: 1.1;
   border-radius: 8px;
 }
+.bottom-nav a {
+  position: relative;
+  isolation: isolate;
+  background: transparent;
+}
+.bottom-nav a[aria-current="page"] {
+  background: transparent;
+}
+.bottom-nav a::before {
+  content: "";
+  position: absolute;
+  inset: 50% 0 auto;
+  transform: translateY(-50%);
+  aspect-ratio: 16 / 9;
+  z-index: -1;
+  border-radius: 7px;
+  background: transparent;
+  transition: background-color 100ms ease-out;
+}
+.bottom-nav a[aria-current="page"]::before {
+  background: var(--selected);
+}
+.route-ghost {
+  position: fixed;
+  margin: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: var(--surface);
+  opacity: 1;
+  overflow: visible;
+}
 .bottom-nav a svg,
 .bottom-nav a[href="#home"] svg {
   width: 21px;

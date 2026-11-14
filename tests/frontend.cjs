@@ -234,12 +234,14 @@ const submit = () =>
     !html.includes("Пример данных") && !code.includes("Пример данных"),
   );
   const motions = [];
+  const motionEnds = [];
   let cancelled = 0;
   let running = [];
   w.matchMedia = () => ({ matches: false });
   w.HTMLElement.prototype.getAnimations = () => running;
   w.HTMLElement.prototype.animate = function (frames, options) {
     const animation = {
+      finished: new Promise((resolve) => motionEnds.push(resolve)),
       cancel() {
         cancelled++;
       },
@@ -251,16 +253,18 @@ const submit = () =>
   d.getAnimations = () => running;
   await go("settings");
   ok(
-    "Fallback entry uses only opacity, without page displacement",
+    "Outgoing page fades away while destination stays opaque",
     motions.length === 1 &&
-      motions[0].options.duration === 160 &&
-      motions[0].frames[1].opacity === 1 &&
+      motions[0].options.duration === 180 &&
+      motions[0].frames[1].opacity === 0 &&
       motions[0].frames.every((frame) => !("transform" in frame)),
   );
   await go("databases");
   ok(
     "Rapid navigation cancels the preceding motion",
-    motions.length === 2 && cancelled >= 1,
+    motions.length === 2 &&
+      cancelled >= 1 &&
+      d.querySelectorAll(".route-ghost").length === 1,
   );
   d.querySelector('[data-db="local"]').click();
   ok(
@@ -440,6 +444,12 @@ const submit = () =>
       d.querySelector("h1").textContent === "БАЗЫ ДАННЫХ",
   );
   await tick();
+  motionEnds.at(-1)();
+  await tick();
+  ok(
+    "Completed page dissolve removes its inert outgoing layer",
+    !d.querySelector(".route-ghost"),
+  );
   console.log(`${count} checks passed`);
   dom.window.close();
 })().catch((e) => {

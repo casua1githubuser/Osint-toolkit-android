@@ -52,6 +52,8 @@ const state = {
 };
 const native = () => typeof window.NativeOSINT !== "undefined";
 let ambientObserver = null;
+let routeGhost = null;
+let routeFade = null;
 const systemReducedMotion = () =>
   typeof matchMedia === "function" &&
   matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -233,7 +235,7 @@ function graph() {
   return `${banner("ГРАФ СВЯЗЕЙ", "Relationship graph", "graph")}<p class="hint" style="margin-bottom:16px">Предварительный макет · ${data ? "связи текущего запроса" : "без данных"}</p><div class="graph-field"><div class="graph-label">N: ${data ? nodes.length + 1 : 0}<br>E: ${nodes.length}</div>${data ? `<svg class="graph-svg" viewBox="0 0 300 310" role="group" aria-label="Запрос и проверенные источники"><g transform="translate(150 155) scale(${state.zoom}) translate(-150 -155)">${nodes.map((n) => `<path d="M150 155L${n.x} ${n.y}" stroke="#7697a0" stroke-dasharray="3 3"/>`).join("")}<rect x="115" y="120" width="70" height="70" rx="10" fill="#285e7c"/><svg x="137" y="131" width="26" height="26" viewBox="0 0 24 24" stroke="#f6f8fa" fill="none" stroke-width="1.4"><path d="${paths[dns ? "globe" : "user"]}"/></svg><text x="150" y="178" text-anchor="middle" stroke="none" fill="#f6f8fa" font-size="11">${dns ? "ДОМЕН" : "ЗАПРОС"}</text>${nodes.map((n, i) => `<g class="graph-hit" role="button" tabindex="0" aria-label="${esc(n.title)}" data-node="${i}"><rect x="${n.x - 30}" y="${n.y - 30}" width="60" height="60" rx="7" fill="#f0f2f3"/><text x="${n.x}" y="${n.y + 4}" text-anchor="middle" stroke="none" fill="#123b49" font-size="12">${esc(n.title.length > 10 ? n.title.slice(0, 9) + "…" : n.title)}</text></g>`).join("")}</g></svg>` : `<div class="graph-center"><span class="graph-node">${icon("user")}</span><p class="graph-empty">Выполните поиск, чтобы увидеть запрос и проверенные источники.</p></div>`}<div class="graph-controls"><button data-zoom="in" aria-label="Увеличить" ${!data || state.zoom >= 1.6 ? "disabled" : ""}>${icon("plus")}</button><button data-zoom="out" aria-label="Уменьшить" ${!data || state.zoom <= 0.6 ? "disabled" : ""}>${icon("minus")}</button><button data-zoom="fit" aria-label="По размеру поля" ${data ? "" : "disabled"}>${icon("fit")}</button></div></div><p class="graph-legend">- - - ${dns ? "Домен → адрес из DNS-ответа" : "Запрос → проверенный URL"}.<br>Личные связи и владение аккаунтами не установлены.</p><div class="result-card"><div class="result-head"><span class="entity-icon">${icon(dns ? "globe" : "user")}</span><h2 class="mono">${esc(state.graphDetail !== null && nodes[state.graphDetail] ? nodes[state.graphDetail].title : center)}</h2></div><p class="result-detail">${esc(state.graphDetail !== null && nodes[state.graphDetail] ? nodes[state.graphDetail].detail : data ? "Источник связей — результаты последней проверки." : "Выберите существующий запрос из истории или начните новый поиск.")}</p></div><a class="secondary" href="#${data ? "results" : "search"}">${data ? "К результатам" : "Перейти к поиску"} ${icon("arrow")}</a>${strip()}`;
 }
 function settings() {
-  return `${banner("НАСТРОЙКИ", "System preferences")}<div class="section-heading"><h2 class="section-title">О приложении</h2></div><div class="row"><span class="row-content"><strong>OSINT / 2002</strong><small>Android · 0.8.2-alpha</small></span></div><p class="notice">${native() ? "Поиск профилей, системный DNS и SQLite работают на устройстве." : "Открыт браузерный макет. Нативные проверки доступны в APK."}</p><details><summary>Данные и хранение</summary><p>Запросы и ответы сохраняются в SQLite на устройстве. Для проверки профилей приложение обращается к выбранным сайтам. Удалённый API и облачная синхронизация не подключены.</p></details><details><summary>Возможности текущей версии</summary><p>Проверка публичных URL, DNS A / AAAA, история запросов. Граф показывает связь запроса с проверенными источниками. Поиск телефонов и почты, импорт файлов, WHOIS, Sherlock и Maigret не подключены.</p></details>${strip()}`;
+  return `${banner("НАСТРОЙКИ", "System preferences")}<div class="section-heading"><h2 class="section-title">О приложении</h2></div><div class="row"><span class="row-content"><strong>OSINT / 2002</strong><small>Android · 0.8.3-alpha</small></span></div><p class="notice">${native() ? "Поиск профилей, системный DNS и SQLite работают на устройстве." : "Открыт браузерный макет. Нативные проверки доступны в APK."}</p><details><summary>Данные и хранение</summary><p>Запросы и ответы сохраняются в SQLite на устройстве. Для проверки профилей приложение обращается к выбранным сайтам. Удалённый API и облачная синхронизация не подключены.</p></details><details><summary>Возможности текущей версии</summary><p>Проверка публичных URL, DNS A / AAAA, история запросов. Граф показывает связь запроса с проверенными источниками. Поиск телефонов и почты, импорт файлов, WHOIS, Sherlock и Maigret не подключены.</p></details>${strip()}`;
 }
 function render() {
   const page = location.hash.slice(1) || "home";
@@ -593,20 +595,57 @@ if (typeof matchMedia === "function") {
   if (typeof preference.addEventListener === "function")
     preference.addEventListener("change", updateAmbientPlayback);
 }
-function animatePageEntry() {
-  if (systemReducedMotion() || typeof $("main").animate !== "function") return;
-  if (typeof $("main").getAnimations === "function")
-    $("main")
-      .getAnimations()
-      .forEach((animation) => animation.cancel());
-  $("main").animate([{ opacity: 0.88 }, { opacity: 1 }], {
-    duration: 160,
-    easing: "ease-out",
+function retainOutgoingPage() {
+  if (systemReducedMotion() || typeof $("main").animate !== "function") {
+    if (routeFade) routeFade.cancel();
+    if (routeGhost) routeGhost.remove();
+    routeFade = routeGhost = null;
+    return;
+  }
+  // Keep one outgoing layer during a burst of taps, rather than restarting
+  // the destination's opacity and flashing the paper background each time.
+  if (routeGhost) return;
+  const rect = $("main").getBoundingClientRect();
+  routeGhost = $("main").cloneNode(true);
+  routeGhost.removeAttribute("id");
+  routeGhost.querySelectorAll("[id]").forEach((e) => e.removeAttribute("id"));
+  routeGhost.querySelectorAll(".ambient-field").forEach((e) => e.remove());
+  routeGhost.classList.add("route-ghost");
+  routeGhost.setAttribute("aria-hidden", "true");
+  routeGhost.setAttribute("inert", "");
+  Object.assign(routeGhost.style, {
+    left: `${rect.left}px`,
+    top: `${rect.top}px`,
+    width: `${rect.width}px`,
+    height: `${rect.height}px`,
   });
+  document.body.append(routeGhost);
+}
+function animatePageEntry() {
+  if (!routeGhost) return;
+  const ghost = routeGhost;
+  const opacity = Number(getComputedStyle(ghost).opacity);
+  if (routeFade) routeFade.cancel();
+  const fade = ghost.animate(
+    [{ opacity: Number.isFinite(opacity) ? opacity : 1 }, { opacity: 0 }],
+    {
+      duration: 180,
+      easing: "cubic-bezier(0.16, 1, 0.3, 1)",
+      fill: "forwards",
+    },
+  );
+  routeFade = fade;
+  if (fade.finished)
+    fade.finished
+      .then(() => {
+        if (routeFade !== fade) return;
+        ghost.remove();
+        routeGhost = routeFade = null;
+      })
+      .catch(() => {});
 }
 function changePage() {
-  // Commit each destination synchronously, then fade its complete painted layer.
-  // Snapshot transitions could expose the new backdrop before its text.
+  retainOutgoingPage();
   render();
   scrollTo(0, 0);
   $("main").focus({ preventScroll: true });
