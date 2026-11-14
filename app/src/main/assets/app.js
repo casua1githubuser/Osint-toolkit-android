@@ -470,6 +470,10 @@ function randomizeVector(vector, initial = false) {
   const field = vector.parentElement;
   const width = field.clientWidth || 360;
   const height = field.clientHeight || 180;
+  const lane = Number(vector.dataset.side);
+  // Disjoint pixel residues reserve different x/y coordinates for each vector.
+  // Orthogonal crossings remain possible; collinear shared segments cannot occur.
+  const laneCoordinate = (value) => Math.round(value / 3) * 3 + lane;
   const straight = vector.dataset.straight === "true";
   const previousSide = vector.dataset.entrySide;
   const side = straight
@@ -483,8 +487,8 @@ function randomizeVector(vector, initial = false) {
   const lowBand = vector.dataset.band !== "low";
   vector.dataset.band = lowBand ? "low" : "high";
   const coordinate = () => (lowBand ? 0.18 : 0.62) + Math.random() * 0.2;
-  const x = Math.round(width * coordinate());
-  const y = Math.round(height * coordinate());
+  const x = laneCoordinate(width * coordinate());
+  const y = laneCoordinate(height * coordinate());
   const footer = field.dataset.zone === "footer";
   // Each region has left/right/top entries (bottom instead of top in the footer).
   // Vector zero is always straight; the others use only horizontal/vertical legs.
@@ -503,22 +507,33 @@ function randomizeVector(vector, initial = false) {
             [x, footer ? height + 16 : -16],
             [x, footer ? -16 : height + 16],
           ]
-    : side === 0
-      ? [
-          [-16, y],
-          [width + 16, y],
-        ]
-      : side === 1
-        ? [
-            [width + 16, y],
-            [x, y],
-            [x, footer ? -16 : height + 16],
-          ]
-        : [
-            [x, footer ? height + 16 : -16],
-            [x, y],
-            [-16, y],
-          ];
+    : [
+        side === 0
+          ? [-16, y]
+          : side === 1
+            ? [width + 16, y]
+            : [x, footer ? height + 16 : -16],
+      ];
+  if (!straight) {
+    const turns = 1 + Math.floor(Math.random() * 3);
+    vector.dataset.turns = String(turns);
+    let axis = side === 2 ? 1 : 0;
+    for (let leg = 0; leg <= turns; leg++) {
+      const next = [...points[points.length - 1]];
+      const extent = axis === 0 ? width : height;
+      // Unequal random leg lengths make turn times irregular at constant speed.
+      const fraction =
+        (next[axis] < extent / 2 ? 0.58 : 0.16) + Math.random() * 0.24;
+      next[axis] =
+        leg === turns
+          ? next[axis] < extent / 2
+            ? extent + 16
+            : -16
+          : laneCoordinate(extent * fraction);
+      points.push(next);
+      axis = 1 - axis;
+    }
+  }
   const path = points
     .map((p, i) => `${i ? "L" : "M"}${p[0]} ${p[1]}`)
     .join(" ");

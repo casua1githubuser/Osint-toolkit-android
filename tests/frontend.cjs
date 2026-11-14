@@ -380,6 +380,46 @@ const submit = () =>
       "Vector cycles reuse existing elements",
       field.querySelectorAll(".ambient-vector").length === 3,
     );
+    let validRoutes = true;
+    let noSharedLines = true;
+    const observedTurns = new Set();
+    for (let cycle = 0; cycle < 100; cycle++) {
+      const lines = [];
+      for (const v of vectors) {
+        v.querySelector("path").dispatchEvent(
+          new w.Event("animationiteration"),
+        );
+        const coordinates = v
+          .querySelector("path")
+          .getAttribute("d")
+          .match(/-?\d+/g)
+          .map(Number);
+        const turns = coordinates.length / 2 - 2;
+        if (v.dataset.straight === "true") validRoutes &&= turns === 0;
+        else {
+          observedTurns.add(turns);
+          validRoutes &&= turns >= 1 && turns <= 3;
+        }
+        for (let i = 2; i < coordinates.length; i += 2) {
+          const horizontal = coordinates[i + 1] === coordinates[i - 1];
+          validRoutes &&= horizontal || coordinates[i] === coordinates[i - 2];
+          const fixed = horizontal ? coordinates[i + 1] : coordinates[i];
+          noSharedLines &&= !lines.some(
+            (l) =>
+              l.owner !== v && l.horizontal === horizontal && l.fixed === fixed,
+          );
+          lines.push({ owner: v, horizontal, fixed });
+        }
+      }
+    }
+    ok(
+      "Random routes use one to three right-angle turns",
+      validRoutes && observedTurns.size === 3,
+    );
+    ok(
+      "Vectors never share horizontal or vertical lines over repeated cycles",
+      noSharedLines,
+    );
   }
   const updates = [];
   const finishes = [];
