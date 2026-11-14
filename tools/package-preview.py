@@ -11,6 +11,10 @@ assets=root/'app/src/main/assets'
 output=Path(sys.argv[1]).resolve() if len(sys.argv)>1 else root/'build/preview'
 output.mkdir(parents=True,exist_ok=True)
 html=(assets/'index.html').read_text(encoding='utf-8')
+icon_license=assets/'TABLER-LICENSE.txt'
+if icon_license.exists():
+    notice=icon_license.read_text(encoding='utf-8').replace('--','- -')
+    html=html.replace('<head>', '<head>\n<!-- Tabler icon attribution\n'+notice+'\n-->')
 css=(assets/'style.css').read_text(encoding='utf-8')
 images={}
 

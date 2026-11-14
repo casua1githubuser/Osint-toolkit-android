@@ -1926,7 +1926,8 @@ summary {
   shape-rendering: geometricPrecision;
 }
 .bottom-nav .nav-icon path,
-.tile .module-icon path {
+.tile .module-icon path,
+.tile .module-icon rect {
   vector-effect: non-scaling-stroke;
 }
 .tile .module-icon {
