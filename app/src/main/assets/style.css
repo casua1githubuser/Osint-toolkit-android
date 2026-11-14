@@ -1726,3 +1726,12 @@ main {
   --square-alpha: 0.2;
   color: #4f7a9b;
 }
+.bottom-nav a span {
+  letter-spacing: -0.04em;
+}
+::view-transition-old(page-content),
+::view-transition-new(page-content) {
+  height: auto;
+  object-fit: contain;
+  object-position: top left;
+}
