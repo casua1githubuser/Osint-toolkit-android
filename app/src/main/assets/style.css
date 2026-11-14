@@ -1920,9 +1920,13 @@ summary {
 }
 .bottom-nav a svg,
 .bottom-nav a[href="#home"] svg {
-  width: 32px;
-  height: 18px;
-  stroke-width: 1.45;
+  width: 40px;
+  height: 24px;
+  stroke-width: 2;
+  shape-rendering: geometricPrecision;
+}
+.bottom-nav .nav-icon path {
+  vector-effect: non-scaling-stroke;
 }
 .bottom-nav a span {
   white-space: nowrap;

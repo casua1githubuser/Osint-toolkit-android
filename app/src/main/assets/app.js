@@ -31,19 +31,33 @@ const paths = {
 };
 const icon = (name, cls = "") =>
   `<svg class="${cls}" viewBox="0 0 24 24" aria-hidden="true"><path d="${paths[name] || paths.user}"/></svg>`;
-// Draw directly in a wide viewport: circular details and stroke widths stay round.
-const navigationPaths = {
-  search:
-    "M2.5 10 5 4h6l1.5 6M19.5 10 21 4h6l2.5 6M12 7h8M10 12h12M10 12a4 4 0 1 1-8 0 4 4 0 0 1 8 0M30 12a4 4 0 1 1-8 0 4 4 0 0 1 8 0",
-  graph:
-    "M14.5 6 5.5 12M17.5 6 26.5 12M6 13h20M18 5a2 2 0 1 1-4 0 2 2 0 0 1 4 0M6 13a2 2 0 1 1-4 0 2 2 0 0 1 4 0M30 13a2 2 0 1 1-4 0 2 2 0 0 1 4 0",
-  home: "M2 8 16 3 30 8M5 7v8h8v-5h6v5h8V7",
-  db: "M2 5c0-2.7 28-2.7 28 0S2 7.7 2 5ZM2 5v8c0 2.7 28 2.7 28 0V5M2 9c0 2.7 28 2.7 28 0",
-  settings:
-    "M2 4h6M12 4h18M2 9h18M24 9h6M2 14h9M15 14h15M12 4a2 2 0 1 1-4 0 2 2 0 0 1 4 0M24 9a2 2 0 1 1-4 0 2 2 0 0 1 4 0M15 14a2 2 0 1 1-4 0 2 2 0 0 1 4 0",
+// Wide adaptations of Tabler outline icons; see docs/navigation-icons.md.
+const navigationGlyphs = {
+  search: [
+    "0 6 24 15",
+    '<g transform="translate(-3 0)"><path d="M4 16a3 3 0 1 0 6 0a3 3 0 1 0 -6 0"/><path d="M7.654 9.17l.729 -1.261c.16 -.249 1.056 -.203 1.117 .091l.177 1.38"/><path d="M4.239 14.813l2.84 -5.133c.189 -.31 .592 -.68 1.421 -.68c.828 0 1.5 .448 1.5 1v6"/></g><g transform="translate(3 0)"><path d="M14 16a3 3 0 1 0 6 0a3 3 0 1 0 -6 0"/><path d="M16.346 9.17l-.729 -1.261c-.16 -.248 -1.056 -.203 -1.117 .091l-.177 1.38"/><path d="M19.761 14.813l-2.84 -5.133c-.189 -.31 -.592 -.68 -1.421 -.68c-.828 0 -1.5 .448 -1.5 1v6"/></g><path d="M7 12h10v2H7Z"/>',
+  ],
+  graph: [
+    "0 2 32 20",
+    '<path d="M6 12a2 2 0 1 1-4 0 2 2 0 0 1 4 0"/><path d="M30 6a2 2 0 1 1-4 0 2 2 0 0 1 4 0"/><path d="M30 18a2 2 0 1 1-4 0 2 2 0 0 1 4 0"/><path d="M6 12h14a4 4 0 0 0 4-4V6h2"/><path d="M20 12a4 4 0 0 1 4 4v2h2"/>',
+  ],
+  home: [
+    "0 0 32 22",
+    '<path d="M5 10H2L16 4l14 6h-3"/><path d="M5 10v6a2 2 0 0 0 2 2h18a2 2 0 0 0 2-2v-6"/><path d="M13 18v-7h6v7"/>',
+  ],
+  db: [
+    "1 1 22 14",
+    '<path d="M3 7a3 3 0 0 1 3 -3h12a3 3 0 0 1 3 3v2a3 3 0 0 1 -3 3h-12a3 3 0 0 1 -3 -3v-2"/><path d="M7 8v.01"/><path d="M11 8h6"/>',
+  ],
+  settings: [
+    "0 2 24 14",
+    '<path d="M12 6a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"/><path d="M2 6h10M16 6h6"/><path d="M6 12a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"/><path d="M2 12h4M10 12h12"/>',
+  ],
 };
-const navigationIcon = (name) =>
-  `<svg class="nav-icon" viewBox="0 0 32 18" aria-hidden="true"><path d="${navigationPaths[name]}"/></svg>`;
+const navigationIcon = (name) => {
+  const [box, artwork] = navigationGlyphs[name];
+  return `<svg class="nav-icon" viewBox="${box}" aria-hidden="true">${artwork}</svg>`;
+};
 const logo = () =>
   `<div class="wordmark" aria-label="OSINT / 2002"><svg viewBox="0 0 260 34" aria-hidden="true"><path d="M17 3h23c19 0 19 27 0 27H17C-2 30-2 3 17 3ZM111 3H72c-14 0-14 13 0 13h27c15 0 15 14 0 14H58M122 3v27M134 30V3l59 27V3M204 3h54m-27 0v27"/></svg><div class="year">/ 2002</div></div>`;
 const state = {
@@ -248,7 +262,7 @@ function graph() {
   return `${banner("ГРАФ СВЯЗЕЙ", "Relationship graph", "graph")}<p class="hint" style="margin-bottom:16px">Предварительный макет · ${data ? "связи текущего запроса" : "без данных"}</p><div class="graph-field"><div class="graph-label">N: ${data ? nodes.length + 1 : 0}<br>E: ${nodes.length}</div>${data ? `<svg class="graph-svg" viewBox="0 0 300 310" role="group" aria-label="Запрос и проверенные источники"><g transform="translate(150 155) scale(${state.zoom}) translate(-150 -155)">${nodes.map((n) => `<path d="M150 155L${n.x} ${n.y}" stroke="#7697a0" stroke-dasharray="3 3"/>`).join("")}<rect x="115" y="120" width="70" height="70" rx="10" fill="#285e7c"/><svg x="137" y="131" width="26" height="26" viewBox="0 0 24 24" stroke="#f6f8fa" fill="none" stroke-width="1.4"><path d="${paths[dns ? "globe" : "user"]}"/></svg><text x="150" y="178" text-anchor="middle" stroke="none" fill="#f6f8fa" font-size="11">${dns ? "ДОМЕН" : "ЗАПРОС"}</text>${nodes.map((n, i) => `<g class="graph-hit" role="button" tabindex="0" aria-label="${esc(n.title)}" data-node="${i}"><rect x="${n.x - 30}" y="${n.y - 30}" width="60" height="60" rx="7" fill="#f0f2f3"/><text x="${n.x}" y="${n.y + 4}" text-anchor="middle" stroke="none" fill="#123b49" font-size="12">${esc(n.title.length > 10 ? n.title.slice(0, 9) + "…" : n.title)}</text></g>`).join("")}</g></svg>` : `<div class="graph-center"><span class="graph-node">${icon("user")}</span><p class="graph-empty">Выполните поиск, чтобы увидеть запрос и проверенные источники.</p></div>`}<div class="graph-controls"><button data-zoom="in" aria-label="Увеличить" ${!data || state.zoom >= 1.6 ? "disabled" : ""}>${icon("plus")}</button><button data-zoom="out" aria-label="Уменьшить" ${!data || state.zoom <= 0.6 ? "disabled" : ""}>${icon("minus")}</button><button data-zoom="fit" aria-label="По размеру поля" ${data ? "" : "disabled"}>${icon("fit")}</button></div></div><p class="graph-legend">- - - ${dns ? "Домен → адрес из DNS-ответа" : "Запрос → проверенный URL"}.<br>Личные связи и владение аккаунтами не установлены.</p><div class="result-card"><div class="result-head"><span class="entity-icon">${icon(dns ? "globe" : "user")}</span><h2 class="mono">${esc(state.graphDetail !== null && nodes[state.graphDetail] ? nodes[state.graphDetail].title : center)}</h2></div><p class="result-detail">${esc(state.graphDetail !== null && nodes[state.graphDetail] ? nodes[state.graphDetail].detail : data ? "Источник связей — результаты последней проверки." : "Выберите существующий запрос из истории или начните новый поиск.")}</p></div><a class="secondary" href="#${data ? "results" : "search"}">${data ? "К результатам" : "Перейти к поиску"} ${icon("arrow")}</a>${strip()}`;
 }
 function settings() {
-  return `${banner("НАСТРОЙКИ", "System preferences")}<div class="section-heading"><h2 class="section-title">О приложении</h2></div><div class="row"><span class="row-content"><strong>OSINT / 2002</strong><small>Android · 0.8.6-alpha</small></span></div><p class="notice">${native() ? "Поиск профилей, системный DNS и SQLite работают на устройстве." : "Открыт браузерный макет. Нативные проверки доступны в APK."}</p><details><summary>Данные и хранение</summary><p>Запросы и ответы сохраняются в SQLite на устройстве. Для проверки профилей приложение обращается к выбранным сайтам. Удалённый API и облачная синхронизация не подключены.</p></details><details><summary>Возможности текущей версии</summary><p>Проверка публичных URL, DNS A / AAAA, история запросов. Граф показывает связь запроса с проверенными источниками. Поиск телефонов и почты, импорт файлов, WHOIS, Sherlock и Maigret не подключены.</p></details>${strip()}`;
+  return `${banner("НАСТРОЙКИ", "System preferences")}<div class="section-heading"><h2 class="section-title">О приложении</h2></div><div class="row"><span class="row-content"><strong>OSINT / 2002</strong><small>Android · 0.9.0-alpha</small></span></div><p class="notice">${native() ? "Поиск профилей, системный DNS и SQLite работают на устройстве." : "Открыт браузерный макет. Нативные проверки доступны в APK."}</p><details><summary>Данные и хранение</summary><p>Запросы и ответы сохраняются в SQLite на устройстве. Для проверки профилей приложение обращается к выбранным сайтам. Удалённый API и облачная синхронизация не подключены.</p></details><details><summary>Возможности текущей версии</summary><p>Проверка публичных URL, DNS A / AAAA, история запросов. Граф показывает связь запроса с проверенными источниками. Поиск телефонов и почты, импорт файлов, WHOIS, Sherlock и Maigret не подключены.</p></details>${strip()}`;
 }
 function render() {
   const page = location.hash.slice(1) || "home";

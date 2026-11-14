@@ -66,3 +66,5 @@ Color-correction prompt:
 The 0.8.0 typography trial uses Jura (Google Fonts, ofl/jura) for functional text, with regular body text and bold headings. The drawn OSINT logo and editorial microcopy retain their prior styling. Jura.ttf and Jura-OFL.txt are bundled locally; no runtime font service is used.
 
 Version 0.8.1 uses OSINT Wide Regular/Bold, a renamed derivative of Jura under its bundled SIL OFL. Glyph outlines, horizontal advances and positioning are widened to 132%; this changes letter shapes instead of only tracking. Vertical dimensions and 400/700 weights remain unchanged. Rebuild with tools/build-wide-font.py and fonttools 4.60.1. Original Jura copyright/license notices remain in Jura-OFL.txt and font metadata. Editorial microcopy and the drawn OSINT logo retain their prior styling.
+
+The 0.9.0 navigation uses wide adaptations of Tabler outline icons, with sources and modifications documented in docs/navigation-icons.md. MIT license bundled as TABLER-LICENSE.txt. Rendering is 40x24 CSS pixels with 2px non-scaling strokes.
