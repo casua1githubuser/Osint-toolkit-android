@@ -1971,3 +1971,54 @@ summary {
   line-height: 1.55;
   text-wrap: pretty;
 }
+
+/* Shared icon system for forms, lists, results and graph controls. */
+.ui-icon {
+  width: 32px;
+  height: 24px;
+  stroke-width: 2;
+  shape-rendering: geometricPrecision;
+}
+.ui-icon :is(path, rect, circle, ellipse, line, polyline) {
+  vector-effect: non-scaling-stroke;
+}
+.chip .ui-icon,
+.primary .ui-icon,
+.secondary .ui-icon,
+.entity-icon .ui-icon {
+  width: 28px;
+  height: 22px;
+}
+.clear-button .ui-icon {
+  width: 20px;
+  height: 20px;
+}
+.clear-button {
+  display: grid;
+  place-items: center;
+}
+summary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  list-style: none;
+}
+summary::-webkit-details-marker {
+  display: none;
+}
+summary .ui-icon {
+  width: 18px;
+  height: 18px;
+}
+details[open] summary .ui-icon {
+  transform: rotate(90deg);
+}
+.graph-controls .ui-icon {
+  width: 24px;
+  height: 24px;
+}
+.graph-svg .graph-query-icon {
+  width: 32px;
+  height: 24px;
+  color: #f6f8fa;
+}

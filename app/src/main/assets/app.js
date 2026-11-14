@@ -8,29 +8,37 @@ const esc = (s) =>
         c
       ],
   );
-const paths = {
-  home: "M3 11 12 3l9 8M5 10v11h5v-7h4v7h5V10",
-  search: "M20 20l-6-6M16 9a7 7 0 1 1-14 0 7 7 0 0 1 14 0",
-  graph:
-    "M12 7v6M6 17l6-4 6 4M15 4a3 3 0 1 1-6 0 3 3 0 0 1 6 0M7 20a3 3 0 1 1-6 0 3 3 0 0 1 6 0M23 20a3 3 0 1 1-6 0 3 3 0 0 1 6 0",
-  globe:
-    "M22 12a10 10 0 1 1-20 0 10 10 0 0 1 20 0M2 12h20M12 2c-6 5-6 15 0 20 6-5 6-15 0-20",
-  db: "M21 6c0 6-18 6-18 0s18-6 18 0M3 6v12c0 6 18 6 18 0V6M3 12c0 6 18 6 18 0",
-  archive: "M4 4h16l2 6v11H2V10l2-6M2 10h6l1 4h6l1-4h6",
-  settings:
-    "m10 2-1 3-3 1-3-1-2 4 2 2v3l-2 2 2 4 3-1 3 1 1 3h4l1-3 3-1 3 1 2-4-2-2v-3l2-2-2-4-3 1-3-1-1-3h-4M16 12a4 4 0 1 1-8 0 4 4 0 0 1 8 0",
-  arrow: "M3 12h18m-6-6 6 6-6 6",
-  clock: "M22 12a10 10 0 1 1-20 0 10 10 0 0 1 20 0M12 6v7l4 2",
-  user: "M16 6a4 4 0 1 1-8 0 4 4 0 0 1 8 0M3 22c0-11 18-11 18 0",
-  play: "M5 2v20l16-10L5 2",
-  plus: "M12 4v16M4 12h16",
-  minus: "M4 12h16",
-  fit: "M3 8V3h5m8 0h5v5m0 8v5h-5M8 21H3v-5",
-  layers: "m2 8 10-6 10 6-10 6L2 8m0 5 10 6 10-6M2 18l10 6 10-6",
-  check: "m4 12 5 5L20 5",
+const utilityGlyphs = {
+  chevron: ["0 0 24 24", '<path d="M9 6l6 6l-6 6"/>'],
+  user: [
+    "0 0 24 24",
+    '<path d="M3 7a3 3 0 0 1 3 -3h12a3 3 0 0 1 3 3v10a3 3 0 0 1 -3 3h-12a3 3 0 0 1 -3 -3l0 -10" />\n  <path d="M7 10a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />\n  <path d="M15 8l2 0" />\n  <path d="M15 12l2 0" />\n  <path d="M7 16l10 0" />',
+  ],
+  play: ["0 0 24 24", '<path d="M7 4v16l13 -8l-13 -8" />'],
+  arrow: [
+    "0 0 24 24",
+    '<path d="M5 12l14 0" />\n  <path d="M13 18l6 -6" />\n  <path d="M13 6l6 6" />',
+  ],
+  plus: ["0 0 24 24", '<path d="M12 5l0 14" />\n  <path d="M5 12l14 0" />'],
+  minus: ["0 0 24 24", '<path d="M5 12l14 0" />'],
+  fit: [
+    "0 0 24 24",
+    '<path d="M16 4l4 0l0 4" />\n  <path d="M14 10l6 -6" />\n  <path d="M8 20l-4 0l0 -4" />\n  <path d="M4 20l6 -6" />\n  <path d="M16 20l4 0l0 -4" />\n  <path d="M14 14l6 6" />\n  <path d="M8 4l-4 0l0 4" />\n  <path d="M4 4l6 6" />',
+  ],
+  layers: [
+    "0 0 24 24",
+    '<path d="M12 4l-8 4l8 4l8 -4l-8 -4" />\n  <path d="M4 12l8 4l8 -4" />\n  <path d="M4 16l8 4l8 -4" />',
+  ],
+  check: ["0 0 24 24", '<path d="M5 12l5 5l10 -10" />'],
+  close: ["0 0 24 24", '<path d="M18 6l-12 12" />\n  <path d="M6 6l12 12" />'],
 };
-const icon = (name, cls = "") =>
-  `<svg class="${cls}" viewBox="0 0 24 24" aria-hidden="true"><path d="${paths[name] || paths.user}"/></svg>`;
+const icon = (name, cls = "", attributes = "") => {
+  const key =
+    { globe: "dns", clock: "history", archive: "history" }[name] || name;
+  const [box, artwork] =
+    navigationGlyphs[key] || utilityGlyphs[name] || utilityGlyphs.user;
+  return `<svg class="ui-icon ${cls}" data-icon="${key}" viewBox="${box}" aria-hidden="true" ${attributes}>${artwork}</svg>`;
+};
 // Wide adaptations of Tabler outline icons; see docs/navigation-icons.md.
 const navigationGlyphs = {
   dns: [
@@ -62,10 +70,7 @@ const navigationGlyphs = {
     '<path d="M12 6a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"/><path d="M2 6h10M16 6h6"/><path d="M6 12a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"/><path d="M2 12h4M10 12h12"/>',
   ],
 };
-const navigationIcon = (name, cls = "nav-icon") => {
-  const [box, artwork] = navigationGlyphs[name];
-  return `<svg class="${cls}" viewBox="${box}" aria-hidden="true">${artwork}</svg>`;
-};
+const navigationIcon = (name, cls = "nav-icon") => icon(name, cls);
 const moduleIcon = (name) =>
   navigationIcon(
     { globe: "dns", archive: "history" }[name] || name,
@@ -205,7 +210,7 @@ function home() {
 function searchPage(dns = false) {
   const kind = dns ? "dns" : "search";
   const busy = state.busy[kind];
-  return `${banner(dns ? "ДОМЕНЫ / DNS" : "ПОИСК", dns ? "Network footprint" : "Search engine", kind)}<form id="query-form" data-kind="${kind}"><label class="form-label" for="query">${dns ? "Домен для проверки" : "Никнейм для поиска"}</label><div class="query-field">${icon(dns ? "globe" : "search")}<input id="query" name="query" value="${esc(dns ? state.domain : state.query)}" placeholder="${dns ? "example.org" : "Введите никнейм"}" autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="search" maxlength="${dns ? "253" : "40"}" ${busy ? "readonly" : ""}><button class="clear-button" type="button" data-action="clear" aria-label="Очистить запрос" ${busy ? "disabled" : ""}>×</button></div><div class="section-heading"><h2>Тип запроса</h2></div><div class="chips"><a class="chip ${dns ? "" : "selected"}" href="#search" ${dns ? "" : 'aria-current="page"'}>${icon("user")}Аккаунт</a><a class="chip ${dns ? "selected" : ""}" href="#dns" ${dns ? 'aria-current="page"' : ""}>${icon("globe")}Домен</a></div>${dns ? `<div class="section-heading"><h2>Тип проверки</h2></div><div class="supported-records"><div>${icon("check")}<span>A — IPv4</span></div><div>${icon("check")}<span>AAAA — IPv6</span></div></div><p class="hint">Оба типа адресов запрашиваются через системный DNS.</p>` : `<div class="section-heading"><h2>Источники</h2><span class="meta">HTTPS / ${state.sources.length}</span></div><fieldset class="source-list" ${busy ? "disabled" : ""}><legend class="sr-only">Выберите источники для поиска</legend>${state.sources.map((site, i) => `<label class="source-row"><input type="checkbox" name="source" value="${site}" ${state.selected.includes(site) ? "checked" : ""}><span>${site}</span><span class="meta">${String(i + 1).padStart(2, "0")}</span></label>`).join("")}</fieldset>`}<div id="form-message" aria-live="polite">${state.errors[kind] ? notice(state.errors[kind], true) : ""}${busy ? notice(dns ? "Запрашиваем DNS…" : "Проверяем выбранные источники. Это может занять до минуты.") + '<div class="working" aria-hidden="true"></div>' : ""}</div><button class="primary" type="submit" ${busy ? "disabled" : ""}>${icon("play")}<span>${busy ? "Выполняется…" : dns ? "Проверить домен" : "Запустить поиск"}</span></button><p class="hint">${dns ? "Публичные IP-адреса не подтверждают владельца домена." : "HTTP 200 — кандидат, а не подтверждение аккаунта. Ошибки и блокировки остаются неопределёнными."}</p>${dns ? notice("WHOIS, MX и TXT пока не подключены.") : ""}</form>${strip()}`;
+  return `${banner(dns ? "ДОМЕНЫ / DNS" : "ПОИСК", dns ? "Network footprint" : "Search engine", kind)}<form id="query-form" data-kind="${kind}"><label class="form-label" for="query">${dns ? "Домен для проверки" : "Никнейм для поиска"}</label><div class="query-field">${icon(dns ? "globe" : "search")}<input id="query" name="query" value="${esc(dns ? state.domain : state.query)}" placeholder="${dns ? "example.org" : "Введите никнейм"}" autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="search" maxlength="${dns ? "253" : "40"}" ${busy ? "readonly" : ""}><button class="clear-button" type="button" data-action="clear" aria-label="Очистить запрос" ${busy ? "disabled" : ""}>${icon("close")}</button></div><div class="section-heading"><h2>Тип запроса</h2></div><div class="chips"><a class="chip ${dns ? "" : "selected"}" href="#search" ${dns ? "" : 'aria-current="page"'}>${icon("user")}Аккаунт</a><a class="chip ${dns ? "selected" : ""}" href="#dns" ${dns ? 'aria-current="page"' : ""}>${icon("globe")}Домен</a></div>${dns ? `<div class="section-heading"><h2>Тип проверки</h2></div><div class="supported-records"><div>${icon("check")}<span>A — IPv4</span></div><div>${icon("check")}<span>AAAA — IPv6</span></div></div><p class="hint">Оба типа адресов запрашиваются через системный DNS.</p>` : `<div class="section-heading"><h2>Источники</h2><span class="meta">HTTPS / ${state.sources.length}</span></div><fieldset class="source-list" ${busy ? "disabled" : ""}><legend class="sr-only">Выберите источники для поиска</legend>${state.sources.map((site, i) => `<label class="source-row"><input type="checkbox" name="source" value="${site}" ${state.selected.includes(site) ? "checked" : ""}><span>${site}</span><span class="meta">${String(i + 1).padStart(2, "0")}</span></label>`).join("")}</fieldset>`}<div id="form-message" aria-live="polite">${state.errors[kind] ? notice(state.errors[kind], true) : ""}${busy ? notice(dns ? "Запрашиваем DNS…" : "Проверяем выбранные источники. Это может занять до минуты.") + '<div class="working" aria-hidden="true"></div>' : ""}</div><button class="primary" type="submit" ${busy ? "disabled" : ""}>${icon("play")}<span>${busy ? "Выполняется…" : dns ? "Проверить домен" : "Запустить поиск"}</span></button><p class="hint">${dns ? "Публичные IP-адреса не подтверждают владельца домена." : "HTTP 200 — кандидат, а не подтверждение аккаунта. Ошибки и блокировки остаются неопределёнными."}</p>${dns ? notice("WHOIS, MX и TXT пока не подключены.") : ""}</form>${strip()}`;
 }
 
 function results() {
@@ -272,10 +277,10 @@ function graph() {
     x: 150 + 102 * Math.cos(-Math.PI / 2 + (i * 2 * Math.PI) / entities.length),
     y: 155 + 100 * Math.sin(-Math.PI / 2 + (i * 2 * Math.PI) / entities.length),
   }));
-  return `${banner("ГРАФ СВЯЗЕЙ", "Relationship graph", "graph")}<p class="hint" style="margin-bottom:16px">Предварительный макет · ${data ? "связи текущего запроса" : "без данных"}</p><div class="graph-field"><div class="graph-label">N: ${data ? nodes.length + 1 : 0}<br>E: ${nodes.length}</div>${data ? `<svg class="graph-svg" viewBox="0 0 300 310" role="group" aria-label="Запрос и проверенные источники"><g transform="translate(150 155) scale(${state.zoom}) translate(-150 -155)">${nodes.map((n) => `<path d="M150 155L${n.x} ${n.y}" stroke="#7697a0" stroke-dasharray="3 3"/>`).join("")}<rect x="115" y="120" width="70" height="70" rx="10" fill="#285e7c"/><svg x="137" y="131" width="26" height="26" viewBox="0 0 24 24" stroke="#f6f8fa" fill="none" stroke-width="1.4"><path d="${paths[dns ? "globe" : "user"]}"/></svg><text x="150" y="178" text-anchor="middle" stroke="none" fill="#f6f8fa" font-size="11">${dns ? "ДОМЕН" : "ЗАПРОС"}</text>${nodes.map((n, i) => `<g class="graph-hit" role="button" tabindex="0" aria-label="${esc(n.title)}" data-node="${i}"><rect x="${n.x - 30}" y="${n.y - 30}" width="60" height="60" rx="7" fill="#f0f2f3"/><text x="${n.x}" y="${n.y + 4}" text-anchor="middle" stroke="none" fill="#123b49" font-size="12">${esc(n.title.length > 10 ? n.title.slice(0, 9) + "…" : n.title)}</text></g>`).join("")}</g></svg>` : `<div class="graph-center"><span class="graph-node">${icon("user")}</span><p class="graph-empty">Выполните поиск, чтобы увидеть запрос и проверенные источники.</p></div>`}<div class="graph-controls"><button data-zoom="in" aria-label="Увеличить" ${!data || state.zoom >= 1.6 ? "disabled" : ""}>${icon("plus")}</button><button data-zoom="out" aria-label="Уменьшить" ${!data || state.zoom <= 0.6 ? "disabled" : ""}>${icon("minus")}</button><button data-zoom="fit" aria-label="По размеру поля" ${data ? "" : "disabled"}>${icon("fit")}</button></div></div><p class="graph-legend">- - - ${dns ? "Домен → адрес из DNS-ответа" : "Запрос → проверенный URL"}.<br>Личные связи и владение аккаунтами не установлены.</p><div class="result-card"><div class="result-head"><span class="entity-icon">${icon(dns ? "globe" : "user")}</span><h2 class="mono">${esc(state.graphDetail !== null && nodes[state.graphDetail] ? nodes[state.graphDetail].title : center)}</h2></div><p class="result-detail">${esc(state.graphDetail !== null && nodes[state.graphDetail] ? nodes[state.graphDetail].detail : data ? "Источник связей — результаты последней проверки." : "Выберите существующий запрос из истории или начните новый поиск.")}</p></div><a class="secondary" href="#${data ? "results" : "search"}">${data ? "К результатам" : "Перейти к поиску"} ${icon("arrow")}</a>${strip()}`;
+  return `${banner("ГРАФ СВЯЗЕЙ", "Relationship graph", "graph")}<p class="hint" style="margin-bottom:16px">Предварительный макет · ${data ? "связи текущего запроса" : "без данных"}</p><div class="graph-field"><div class="graph-label">N: ${data ? nodes.length + 1 : 0}<br>E: ${nodes.length}</div>${data ? `<svg class="graph-svg" viewBox="0 0 300 310" role="group" aria-label="Запрос и проверенные источники"><g transform="translate(150 155) scale(${state.zoom}) translate(-150 -155)">${nodes.map((n) => `<path d="M150 155L${n.x} ${n.y}" stroke="#7697a0" stroke-dasharray="3 3"/>`).join("")}<rect x="115" y="120" width="70" height="70" rx="10" fill="#285e7c"/>${icon(dns ? "globe" : "user", "graph-query-icon", 'x="134" y="130" width="32" height="24"')}<text x="150" y="178" text-anchor="middle" stroke="none" fill="#f6f8fa" font-size="11">${dns ? "ДОМЕН" : "ЗАПРОС"}</text>${nodes.map((n, i) => `<g class="graph-hit" role="button" tabindex="0" aria-label="${esc(n.title)}" data-node="${i}"><rect x="${n.x - 30}" y="${n.y - 30}" width="60" height="60" rx="7" fill="#f0f2f3"/><text x="${n.x}" y="${n.y + 4}" text-anchor="middle" stroke="none" fill="#123b49" font-size="12">${esc(n.title.length > 10 ? n.title.slice(0, 9) + "…" : n.title)}</text></g>`).join("")}</g></svg>` : `<div class="graph-center"><span class="graph-node">${icon("user")}</span><p class="graph-empty">Выполните поиск, чтобы увидеть запрос и проверенные источники.</p></div>`}<div class="graph-controls"><button data-zoom="in" aria-label="Увеличить" ${!data || state.zoom >= 1.6 ? "disabled" : ""}>${icon("plus")}</button><button data-zoom="out" aria-label="Уменьшить" ${!data || state.zoom <= 0.6 ? "disabled" : ""}>${icon("minus")}</button><button data-zoom="fit" aria-label="По размеру поля" ${data ? "" : "disabled"}>${icon("fit")}</button></div></div><p class="graph-legend">- - - ${dns ? "Домен → адрес из DNS-ответа" : "Запрос → проверенный URL"}.<br>Личные связи и владение аккаунтами не установлены.</p><div class="result-card"><div class="result-head"><span class="entity-icon">${icon(dns ? "globe" : "user")}</span><h2 class="mono">${esc(state.graphDetail !== null && nodes[state.graphDetail] ? nodes[state.graphDetail].title : center)}</h2></div><p class="result-detail">${esc(state.graphDetail !== null && nodes[state.graphDetail] ? nodes[state.graphDetail].detail : data ? "Источник связей — результаты последней проверки." : "Выберите существующий запрос из истории или начните новый поиск.")}</p></div><a class="secondary" href="#${data ? "results" : "search"}">${data ? "К результатам" : "Перейти к поиску"} ${icon("arrow")}</a>${strip()}`;
 }
 function settings() {
-  return `${banner("НАСТРОЙКИ", "System preferences")}<div class="section-heading"><h2 class="section-title">О приложении</h2></div><div class="row"><span class="row-content"><strong>OSINT / 2002</strong><small>Android · 0.9.2-alpha</small></span></div><p class="notice">${native() ? "Поиск профилей, системный DNS и SQLite работают на устройстве." : "Открыт браузерный макет. Нативные проверки доступны в APK."}</p><details><summary>Данные и хранение</summary><p>Запросы и ответы сохраняются в SQLite на устройстве. Для проверки профилей приложение обращается к выбранным сайтам. Удалённый API и облачная синхронизация не подключены.</p></details><details><summary>Возможности текущей версии</summary><p>Проверка публичных URL, DNS A / AAAA, история запросов. Граф показывает связь запроса с проверенными источниками. Поиск телефонов и почты, импорт файлов, WHOIS, Sherlock и Maigret не подключены.</p></details>${strip()}`;
+  return `${banner("НАСТРОЙКИ", "System preferences")}<div class="section-heading"><h2 class="section-title">О приложении</h2></div><div class="row"><span class="row-content"><strong>OSINT / 2002</strong><small>Android · 0.10.0-alpha</small></span></div><p class="notice">${native() ? "Поиск профилей, системный DNS и SQLite работают на устройстве." : "Открыт браузерный макет. Нативные проверки доступны в APK."}</p><details><summary>${icon("chevron")}Данные и хранение</summary><p>Запросы и ответы сохраняются в SQLite на устройстве. Для проверки профилей приложение обращается к выбранным сайтам. Удалённый API и облачная синхронизация не подключены.</p></details><details><summary>${icon("chevron")}Возможности текущей версии</summary><p>Проверка публичных URL, DNS A / AAAA, история запросов. Граф показывает связь запроса с проверенными источниками. Поиск телефонов и почты, импорт файлов, WHOIS, Sherlock и Maigret не подключены.</p></details>${strip()}`;
 }
 function render() {
   const page = location.hash.slice(1) || "home";
