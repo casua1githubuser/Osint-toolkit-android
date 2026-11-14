@@ -33,16 +33,41 @@ public class MainActivity extends Activity {
   WebSettings s=web.getSettings(); s.setJavaScriptEnabled(true);s.setDomStorageEnabled(true);
   s.setAllowFileAccess(false);s.setAllowContentAccess(false);
   web.addJavascriptInterface(new Bridge(),"NativeOSINT");
-  setContentView(web);
-  // Keep the WebView clear of status bars, gesture navigation and the keyboard.
-  web.setOnApplyWindowInsetsListener((view,insets)->{
-   view.setPadding(insets.getSystemWindowInsetLeft(),insets.getSystemWindowInsetTop(),
-    insets.getSystemWindowInsetRight(),insets.getSystemWindowInsetBottom());
-   return insets.consumeSystemWindowInsets();
+  android.widget.FrameLayout root=new android.widget.FrameLayout(this);
+  root.setBackgroundColor(0xfff0f2f3);
+  root.addView(web,new android.widget.FrameLayout.LayoutParams(-1,-1));
+  setContentView(root);
+  // Resize the actual WebView viewport, not its scrolling document padding.
+  // Fixed HTML navigation and scrolling content both stay inside system bars.
+  if(android.os.Build.VERSION.SDK_INT>=30)getWindow().setDecorFitsSystemWindows(false);
+  root.setOnApplyWindowInsetsListener((view,insets)->{
+   int left,top,right,bottom;
+   if(android.os.Build.VERSION.SDK_INT>=30){
+    android.graphics.Insets bars=insets.getInsets(android.view.WindowInsets.Type.systemBars()
+     |android.view.WindowInsets.Type.displayCutout());
+    android.graphics.Insets keyboard=insets.getInsets(android.view.WindowInsets.Type.ime());
+    left=bars.left;top=bars.top;right=bars.right;bottom=Math.max(bars.bottom,keyboard.bottom);
+   }else{
+    left=insets.getSystemWindowInsetLeft();top=insets.getSystemWindowInsetTop();
+    right=insets.getSystemWindowInsetRight();bottom=insets.getSystemWindowInsetBottom();
+   }
+   android.widget.FrameLayout.LayoutParams layout=(android.widget.FrameLayout.LayoutParams)web.getLayoutParams();
+   if(layout.leftMargin!=left||layout.topMargin!=top||layout.rightMargin!=right||layout.bottomMargin!=bottom){
+    layout.setMargins(left,top,right,bottom);web.setLayoutParams(layout);
+   }
+   return insets;
   });
-  web.requestApplyInsets();
+  root.requestApplyInsets();
   getWindow().getDecorView().setSystemUiVisibility(android.view.View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
-   |android.view.View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR);
+   |android.view.View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR|android.view.View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+   |android.view.View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN|android.view.View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
+  getWindow().setStatusBarColor(android.graphics.Color.TRANSPARENT);
+  getWindow().setNavigationBarColor(android.graphics.Color.TRANSPARENT);
+  s.setTextZoom(Math.round(getResources().getConfiguration().fontScale*100));
+  if(android.os.Build.VERSION.SDK_INT>=33){
+   getOnBackInvokedDispatcher().registerOnBackInvokedCallback(
+    android.window.OnBackInvokedDispatcher.PRIORITY_DEFAULT,this::handleBack);
+  }
   // Local asset loading without opening an HTTP port.
   web.setWebViewClient(new android.webkit.WebViewClient(){
    @Override public android.webkit.WebResourceResponse shouldInterceptRequest(WebView v,WebResourceRequest r){
@@ -55,6 +80,8 @@ public class MainActivity extends Activity {
      case "style.css":mime="text/css";break;
      case "app.js":mime="application/javascript";break;
      case "images/editorial-atlas.png":mime="image/png";break;
+     case "images/module-scenes.png":mime="image/png";break;
+     case "fonts/IBMPlexSans.ttf":mime="font/ttf";break;
      default:return blocked();
     }
     try{return new android.webkit.WebResourceResponse(mime,"UTF-8",getAssets().open(file));}
@@ -66,6 +93,12 @@ public class MainActivity extends Activity {
   });
   web.loadUrl("https://appassets.androidplatform.net/assets/index.html");
  }
+ private void handleBack(){
+  if(!destroyed)web.evaluateJavascript("window.appBack && window.appBack()",result->{
+   if(!"true".equals(result)&&!destroyed)finish();
+  });
+ }
+ @Override public void onBackPressed(){handleBack();}
  private android.webkit.WebResourceResponse blocked(){
   return new android.webkit.WebResourceResponse("text/plain","UTF-8",404,"Not Found",
    java.util.Collections.emptyMap(),new ByteArrayInputStream(new byte[0]));
