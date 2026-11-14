@@ -853,10 +853,6 @@ details p {
     transform: translateY(0);
   }
 }
-.reduced-motion * {
-  animation: none !important;
-  transition: none !important;
-}
 @media (prefers-reduced-motion: reduce) {
   * {
     animation: none !important;
@@ -1503,10 +1499,6 @@ button:active:not(:disabled),
     transform: none !important;
   }
 }
-.reduced-motion button:active,
-.reduced-motion .tile:active {
-  transform: none !important;
-}
 .tile small {
   font-size: 12px;
 }
@@ -1538,4 +1530,199 @@ button:active:not(:disabled),
   .bottom-nav a {
     font-size: 9.5px;
   }
+}
+
+/* More breathing room for text, data rows and trailing actions. */
+:root {
+  --gutter: clamp(28px, 7vw, 36px);
+  font-weight: 450;
+}
+.shell {
+  padding-inline: var(--gutter);
+}
+.hero,
+.photo-strip {
+  margin-inline: calc(-1 * var(--gutter));
+}
+.page-banner:before {
+  inset: -100px calc(-1 * var(--gutter)) 0;
+}
+.row {
+  padding: 17px 14px;
+  gap: 14px;
+}
+.unavailable-row {
+  padding: 18px 14px;
+}
+.source-list {
+  padding-inline: 16px;
+}
+.section-heading {
+  padding-inline: 2px;
+}
+summary {
+  padding-inline: 14px;
+}
+details p {
+  padding: 0 14px 10px;
+}
+h1 {
+  font-weight: 550;
+}
+.tile strong,
+.row strong,
+.result-head h2 {
+  font-weight: 550;
+}
+.tile small,
+small,
+.hint,
+.result-detail,
+details p {
+  font-weight: 400;
+}
+.section-heading h2,
+.form-label,
+.source-row,
+.primary,
+.secondary,
+.chip,
+.settings-row,
+summary,
+.notice,
+.text-button {
+  font-weight: 450;
+}
+.bottom-nav a {
+  font-weight: 450;
+}
+.photo-strip[data-scene="databases"],
+.photo-strip[data-scene="settings"] {
+  height: clamp(160px, 34vw, 200px);
+  opacity: 0.75;
+}
+.photo-strip[data-scene="history"] {
+  background-image: var(--photo);
+  background-size: 300% 300%;
+  background-position: 100% 50%;
+}
+.photo-strip[data-scene="results"] {
+  background-image: var(--photo);
+  background-size: 300% 300%;
+  background-position: 100% 0;
+}
+.photo-strip[data-scene="graph"] {
+  background-image: var(--module-photo);
+  background-size: 300% auto;
+  background-position: 50% 50%;
+}
+.photo-strip[data-scene="home"] {
+  height: 144px;
+  background-image:
+    radial-gradient(ellipse at 25% 70%, #9dbfda70, transparent 60%),
+    radial-gradient(ellipse at 80% 30%, #b5d0e260, transparent 65%);
+  opacity: 1;
+}
+.photo-strip {
+  isolation: isolate;
+}
+/* Sparse, compositor-friendly outline squares: no canvas, video or blur loop. */
+.ambient-field {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 1;
+  contain: paint;
+  color: #497a9d;
+  --square-alpha: 0.18;
+}
+.hero .ambient-field {
+  inset: 15% 0 0 48%;
+  color: #fff;
+  --square-alpha: 0.66;
+}
+.photo-strip[data-scene="home"] .ambient-field {
+  --square-alpha: 0.38;
+}
+.ambient-square {
+  position: absolute;
+  border: 1px solid currentColor;
+  width: 36px;
+  height: 36px;
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0.3);
+  animation: ambient-square 12s ease-in-out infinite;
+}
+.ambient-field.is-paused .ambient-square {
+  animation-play-state: paused;
+}
+@keyframes ambient-square {
+  0%,
+  10% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.28);
+  }
+  32% {
+    opacity: var(--square-alpha);
+    transform: translate(-50%, -50%) scale(0.82);
+  }
+  56% {
+    opacity: var(--square-alpha);
+    transform: translate(-50%, -50%) scale(1.12);
+  }
+  84%,
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.4);
+  }
+}
+/* Crossfade stable content; no translation, zoom, or animated page geometry. */
+:root {
+  view-transition-name: none;
+}
+main {
+  view-transition-name: page-content;
+}
+::view-transition-group(page-content) {
+  animation: none;
+}
+::view-transition-old(page-content) {
+  animation: page-out 160ms ease-out both;
+}
+::view-transition-new(page-content) {
+  animation: page-in 160ms ease-out both;
+}
+@keyframes page-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+@keyframes page-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ambient-field {
+    display: none;
+  }
+  .ambient-square {
+    animation: none;
+  }
+  ::view-transition-old(page-content),
+  ::view-transition-new(page-content) {
+    animation: none;
+  }
+}
+.page-banner .ambient-field {
+  inset: 0 0 0 48%;
+  --square-alpha: 0.2;
+  color: #4f7a9b;
 }

@@ -23,7 +23,7 @@ The APK is written to `app/build/outputs/apk/debug/app-debug.apk`.
 - The graph visualizes only query-to-checked-source or domain-to-DNS-answer relationships. It does not infer account ownership or personal relationships.
 - External catalogs (Sherlock/Maigret), CSV/XLSX import, phone/email searches, and a remote backend are not integrated. No demo records are bundled.
 - Debug APK signed by a *new ephemeral GitHub runner debug key on each build*. Updates may require uninstall; **do not uninstall an existing installation without backing up data**. For release use a persisted secure signing key.
-- `applicationId` is `com.osinttoolkit.app`, versionCode 6, versionName `0.5.0-alpha`, minSdk 26, targetSdk 35.
+- `applicationId` is `com.osinttoolkit.app`, versionCode 7, versionName `0.6.0-alpha`, minSdk 26, targetSdk 35.
 - Installation on a real Nothing Phone (3) has **not been verified**.
 
 ## Verification
@@ -36,7 +36,9 @@ On-device installation and behavior remain unverified.
 - Bundled Unbounded with Cyrillic support (SIL Open Font License in `app/src/main/assets/fonts/Unbounded-OFL.txt`). Extended geometric headings use a restrained oblique style inspired by the supplied type reference; URLs and timestamps retain system monospace.
 - Separate images for profile search, graph and DNS. The search header is an interior view of the pedestrian bridge shown in its lower photo strip. Database/settings strips use different storage and curved-architecture images; DNS uses network detail. No decorative technical footer.
 - Five equal navigation slots: Search, Graph, Home, Databases, Settings. Home is geometrically centered; History is reachable from Home and storage, with an explicit storage breadcrumb. Large text wraps and the page reserves the menu's measured height.
-- Balanced motion: 100ms touch feedback and a 200ms/7px page entry with a soft easing curve. Navigation cancels the prior page animation; input is never delayed. Local refreshes do not replay page transitions. Both app and system reduced-motion preferences are respected.
+- Page changes use a short opacity crossfade through View Transitions when available, with an opacity-only fallback for older WebViews. No page translation or animated geometry. Rapid navigation skips stale updates. The in-app animation switch is removed; the OS motion preference remains supported.
+- Sparse outline squares grow, shrink and fade on 9–14s cycles. Home has three near the eye and three in its lower mist; other screens use two per decorative region with a fainter treatment. Position changes happen only at transparent cycle boundaries. Hidden tabs and offscreen regions pause, and there is no JavaScript per-frame loop or video. Actual phone CPU/battery usage has not been measured.
+- Content gutters and row/action padding are larger, typography has more weight, and database/settings photo strips are 160–200px tall. Home has a quiet lower mist region.
 - History is stored query results, not a collection/tag editor. External catalogs and imports are static availability descriptions, not clickable features. DNS always checks both address types; A/AAAA labels are not selectors.
 - A native parent layout reserves system-bar, cutout and keyboard insets around the WebView. This changes the actual viewport so fixed navigation and scrolling content cannot occupy those inset regions.
 - Functional regression checks: `npm ci --prefix tests` followed by `npm test --prefix tests`. GitHub Actions runs these before the Android build. Test fixtures live under `tests/` and are not APK assets.

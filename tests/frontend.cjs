@@ -251,10 +251,11 @@ const submit = () =>
   d.getAnimations = () => running;
   await go("settings");
   ok(
-    "Balanced entry motion is short and non-blocking",
+    "Fallback entry uses only opacity, without page displacement",
     motions.length === 1 &&
-      motions[0].options.duration === 200 &&
-      motions[0].frames[1].opacity === 1,
+      motions[0].options.duration === 160 &&
+      motions[0].frames[1].opacity === 1 &&
+      motions[0].frames.every((frame) => !("transform" in frame)),
   );
   await go("databases");
   ok(
@@ -267,25 +268,82 @@ const submit = () =>
     motions.length === 2,
   );
   await go("settings");
-  const reduce = d.querySelector("#reduce-motion");
-  reduce.checked = true;
-  reduce.dispatchEvent(new w.Event("change"));
-  ok("Reduce motion cancels running animation", cancelled >= 3);
-  const beforeReduced = motions.length;
-  await go("search");
   ok(
-    "App reduced-motion preference skips page movement",
-    motions.length === beforeReduced,
+    "In-app animation setting is removed",
+    !d.querySelector("#reduce-motion") &&
+      !d.querySelector("main").textContent.includes("Уменьшить анимацию"),
   );
-  await go("settings");
-  d.querySelector("#reduce-motion").checked = false;
-  d.querySelector("#reduce-motion").dispatchEvent(new w.Event("change"));
+  const beforeReduced = motions.length;
   w.matchMedia = () => ({ matches: true });
   await go("home");
   ok(
     "System reduced-motion preference also skips movement",
     motions.length === beforeReduced,
   );
+  ok(
+    "Home has a bounded six decorative squares",
+    d.querySelectorAll(".ambient-square").length === 6 &&
+      [...d.querySelectorAll(".ambient-field")].every(
+        (field) => field.getAttribute("aria-hidden") === "true",
+      ),
+  );
+  ok(
+    "System reduced motion pauses decoration",
+    [...d.querySelectorAll(".ambient-field")].every((field) =>
+      field.classList.contains("is-paused"),
+    ),
+  );
+  w.matchMedia = () => ({ matches: false });
+  Object.defineProperty(d, "hidden", { configurable: true, value: false });
+  d.dispatchEvent(new w.Event("visibilitychange"));
+  ok(
+    "Visible page resumes its decoration",
+    [...d.querySelectorAll(".ambient-field")].every(
+      (field) => !field.classList.contains("is-paused"),
+    ),
+  );
+  const firstSquare = d.querySelector(".ambient-square");
+  for (let i = 0; i < 10; i++)
+    firstSquare.dispatchEvent(new w.Event("animationiteration"));
+  ok(
+    "Random cycles reuse a fixed number of elements",
+    d.querySelectorAll(".ambient-square").length === 6,
+  );
+  Object.defineProperty(d, "hidden", { configurable: true, value: true });
+  d.dispatchEvent(new w.Event("visibilitychange"));
+  ok(
+    "Hidden tab pauses all decoration",
+    [...d.querySelectorAll(".ambient-field")].every((field) =>
+      field.classList.contains("is-paused"),
+    ),
+  );
+  await go("settings");
+  ok(
+    "Secondary screens have fewer decorative squares",
+    d.querySelectorAll(".ambient-square").length === 4,
+  );
+  const updates = [];
+  const finishes = [];
+  let skipped = 0;
+  d.startViewTransition = (update) => {
+    updates.push(update);
+    return {
+      skipTransition() {
+        skipped++;
+      },
+      finished: new Promise((resolve) => finishes.push(resolve)),
+    };
+  };
+  await go("search");
+  await go("databases");
+  updates[0]();
+  updates[1]();
+  ok(
+    "Rapid view transitions skip stale page updates",
+    skipped === 1 && state().page === "databases",
+  );
+  finishes.forEach((resolve) => resolve());
+  await tick();
   console.log(`${count} checks passed`);
   dom.window.close();
 })().catch((e) => {

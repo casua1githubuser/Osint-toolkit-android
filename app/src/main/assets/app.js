@@ -51,28 +51,18 @@ const state = {
   graphDetail: null,
 };
 const native = () => typeof window.NativeOSINT !== "undefined";
-const storage = {
-  get(key) {
-    try {
-      return localStorage.getItem(key);
-    } catch {
-      return null;
-    }
-  },
-  set(key, v) {
-    try {
-      localStorage.setItem(key, v);
-    } catch {}
-  },
-};
-document.documentElement.classList.toggle(
-  "reduced-motion",
-  storage.get("reduced-motion") === "true",
-);
+let ambientObserver = null;
+let pageTransition = null;
+let navigationRevision = 0;
+const systemReducedMotion = () =>
+  typeof matchMedia === "function" &&
+  matchMedia("(prefers-reduced-motion: reduce)").matches;
+const ambient = (zone = "footer") =>
+  `<div class="ambient-field is-paused" data-zone="${zone}" aria-hidden="true">${Array.from({ length: state.page === "home" ? 3 : 2 }, () => '<span class="ambient-square"></span>').join("")}</div>`;
 const banner = (title, subtitle, img = "") =>
-  `<div class="page-banner" data-image="${img || state.page}"><h1>${title}</h1><p class="eyebrow">/ ${subtitle}</p></div>`;
+  `<div class="page-banner" data-image="${img || state.page}"><h1>${title}</h1><p class="eyebrow">/ ${subtitle}</p>${ambient("header")}</div>`;
 const strip = () =>
-  `<div class="photo-strip" data-scene="${state.page}" aria-hidden="true"></div>`;
+  `<div class="photo-strip" data-scene="${state.page}" aria-hidden="true">${ambient()}</div>`;
 const notice = (s, error = false) =>
   `<div class="notice${error ? " error" : ""}" role="${error ? "alert" : "status"}">${esc(s)}</div>`;
 function navigate(page) {
@@ -169,7 +159,7 @@ function home() {
       "6",
     ],
   ];
-  return `<div class="hero">${logo()}<span class="crosshair" aria-hidden="true"></span><span class="hero-note">OPEN SOURCE INTELLIGENCE</span></div><div class="tiles">${tiles.map((t) => `<a class="tile" href="#${t[0]}" data-photo="${t[5]}"><span class="tile-icon">${icon(t[1])}</span><strong>${t[2]}</strong><small>${t[3]}<br>${t[4]}</small>${icon("arrow", "arrow")}</a>`).join("")}</div><div class="section-heading"><h2>Последние запросы</h2><a class="text-button" href="#history">Все ${icon("arrow")}</a></div><div id="home-history">${historyRows(3)}</div>`;
+  return `<div class="hero">${logo()}<span class="crosshair" aria-hidden="true"></span>${ambient("eye")}<span class="hero-note">OPEN SOURCE INTELLIGENCE</span></div><div class="tiles">${tiles.map((t) => `<a class="tile" href="#${t[0]}" data-photo="${t[5]}"><span class="tile-icon">${icon(t[1])}</span><strong>${t[2]}</strong><small>${t[3]}<br>${t[4]}</small>${icon("arrow", "arrow")}</a>`).join("")}</div><div class="section-heading"><h2>Последние запросы</h2><a class="text-button" href="#history">Все ${icon("arrow")}</a></div><div id="home-history">${historyRows(3)}</div>${strip()}`;
 }
 
 function searchPage(dns = false) {
@@ -207,7 +197,7 @@ function results() {
         return `<article class="result-card"><div class="result-head"><span class="entity-icon">${icon(dns ? "globe" : "user")}</span><h2>${esc(x.site)}</h2><span class="badge ${x.state === "unknown" ? "unknown" : x.state === "not_found" ? "negative" : ""}">${text}</span></div><p class="result-url">${esc(x.url)}</p><p class="result-detail">${dns ? "Системное разрешение имени домена" : x.status ? "HTTP " + esc(x.status) + (x.state === "candidate" ? " · Требуется ручная проверка профиля." : "") : esc(x.detail || "Источник не ответил. Статус неизвестен.")}</p></article>`;
       })
       .join("") || '<p class="empty">Нет результатов с этим статусом.</p>'
-  }<p class="hint">Результат сохранён в истории на этом устройстве.</p><a class="primary" href="#graph">${icon("graph")}ОТКРЫТЬ ГРАФ ${icon("arrow")}</a>`;
+  }<p class="hint">Результат сохранён в истории на этом устройстве.</p><a class="primary" href="#graph">${icon("graph")}ОТКРЫТЬ ГРАФ ${icon("arrow")}</a>${strip()}`;
 }
 function databases() {
   return `${banner("БАЗЫ ДАННЫХ", "Local workspace", "db")}<div class="chips"><button class="chip" data-db="local" aria-pressed="${state.dbTab === "local"}">${icon("db")}Хранилище</button><button class="chip" data-db="sources" aria-pressed="${state.dbTab === "sources"}">${icon("layers")}Источники</button></div>${state.dbTab === "local" ? `<div class="section-heading"><h2>На этом устройстве</h2></div><a class="row linked-row" href="#history">${icon("clock")}<div class="row-content"><strong>История запросов</strong><small>Результаты проверок · SQLite</small></div>${icon("arrow")}</a><div class="section-heading"><h2>Внешние каталоги</h2></div><div class="unavailable-row"><strong>Sherlock / Maigret</strong><span>Не подключены</span></div><div class="unavailable-row"><strong>Импорт CSV / XLSX</strong><span>Пока недоступен</span></div><p class="hint">Каталоги сайтов и импорт файлов не входят в локальную историю.</p>` : `<div class="section-heading"><h2>Проверяемые сайты</h2><span class="meta">${state.sources.length} URL</span></div>${state.sources.map((site) => `<div class="row">${icon("globe")}<div class="row-content"><strong>${site}</strong><small>HTTP-проверка публичного профиля</small></div></div>`).join("")}<p class="hint">Это список сайтов для проверки, а не база аккаунтов или утечек.</p><a class="secondary" href="#search">Выбрать источники ${icon("arrow")}</a>`}${strip()}`;
@@ -242,10 +232,10 @@ function graph() {
     x: 150 + 102 * Math.cos(-Math.PI / 2 + (i * 2 * Math.PI) / entities.length),
     y: 155 + 100 * Math.sin(-Math.PI / 2 + (i * 2 * Math.PI) / entities.length),
   }));
-  return `${banner("ГРАФ СВЯЗЕЙ", "Relationship graph", "graph")}<p class="hint" style="margin-bottom:16px">Предварительный макет · ${data ? "связи текущего запроса" : "без данных"}</p><div class="graph-field"><div class="graph-label">N: ${data ? nodes.length + 1 : 0}<br>E: ${nodes.length}</div>${data ? `<svg class="graph-svg" viewBox="0 0 300 310" role="group" aria-label="Запрос и проверенные источники"><g transform="translate(150 155) scale(${state.zoom}) translate(-150 -155)">${nodes.map((n) => `<path d="M150 155L${n.x} ${n.y}" stroke="#7697a0" stroke-dasharray="3 3"/>`).join("")}<rect x="115" y="120" width="70" height="70" rx="10" fill="#285e7c"/><svg x="137" y="131" width="26" height="26" viewBox="0 0 24 24" stroke="#f6f8fa" fill="none" stroke-width="1.4"><path d="${paths[dns ? "globe" : "user"]}"/></svg><text x="150" y="178" text-anchor="middle" stroke="none" fill="#f6f8fa" font-size="11">${dns ? "ДОМЕН" : "ЗАПРОС"}</text>${nodes.map((n, i) => `<g class="graph-hit" role="button" tabindex="0" aria-label="${esc(n.title)}" data-node="${i}"><rect x="${n.x - 30}" y="${n.y - 30}" width="60" height="60" rx="7" fill="#f0f2f3"/><text x="${n.x}" y="${n.y + 4}" text-anchor="middle" stroke="none" fill="#123b49" font-size="12">${esc(n.title.length > 10 ? n.title.slice(0, 9) + "…" : n.title)}</text></g>`).join("")}</g></svg>` : `<div class="graph-center"><span class="graph-node">${icon("user")}</span><p class="graph-empty">Выполните поиск, чтобы увидеть запрос и проверенные источники.</p></div>`}<div class="graph-controls"><button data-zoom="in" aria-label="Увеличить" ${!data || state.zoom >= 1.6 ? "disabled" : ""}>${icon("plus")}</button><button data-zoom="out" aria-label="Уменьшить" ${!data || state.zoom <= 0.6 ? "disabled" : ""}>${icon("minus")}</button><button data-zoom="fit" aria-label="По размеру поля" ${data ? "" : "disabled"}>${icon("fit")}</button></div></div><p class="graph-legend">- - - ${dns ? "Домен → адрес из DNS-ответа" : "Запрос → проверенный URL"}.<br>Личные связи и владение аккаунтами не установлены.</p><div class="result-card"><div class="result-head"><span class="entity-icon">${icon(dns ? "globe" : "user")}</span><h2 class="mono">${esc(state.graphDetail !== null && nodes[state.graphDetail] ? nodes[state.graphDetail].title : center)}</h2></div><p class="result-detail">${esc(state.graphDetail !== null && nodes[state.graphDetail] ? nodes[state.graphDetail].detail : data ? "Источник связей — результаты последней проверки." : "Выберите существующий запрос из истории или начните новый поиск.")}</p></div><a class="secondary" href="#${data ? "results" : "search"}">${data ? "К результатам" : "Перейти к поиску"} ${icon("arrow")}</a>`;
+  return `${banner("ГРАФ СВЯЗЕЙ", "Relationship graph", "graph")}<p class="hint" style="margin-bottom:16px">Предварительный макет · ${data ? "связи текущего запроса" : "без данных"}</p><div class="graph-field"><div class="graph-label">N: ${data ? nodes.length + 1 : 0}<br>E: ${nodes.length}</div>${data ? `<svg class="graph-svg" viewBox="0 0 300 310" role="group" aria-label="Запрос и проверенные источники"><g transform="translate(150 155) scale(${state.zoom}) translate(-150 -155)">${nodes.map((n) => `<path d="M150 155L${n.x} ${n.y}" stroke="#7697a0" stroke-dasharray="3 3"/>`).join("")}<rect x="115" y="120" width="70" height="70" rx="10" fill="#285e7c"/><svg x="137" y="131" width="26" height="26" viewBox="0 0 24 24" stroke="#f6f8fa" fill="none" stroke-width="1.4"><path d="${paths[dns ? "globe" : "user"]}"/></svg><text x="150" y="178" text-anchor="middle" stroke="none" fill="#f6f8fa" font-size="11">${dns ? "ДОМЕН" : "ЗАПРОС"}</text>${nodes.map((n, i) => `<g class="graph-hit" role="button" tabindex="0" aria-label="${esc(n.title)}" data-node="${i}"><rect x="${n.x - 30}" y="${n.y - 30}" width="60" height="60" rx="7" fill="#f0f2f3"/><text x="${n.x}" y="${n.y + 4}" text-anchor="middle" stroke="none" fill="#123b49" font-size="12">${esc(n.title.length > 10 ? n.title.slice(0, 9) + "…" : n.title)}</text></g>`).join("")}</g></svg>` : `<div class="graph-center"><span class="graph-node">${icon("user")}</span><p class="graph-empty">Выполните поиск, чтобы увидеть запрос и проверенные источники.</p></div>`}<div class="graph-controls"><button data-zoom="in" aria-label="Увеличить" ${!data || state.zoom >= 1.6 ? "disabled" : ""}>${icon("plus")}</button><button data-zoom="out" aria-label="Уменьшить" ${!data || state.zoom <= 0.6 ? "disabled" : ""}>${icon("minus")}</button><button data-zoom="fit" aria-label="По размеру поля" ${data ? "" : "disabled"}>${icon("fit")}</button></div></div><p class="graph-legend">- - - ${dns ? "Домен → адрес из DNS-ответа" : "Запрос → проверенный URL"}.<br>Личные связи и владение аккаунтами не установлены.</p><div class="result-card"><div class="result-head"><span class="entity-icon">${icon(dns ? "globe" : "user")}</span><h2 class="mono">${esc(state.graphDetail !== null && nodes[state.graphDetail] ? nodes[state.graphDetail].title : center)}</h2></div><p class="result-detail">${esc(state.graphDetail !== null && nodes[state.graphDetail] ? nodes[state.graphDetail].detail : data ? "Источник связей — результаты последней проверки." : "Выберите существующий запрос из истории или начните новый поиск.")}</p></div><a class="secondary" href="#${data ? "results" : "search"}">${data ? "К результатам" : "Перейти к поиску"} ${icon("arrow")}</a>${strip()}`;
 }
 function settings() {
-  return `${banner("НАСТРОЙКИ", "System preferences")}<div class="section-heading"><h2 class="section-title">Интерфейс</h2></div><label class="settings-row"><span>Уменьшить анимацию<br><small>Без переходов между экранами</small></span><input id="reduce-motion" type="checkbox" ${storage.get("reduced-motion") === "true" ? "checked" : ""}></label><div class="section-heading"><h2 class="section-title">О приложении</h2></div><div class="row"><span class="row-content"><strong>OSINT / 2002</strong><small>Android · 0.5.0-alpha</small></span></div><p class="notice">${native() ? "Поиск профилей, системный DNS и SQLite работают на устройстве." : "Открыт браузерный макет. Нативные проверки доступны в APK."}</p><details><summary>Данные и хранение</summary><p>Запросы и ответы сохраняются в SQLite на устройстве. Для проверки профилей приложение обращается к выбранным сайтам. Удалённый API и облачная синхронизация не подключены.</p></details><details><summary>Возможности текущей версии</summary><p>Проверка публичных URL, DNS A / AAAA, история запросов. Граф показывает связь запроса с проверенными источниками. Поиск телефонов и почты, импорт файлов, WHOIS, Sherlock и Maigret не подключены.</p></details>${strip()}`;
+  return `${banner("НАСТРОЙКИ", "System preferences")}<div class="section-heading"><h2 class="section-title">О приложении</h2></div><div class="row"><span class="row-content"><strong>OSINT / 2002</strong><small>Android · 0.6.0-alpha</small></span></div><p class="notice">${native() ? "Поиск профилей, системный DNS и SQLite работают на устройстве." : "Открыт браузерный макет. Нативные проверки доступны в APK."}</p><details><summary>Данные и хранение</summary><p>Запросы и ответы сохраняются в SQLite на устройстве. Для проверки профилей приложение обращается к выбранным сайтам. Удалённый API и облачная синхронизация не подключены.</p></details><details><summary>Возможности текущей версии</summary><p>Проверка публичных URL, DNS A / AAAA, история запросов. Граф показывает связь запроса с проверенными источниками. Поиск телефонов и почты, импорт файлов, WHOIS, Sherlock и Maigret не подключены.</p></details>${strip()}`;
 }
 function render() {
   const page = location.hash.slice(1) || "home";
@@ -270,7 +260,7 @@ function render() {
     graph,
     databases,
     history: () =>
-      `${banner("ИСТОРИЯ", "Query history", "history")}<a class="back-link" href="#databases">${icon("arrow")}Хранилище / история</a><div class="section-heading"><h2>Сохранённые запросы</h2><button class="text-button" data-action="refresh">Обновить</button></div><div id="history-list">${historyRows(30)}</div>`,
+      `${banner("ИСТОРИЯ", "Query history", "history")}<a class="back-link" href="#databases">${icon("arrow")}Хранилище / история</a><div class="section-heading"><h2>Сохранённые запросы</h2><button class="text-button" data-action="refresh">Обновить</button></div><div id="history-list">${historyRows(30)}</div>${strip()}`,
     settings,
     splash: () =>
       `<div class="splash">${logo()}${strip()}<p class="eyebrow">Рабочее пространство</p><p class="hint">Локальный режим · Android</p><a class="secondary" href="#home">Открыть ${icon("arrow")}</a></div>`,
@@ -298,6 +288,7 @@ function render() {
     .join("");
   bind();
   syncViewportWidth();
+  setupAmbient();
 }
 function bind() {
   const form = $("query-form");
@@ -336,17 +327,6 @@ function bind() {
     $("result-filter").onchange = (e) => {
       state.filter = e.target.value;
       render();
-    };
-  if ($("reduce-motion"))
-    $("reduce-motion").onchange = (e) => {
-      storage.set("reduced-motion", String(e.target.checked));
-      document.documentElement.classList.toggle(
-        "reduced-motion",
-        e.target.checked,
-      );
-      if (e.target.checked && typeof document.getAnimations === "function") {
-        document.getAnimations().forEach((animation) => animation.cancel());
-      }
     };
   document.querySelectorAll("[data-zoom]").forEach(
     (b) =>
@@ -469,32 +449,106 @@ window.appBack = () => {
   }
   return false;
 };
-function animatePageEntry() {
-  const reduced =
-    document.documentElement.classList.contains("reduced-motion") ||
-    (typeof matchMedia === "function" &&
-      matchMedia("(prefers-reduced-motion: reduce)").matches);
-  if (!reduced && typeof $("main").animate === "function") {
-    if (typeof $("main").getAnimations === "function") {
-      $("main")
-        .getAnimations()
-        .forEach((animation) => animation.cancel());
-    }
-    $("main").animate(
-      [
-        { opacity: 0.5, transform: "translateY(7px)" },
-        { opacity: 1, transform: "translateY(0)" },
-      ],
-      { duration: 200, easing: "cubic-bezier(.16,1,.3,1)" },
-    );
+function randomizeSquare(square, initial = false) {
+  // Placement changes only at a fully transparent cycle boundary, not per frame.
+  const size = 24 + Math.random() * 30;
+  square.style.width = `${size}px`;
+  square.style.height = `${size}px`;
+  square.style.left = `${20 + Math.random() * 60}%`;
+  square.style.top = `${27 + Math.random() * 46}%`;
+  if (initial) {
+    const duration = 9 + Math.random() * 5;
+    square.style.animationDuration = `${duration}s`;
+    square.style.animationDelay = `${-Math.random() * duration}s`;
   }
 }
-addEventListener("hashchange", () => {
-  render();
-  scrollTo(0, 0);
-  $("main").focus({ preventScroll: true });
+function updateAmbientPlayback() {
+  const paused = document.hidden || systemReducedMotion();
+  document.querySelectorAll(".ambient-field").forEach((field) => {
+    field.classList.toggle(
+      "is-paused",
+      paused || field.dataset.visible === "false",
+    );
+  });
+}
+function setupAmbient() {
+  if (ambientObserver) ambientObserver.disconnect();
+  const fields = document.querySelectorAll(".ambient-field");
+  fields.forEach((field) => {
+    field.querySelectorAll(".ambient-square").forEach((square) => {
+      randomizeSquare(square, true);
+      square.addEventListener("animationiteration", () =>
+        randomizeSquare(square),
+      );
+    });
+  });
+  if (typeof IntersectionObserver === "function") {
+    if (!ambientObserver)
+      ambientObserver = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            entry.target.dataset.visible = String(entry.isIntersecting);
+          });
+          updateAmbientPlayback();
+        },
+        { threshold: 0 },
+      );
+    fields.forEach((field) => {
+      field.dataset.visible = "false";
+      ambientObserver.observe(field);
+    });
+  }
+  updateAmbientPlayback();
+}
+document.addEventListener("visibilitychange", updateAmbientPlayback);
+if (typeof matchMedia === "function") {
+  const preference = matchMedia("(prefers-reduced-motion: reduce)");
+  if (typeof preference.addEventListener === "function")
+    preference.addEventListener("change", updateAmbientPlayback);
+}
+function animatePageEntry() {
+  if (systemReducedMotion() || typeof $("main").animate !== "function") return;
+  if (typeof $("main").getAnimations === "function")
+    $("main")
+      .getAnimations()
+      .forEach((animation) => animation.cancel());
+  $("main").animate([{ opacity: 0.88 }, { opacity: 1 }], {
+    duration: 160,
+    easing: "ease-out",
+  });
+}
+function changePage() {
+  const revision = ++navigationRevision;
+  if (pageTransition && typeof pageTransition.skipTransition === "function")
+    pageTransition.skipTransition();
+  const update = () => {
+    if (revision !== navigationRevision) return;
+    render();
+    scrollTo(0, 0);
+    $("main").focus({ preventScroll: true });
+  };
+  if (
+    !systemReducedMotion() &&
+    typeof document.startViewTransition === "function"
+  ) {
+    try {
+      const current = document.startViewTransition(update);
+      pageTransition = current;
+      current.finished
+        .catch(() => {})
+        .finally(() => {
+          if (pageTransition === current) pageTransition = null;
+        });
+      return;
+    } catch (_) {
+      /* Older WebViews use the opacity-only fallback. */
+    }
+  }
+  update();
   animatePageEntry();
-});
+}
+addEventListener("hashchange", changePage);
+
 render();
 requestHistory();
 // Font scaling can make navigation taller; reserve its real measured height.
