@@ -17,3 +17,15 @@ The graph is provisional. Edges mean a URL was checked for a query, or an IP
 address was returned by DNS. They are not inferred personal relationships.
 Unavailable integrations are described in the interface without fake records,
 fake progress, or made-up source totals. The splash has no artificial delay.
+
+## Blue palette correction (0.3.1-alpha)
+
+The atlas was edited with built-in imagegen using the existing atlas as the edit
+target and the user's two attached screenshots as color references. The layout
+and nine scenes remain the same. CSS uses cooler neutral paper, icy blue
+selection surfaces and deeper petroleum-blue ink. Reduced white overlays preserve
+the color in photographs on tiles and internal page headers.
+
+Color-correction prompt:
+
+> Edit ONLY IMAGE 1, the 1536x1024 photographic atlas. Images 2 and 3 are COLOR GRADING REFERENCES ONLY, never put their text or UI in the output. Preserve the exact 3 columns x3 rows edge-to-edge grid, all nine scene compositions and object placement. Recolor and relight the atlas to match the much bluer icy cyan / deep petroleum-blue analog photo-print palette in references 2 and3. The original atlas is wrong: too muddy gray-green, olive, beige, dark neutral gray, brownish skin. Remove all olive/brown/warm gray casts. Apply distinctly cold cyan-blue photochemical monochrome with rich deep blue-teal shadows, luminous icy blue mist and neutral near-white paper highlights. Eye panel: blue skin, intense icy blue iris, bright bleached upper left, deep petrol-blue upper right. Corridor and datacenter: bright icy cyan lamps, blue hazy floors and teal-blue shadows. Other scenes similarly blue-cyan without mud. Moderate print grain ONLY within images, high key bleached photographic edges like the references. Palette target paper #eff2f2, icy blue #a6d4df, cyan midtone #69afc2, deep petrol #10566d. Preserve detailed photographic texture, no saturated electric neon, no glow UI, no text, no new objects, no borders, no gutters. Return ONLY the recolored atlas at original aspect and exact grid, not a screenshot or mockup.

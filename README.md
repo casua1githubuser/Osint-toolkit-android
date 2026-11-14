@@ -23,7 +23,7 @@ The APK is written to `app/build/outputs/apk/debug/app-debug.apk`.
 - The graph visualizes only query-to-checked-source or domain-to-DNS-answer relationships. It does not infer account ownership or personal relationships.
 - External catalogs (Sherlock/Maigret), CSV/XLSX import, phone/email searches, and a remote backend are not integrated. No demo records are bundled.
 - Debug APK signed by a *new ephemeral GitHub runner debug key on each build*. Updates may require uninstall; **do not uninstall an existing installation without backing up data**. For release use a persisted secure signing key.
-- `applicationId` is `com.osinttoolkit.app`, versionCode 3, versionName `0.3.0-alpha`, minSdk 26, targetSdk 35.
+- `applicationId` is `com.osinttoolkit.app`, versionCode 4, versionName `0.3.1-alpha`, minSdk 26, targetSdk 35.
 - Installation on a real Nothing Phone (3) has **not been verified**.
 
 ## Verification

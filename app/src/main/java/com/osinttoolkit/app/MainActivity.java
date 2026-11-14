@@ -29,7 +29,7 @@ public class MainActivity extends Activity {
   db=openOrCreateDatabase("osint.db",MODE_PRIVATE,null);
   db.execSQL("CREATE TABLE IF NOT EXISTS history(id INTEGER PRIMARY KEY AUTOINCREMENT,kind TEXT,query TEXT,results TEXT,created INTEGER)");
   web=new WebView(this);
-  web.setBackgroundColor(0xfff0f2f0);
+  web.setBackgroundColor(0xfff0f2f3);
   WebSettings s=web.getSettings(); s.setJavaScriptEnabled(true);s.setDomStorageEnabled(true);
   s.setAllowFileAccess(false);s.setAllowContentAccess(false);
   web.addJavascriptInterface(new Bridge(),"NativeOSINT");
