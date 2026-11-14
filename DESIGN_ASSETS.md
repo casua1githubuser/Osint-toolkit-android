@@ -20,6 +20,22 @@ fake progress, or made-up source totals. The splash has no artificial delay.
 
 ## Blue palette correction (0.3.1-alpha)
 
+The implemented 0.4.0 revision additionally uses `images/module-scenes.png`: a
+three-cell photographic strip for profile search, the graph and DNS. Search uses
+silhouettes behind glass; the graph uses people interwoven visually with thin
+architectural columns and reflections; DNS uses network patch cables. It was
+created with built-in imagegen. The generation prompt is recorded in
+`docs/semantic-tiles-prompt.md`.
+
+IBM Plex Sans is bundled from the official Google Fonts repository, with its
+SIL Open Font License in `app/src/main/assets/fonts/OFL.txt`. Fonts are loaded
+locally, including in the standalone HTML preview; no font service is contacted.
+
+The approved preview is a visual reference, not a feature contract. The shipped
+navigation explicitly includes History, DNS A/AAAA labels are non-interactive,
+and unavailable imports/catalogs are plain availability descriptions. No mockup
+records or fake progress are part of the APK. The decorative footer is removed.
+
 The atlas was edited with built-in imagegen using the existing atlas as the edit
 target and the user's two attached screenshots as color references. The layout
 and nine scenes remain the same. CSS uses cooler neutral paper, icy blue

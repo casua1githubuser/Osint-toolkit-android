@@ -1283,3 +1283,22 @@ summary {
 body:not([data-page="home"]) .header-aside {
   visibility: hidden;
 }
+.tile small {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.bottom-nav {
+  grid-template-columns: repeat(6, minmax(max-content, 1fr));
+  overflow-x: auto;
+  scrollbar-width: none;
+  gap: 2px;
+}
+.bottom-nav a {
+  min-width: 48px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+.bottom-nav a span {
+  white-space: nowrap;
+  overflow-wrap: normal;
+}
