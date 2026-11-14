@@ -4,9 +4,16 @@
 Java WebView bridge, Android SQLite, direct HTTPS profile checks, DNS A/AAAA resolution.
 
 ## Build
-1. Upload repository contents to GitHub (root must contain `settings.gradle`).
+1. Push this complete project to GitHub (keep the `app/` and `gradle/` directories).
 2. Actions → Android APK → Run workflow.
 3. Download artifact `OSINT-Toolkit-Java-Alpha-APK` and extract `app-debug.apk`.
+
+For a local build, install JDK 17 and Android SDK platform 35 / build-tools 35.0.0.
+Set `ANDROID_HOME` to the SDK directory (or set `sdk.dir` in untracked `local.properties`).
+Run `./gradlew :app:assembleDebug :app:lintDebug` on Linux/macOS or
+`gradlew.bat :app:assembleDebug :app:lintDebug` on Windows.
+The Gradle 8.11.1 wrapper downloads and verifies Gradle automatically.
+The APK is written to `app/build/outputs/apk/debug/app-debug.apk`.
 
 ## Important limits
 - This is an **alpha prototype**, NOT a port of all Python features.
@@ -18,4 +25,6 @@ Java WebView bridge, Android SQLite, direct HTTPS profile checks, DNS A/AAAA res
 - Installation on a real Nothing Phone (3) has **not been verified**.
 
 ## Verification
-The source was statically reviewed and packaged in this environment. No Android SDK/Gradle executable is available here, so compilation and on-device installation remain unverified.
+GitHub Actions builds the debug APK and runs Android Lint on pushes to `main`,
+pull requests, and manual runs. Check the run result before installing its APK.
+On-device installation and behavior remain unverified.
