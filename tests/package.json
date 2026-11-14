@@ -1,0 +1,6 @@
+{
+  "name": "osint-frontend-regressions",
+  "private": true,
+  "scripts": { "test": "node frontend.cjs" },
+  "devDependencies": { "jsdom": "26.1.0" }
+}
