@@ -1763,47 +1763,14 @@ summary,
     transform: translate(-50%, -50%) scale(0.4);
   }
 }
-/* Crossfade stable content; no translation, zoom, or animated page geometry. */
-:root {
-  view-transition-name: none;
-}
 main {
-  view-transition-name: page-content;
-}
-::view-transition-group(page-content) {
-  animation: none;
-}
-::view-transition-old(page-content) {
-  animation: page-out 160ms ease-out both;
-}
-::view-transition-new(page-content) {
-  animation: page-in 160ms ease-out both;
-}
-@keyframes page-out {
-  from {
-    opacity: 1;
-  }
-  to {
-    opacity: 0;
-  }
-}
-@keyframes page-in {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+  isolation: isolate;
 }
 @media (prefers-reduced-motion: reduce) {
   .ambient-field {
     display: none;
   }
   .ambient-square {
-    animation: none;
-  }
-  ::view-transition-old(page-content),
-  ::view-transition-new(page-content) {
     animation: none;
   }
 }
@@ -1814,12 +1781,6 @@ main {
 }
 .bottom-nav a span {
   letter-spacing: -0.04em;
-}
-::view-transition-old(page-content),
-::view-transition-new(page-content) {
-  height: auto;
-  object-fit: contain;
-  object-position: top left;
 }
 
 /* Rounded, open geometric letters echo the drawn OSINT wordmark.
@@ -1911,5 +1872,33 @@ summary {
   }
   .bottom-nav a {
     font-size: 11px;
+  }
+}
+
+/* Wide, low navigation targets retain the full five-column touch area. */
+.bottom-nav {
+  padding-inline: 4px;
+  gap: 3px;
+}
+.bottom-nav a {
+  min-height: 44px;
+  padding: 4px 0;
+  gap: 2px;
+  line-height: 1.1;
+  border-radius: 8px;
+}
+.bottom-nav a svg,
+.bottom-nav a[href="#home"] svg {
+  width: 21px;
+  height: 21px;
+}
+.bottom-nav a span {
+  white-space: nowrap;
+  overflow-wrap: normal;
+  letter-spacing: 0;
+}
+@media (max-width: 374px) {
+  .bottom-nav a {
+    font-size: 9.5px;
   }
 }

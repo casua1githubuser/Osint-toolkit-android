@@ -427,27 +427,18 @@ const submit = () =>
       noSharedLines,
     );
   }
-  const updates = [];
-  const finishes = [];
-  let skipped = 0;
-  d.startViewTransition = (update) => {
-    updates.push(update);
-    return {
-      skipTransition() {
-        skipped++;
-      },
-      finished: new Promise((resolve) => finishes.push(resolve)),
-    };
+  let snapshotTransitions = 0;
+  d.startViewTransition = () => {
+    snapshotTransitions++;
   };
   await go("search");
   await go("databases");
-  updates[0]();
-  updates[1]();
   ok(
-    "Rapid view transitions skip stale page updates",
-    skipped === 1 && state().page === "databases",
+    "Rapid navigation commits the latest content without snapshot delays",
+    snapshotTransitions === 0 &&
+      state().page === "databases" &&
+      d.querySelector("h1").textContent === "БАЗЫ ДАННЫХ",
   );
-  finishes.forEach((resolve) => resolve());
   await tick();
   console.log(`${count} checks passed`);
   dom.window.close();

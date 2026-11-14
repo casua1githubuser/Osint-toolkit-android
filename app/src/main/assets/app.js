@@ -52,8 +52,6 @@ const state = {
 };
 const native = () => typeof window.NativeOSINT !== "undefined";
 let ambientObserver = null;
-let pageTransition = null;
-let navigationRevision = 0;
 const systemReducedMotion = () =>
   typeof matchMedia === "function" &&
   matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -159,7 +157,7 @@ function home() {
       "6",
     ],
   ];
-  return `<div class="hero">${logo()}<span class="crosshair" aria-hidden="true"></span>${ambient("eye")}<span class="hero-note">OPEN SOURCE INTELLIGENCE</span></div><div class="tiles">${tiles.map((t) => `<a class="tile" href="#${t[0]}" data-photo="${t[5]}"><span class="tile-icon">${icon(t[1])}</span><strong>${t[2]}</strong><small>${t[3]}<br>${t[4]}</small>${icon("arrow", "arrow")}</a>`).join("")}</div><div class="section-heading"><h2>Последние запросы</h2><a class="text-button" href="#history">Все ${icon("arrow")}</a></div><div id="home-history">${historyRows(3)}</div>${strip()}`;
+  return `<div class="hero">${logo()}<span class="crosshair" aria-hidden="true"></span>${ambient("eye")}<span class="hero-note">OPEN SOURCE INTELLIGENCE</span></div><div class="tiles">${tiles.map((t) => `<a class="tile" href="#${t[0]}" data-photo="${t[5]}"><span class="tile-icon">${icon(t[1])}</span><strong>${t[2]}</strong><small>${t[3]}<br>${t[4]}</small></a>`).join("")}</div><div class="section-heading"><h2>Последние запросы</h2><a class="text-button" href="#history">Все</a></div><div id="home-history">${historyRows(3)}</div>${strip()}`;
 }
 
 function searchPage(dns = false) {
@@ -200,7 +198,7 @@ function results() {
   }<p class="hint">Результат сохранён в истории на этом устройстве.</p><a class="primary" href="#graph">${icon("graph")}ОТКРЫТЬ ГРАФ ${icon("arrow")}</a>${strip()}`;
 }
 function databases() {
-  return `${banner("БАЗЫ ДАННЫХ", "Local workspace", "db")}<div class="chips"><button class="chip" data-db="local" aria-pressed="${state.dbTab === "local"}">${icon("db")}Хранилище</button><button class="chip" data-db="sources" aria-pressed="${state.dbTab === "sources"}">${icon("layers")}Источники</button></div>${state.dbTab === "local" ? `<div class="section-heading"><h2>На этом устройстве</h2></div><a class="row linked-row" href="#history">${icon("clock")}<div class="row-content"><strong>История запросов</strong><small>Результаты проверок · SQLite</small></div>${icon("arrow")}</a><div class="section-heading"><h2>Внешние каталоги</h2></div><div class="unavailable-row"><strong>Sherlock / Maigret</strong><span>Не подключены</span></div><div class="unavailable-row"><strong>Импорт CSV / XLSX</strong><span>Пока недоступен</span></div><p class="hint">Каталоги сайтов и импорт файлов не входят в локальную историю.</p>` : `<div class="section-heading"><h2>Проверяемые сайты</h2><span class="meta">${state.sources.length} URL</span></div>${state.sources.map((site) => `<div class="row">${icon("globe")}<div class="row-content"><strong>${site}</strong><small>HTTP-проверка публичного профиля</small></div></div>`).join("")}<p class="hint">Это список сайтов для проверки, а не база аккаунтов или утечек.</p><a class="secondary" href="#search">Выбрать источники ${icon("arrow")}</a>`}${strip()}`;
+  return `${banner("БАЗЫ ДАННЫХ", "Local workspace", "db")}<div class="chips"><button class="chip" data-db="local" aria-pressed="${state.dbTab === "local"}">${icon("db")}Хранилище</button><button class="chip" data-db="sources" aria-pressed="${state.dbTab === "sources"}">${icon("layers")}Источники</button></div>${state.dbTab === "local" ? `<div class="section-heading"><h2>На этом устройстве</h2></div><a class="row linked-row" href="#history">${icon("clock")}<div class="row-content"><strong>История запросов</strong><small>Результаты проверок · SQLite</small></div></a><div class="section-heading"><h2>Внешние каталоги</h2></div><div class="unavailable-row"><strong>Sherlock / Maigret</strong><span>Не подключены</span></div><div class="unavailable-row"><strong>Импорт CSV / XLSX</strong><span>Пока недоступен</span></div><p class="hint">Каталоги сайтов и импорт файлов не входят в локальную историю.</p>` : `<div class="section-heading"><h2>Проверяемые сайты</h2><span class="meta">${state.sources.length} URL</span></div>${state.sources.map((site) => `<div class="row">${icon("globe")}<div class="row-content"><strong>${site}</strong><small>HTTP-проверка публичного профиля</small></div></div>`).join("")}<p class="hint">Это список сайтов для проверки, а не база аккаунтов или утечек.</p><a class="secondary" href="#search">Выбрать источники ${icon("arrow")}</a>`}${strip()}`;
 }
 
 function graph() {
@@ -235,7 +233,7 @@ function graph() {
   return `${banner("ГРАФ СВЯЗЕЙ", "Relationship graph", "graph")}<p class="hint" style="margin-bottom:16px">Предварительный макет · ${data ? "связи текущего запроса" : "без данных"}</p><div class="graph-field"><div class="graph-label">N: ${data ? nodes.length + 1 : 0}<br>E: ${nodes.length}</div>${data ? `<svg class="graph-svg" viewBox="0 0 300 310" role="group" aria-label="Запрос и проверенные источники"><g transform="translate(150 155) scale(${state.zoom}) translate(-150 -155)">${nodes.map((n) => `<path d="M150 155L${n.x} ${n.y}" stroke="#7697a0" stroke-dasharray="3 3"/>`).join("")}<rect x="115" y="120" width="70" height="70" rx="10" fill="#285e7c"/><svg x="137" y="131" width="26" height="26" viewBox="0 0 24 24" stroke="#f6f8fa" fill="none" stroke-width="1.4"><path d="${paths[dns ? "globe" : "user"]}"/></svg><text x="150" y="178" text-anchor="middle" stroke="none" fill="#f6f8fa" font-size="11">${dns ? "ДОМЕН" : "ЗАПРОС"}</text>${nodes.map((n, i) => `<g class="graph-hit" role="button" tabindex="0" aria-label="${esc(n.title)}" data-node="${i}"><rect x="${n.x - 30}" y="${n.y - 30}" width="60" height="60" rx="7" fill="#f0f2f3"/><text x="${n.x}" y="${n.y + 4}" text-anchor="middle" stroke="none" fill="#123b49" font-size="12">${esc(n.title.length > 10 ? n.title.slice(0, 9) + "…" : n.title)}</text></g>`).join("")}</g></svg>` : `<div class="graph-center"><span class="graph-node">${icon("user")}</span><p class="graph-empty">Выполните поиск, чтобы увидеть запрос и проверенные источники.</p></div>`}<div class="graph-controls"><button data-zoom="in" aria-label="Увеличить" ${!data || state.zoom >= 1.6 ? "disabled" : ""}>${icon("plus")}</button><button data-zoom="out" aria-label="Уменьшить" ${!data || state.zoom <= 0.6 ? "disabled" : ""}>${icon("minus")}</button><button data-zoom="fit" aria-label="По размеру поля" ${data ? "" : "disabled"}>${icon("fit")}</button></div></div><p class="graph-legend">- - - ${dns ? "Домен → адрес из DNS-ответа" : "Запрос → проверенный URL"}.<br>Личные связи и владение аккаунтами не установлены.</p><div class="result-card"><div class="result-head"><span class="entity-icon">${icon(dns ? "globe" : "user")}</span><h2 class="mono">${esc(state.graphDetail !== null && nodes[state.graphDetail] ? nodes[state.graphDetail].title : center)}</h2></div><p class="result-detail">${esc(state.graphDetail !== null && nodes[state.graphDetail] ? nodes[state.graphDetail].detail : data ? "Источник связей — результаты последней проверки." : "Выберите существующий запрос из истории или начните новый поиск.")}</p></div><a class="secondary" href="#${data ? "results" : "search"}">${data ? "К результатам" : "Перейти к поиску"} ${icon("arrow")}</a>${strip()}`;
 }
 function settings() {
-  return `${banner("НАСТРОЙКИ", "System preferences")}<div class="section-heading"><h2 class="section-title">О приложении</h2></div><div class="row"><span class="row-content"><strong>OSINT / 2002</strong><small>Android · 0.8.1-alpha</small></span></div><p class="notice">${native() ? "Поиск профилей, системный DNS и SQLite работают на устройстве." : "Открыт браузерный макет. Нативные проверки доступны в APK."}</p><details><summary>Данные и хранение</summary><p>Запросы и ответы сохраняются в SQLite на устройстве. Для проверки профилей приложение обращается к выбранным сайтам. Удалённый API и облачная синхронизация не подключены.</p></details><details><summary>Возможности текущей версии</summary><p>Проверка публичных URL, DNS A / AAAA, история запросов. Граф показывает связь запроса с проверенными источниками. Поиск телефонов и почты, импорт файлов, WHOIS, Sherlock и Maigret не подключены.</p></details>${strip()}`;
+  return `${banner("НАСТРОЙКИ", "System preferences")}<div class="section-heading"><h2 class="section-title">О приложении</h2></div><div class="row"><span class="row-content"><strong>OSINT / 2002</strong><small>Android · 0.8.2-alpha</small></span></div><p class="notice">${native() ? "Поиск профилей, системный DNS и SQLite работают на устройстве." : "Открыт браузерный макет. Нативные проверки доступны в APK."}</p><details><summary>Данные и хранение</summary><p>Запросы и ответы сохраняются в SQLite на устройстве. Для проверки профилей приложение обращается к выбранным сайтам. Удалённый API и облачная синхронизация не подключены.</p></details><details><summary>Возможности текущей версии</summary><p>Проверка публичных URL, DNS A / AAAA, история запросов. Граф показывает связь запроса с проверенными источниками. Поиск телефонов и почты, импорт файлов, WHOIS, Sherlock и Maigret не подключены.</p></details>${strip()}`;
 }
 function render() {
   const page = location.hash.slice(1) || "home";
@@ -607,33 +605,11 @@ function animatePageEntry() {
   });
 }
 function changePage() {
-  const revision = ++navigationRevision;
-  if (pageTransition && typeof pageTransition.skipTransition === "function")
-    pageTransition.skipTransition();
-  const update = () => {
-    if (revision !== navigationRevision) return;
-    render();
-    scrollTo(0, 0);
-    $("main").focus({ preventScroll: true });
-  };
-  if (
-    !systemReducedMotion() &&
-    typeof document.startViewTransition === "function"
-  ) {
-    try {
-      const current = document.startViewTransition(update);
-      pageTransition = current;
-      current.finished
-        .catch(() => {})
-        .finally(() => {
-          if (pageTransition === current) pageTransition = null;
-        });
-      return;
-    } catch (_) {
-      /* Older WebViews use the opacity-only fallback. */
-    }
-  }
-  update();
+  // Commit each destination synchronously, then fade its complete painted layer.
+  // Snapshot transitions could expose the new backdrop before its text.
+  render();
+  scrollTo(0, 0);
+  $("main").focus({ preventScroll: true });
   animatePageEntry();
 }
 addEventListener("hashchange", changePage);
