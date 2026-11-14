@@ -281,8 +281,8 @@ const submit = () =>
     motions.length === beforeReduced,
   );
   ok(
-    "Home has a bounded six decorative squares",
-    d.querySelectorAll(".ambient-square").length === 6 &&
+    "Home has twelve decorative squares across both regions",
+    d.querySelectorAll(".ambient-square").length === 12 &&
       [...d.querySelectorAll(".ambient-field")].every(
         (field) => field.getAttribute("aria-hidden") === "true",
       ),
@@ -307,7 +307,7 @@ const submit = () =>
     firstSquare.dispatchEvent(new w.Event("animationiteration"));
   ok(
     "Random cycles reuse a fixed number of elements",
-    d.querySelectorAll(".ambient-square").length === 6,
+    d.querySelectorAll(".ambient-square").length === 12,
   );
   Object.defineProperty(d, "hidden", { configurable: true, value: true });
   d.dispatchEvent(new w.Event("visibilitychange"));
@@ -319,9 +319,55 @@ const submit = () =>
   );
   await go("settings");
   ok(
-    "Secondary screens have fewer decorative squares",
-    d.querySelectorAll(".ambient-square").length === 4,
+    "Secondary screens share the full square animation",
+    d.querySelectorAll(".ambient-square").length === 12,
   );
+  for (const field of d.querySelectorAll(".ambient-field")) {
+    const vectors = [...field.querySelectorAll(".ambient-vector")];
+    ok(
+      "Each region has exactly three vectors with one straight",
+      vectors.length === 3 &&
+        vectors.filter((v) => v.dataset.straight === "true").length === 1,
+    );
+    ok(
+      "Vectors are faster than squares",
+      vectors.every(
+        (v) =>
+          parseFloat(v.style.getPropertyValue("--vector-duration")) >= 6 &&
+          parseFloat(v.style.getPropertyValue("--vector-duration")) <= 8,
+      ),
+    );
+    ok(
+      "Vector paths use only right-angle turns",
+      vectors.every((v) => {
+        const points = v
+          .querySelector("path")
+          .getAttribute("d")
+          .match(/-?\d+/g)
+          .map(Number);
+        for (let i = 2; i < points.length; i += 2)
+          if (points[i] !== points[i - 2] && points[i + 1] !== points[i - 1])
+            return false;
+        return v.dataset.straight !== "true" || points.length === 4;
+      }),
+    );
+    const leftSquares = [...field.querySelectorAll(".ambient-square")].filter(
+      (s) => parseFloat(s.style.left) < 30,
+    );
+    ok(
+      "Every region places squares near the left edge",
+      leftSquares.length >= 2,
+    );
+    const vector = vectors[0];
+    for (let i = 0; i < 10; i++)
+      vector
+        .querySelector("path")
+        .dispatchEvent(new w.Event("animationiteration"));
+    ok(
+      "Vector cycles reuse existing elements",
+      field.querySelectorAll(".ambient-vector").length === 3,
+    );
+  }
   const updates = [];
   const finishes = [];
   let skipped = 0;

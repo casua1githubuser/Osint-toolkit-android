@@ -58,7 +58,7 @@ const systemReducedMotion = () =>
   typeof matchMedia === "function" &&
   matchMedia("(prefers-reduced-motion: reduce)").matches;
 const ambient = (zone = "footer") =>
-  `<div class="ambient-field is-paused" data-zone="${zone}" aria-hidden="true">${Array.from({ length: state.page === "home" ? 3 : 2 }, () => '<span class="ambient-square"></span>').join("")}</div>`;
+  `<div class="ambient-field is-paused" data-zone="${zone}" aria-hidden="true">${Array.from({ length: 6 }, () => '<span class="ambient-square"></span>').join("")}${Array.from({ length: 3 }, (_, i) => `<span class="ambient-vector" data-side="${i}" data-straight="${i === 0}"><svg><path pathLength="100"/></svg><i></i></span>`).join("")}</div>`;
 const banner = (title, subtitle, img = "") =>
   `<div class="page-banner" data-image="${img || state.page}"><h1>${title}</h1><p class="eyebrow">/ ${subtitle}</p>${ambient("header")}</div>`;
 const strip = () =>
@@ -235,7 +235,7 @@ function graph() {
   return `${banner("ГРАФ СВЯЗЕЙ", "Relationship graph", "graph")}<p class="hint" style="margin-bottom:16px">Предварительный макет · ${data ? "связи текущего запроса" : "без данных"}</p><div class="graph-field"><div class="graph-label">N: ${data ? nodes.length + 1 : 0}<br>E: ${nodes.length}</div>${data ? `<svg class="graph-svg" viewBox="0 0 300 310" role="group" aria-label="Запрос и проверенные источники"><g transform="translate(150 155) scale(${state.zoom}) translate(-150 -155)">${nodes.map((n) => `<path d="M150 155L${n.x} ${n.y}" stroke="#7697a0" stroke-dasharray="3 3"/>`).join("")}<rect x="115" y="120" width="70" height="70" rx="10" fill="#285e7c"/><svg x="137" y="131" width="26" height="26" viewBox="0 0 24 24" stroke="#f6f8fa" fill="none" stroke-width="1.4"><path d="${paths[dns ? "globe" : "user"]}"/></svg><text x="150" y="178" text-anchor="middle" stroke="none" fill="#f6f8fa" font-size="11">${dns ? "ДОМЕН" : "ЗАПРОС"}</text>${nodes.map((n, i) => `<g class="graph-hit" role="button" tabindex="0" aria-label="${esc(n.title)}" data-node="${i}"><rect x="${n.x - 30}" y="${n.y - 30}" width="60" height="60" rx="7" fill="#f0f2f3"/><text x="${n.x}" y="${n.y + 4}" text-anchor="middle" stroke="none" fill="#123b49" font-size="12">${esc(n.title.length > 10 ? n.title.slice(0, 9) + "…" : n.title)}</text></g>`).join("")}</g></svg>` : `<div class="graph-center"><span class="graph-node">${icon("user")}</span><p class="graph-empty">Выполните поиск, чтобы увидеть запрос и проверенные источники.</p></div>`}<div class="graph-controls"><button data-zoom="in" aria-label="Увеличить" ${!data || state.zoom >= 1.6 ? "disabled" : ""}>${icon("plus")}</button><button data-zoom="out" aria-label="Уменьшить" ${!data || state.zoom <= 0.6 ? "disabled" : ""}>${icon("minus")}</button><button data-zoom="fit" aria-label="По размеру поля" ${data ? "" : "disabled"}>${icon("fit")}</button></div></div><p class="graph-legend">- - - ${dns ? "Домен → адрес из DNS-ответа" : "Запрос → проверенный URL"}.<br>Личные связи и владение аккаунтами не установлены.</p><div class="result-card"><div class="result-head"><span class="entity-icon">${icon(dns ? "globe" : "user")}</span><h2 class="mono">${esc(state.graphDetail !== null && nodes[state.graphDetail] ? nodes[state.graphDetail].title : center)}</h2></div><p class="result-detail">${esc(state.graphDetail !== null && nodes[state.graphDetail] ? nodes[state.graphDetail].detail : data ? "Источник связей — результаты последней проверки." : "Выберите существующий запрос из истории или начните новый поиск.")}</p></div><a class="secondary" href="#${data ? "results" : "search"}">${data ? "К результатам" : "Перейти к поиску"} ${icon("arrow")}</a>${strip()}`;
 }
 function settings() {
-  return `${banner("НАСТРОЙКИ", "System preferences")}<div class="section-heading"><h2 class="section-title">О приложении</h2></div><div class="row"><span class="row-content"><strong>OSINT / 2002</strong><small>Android · 0.6.0-alpha</small></span></div><p class="notice">${native() ? "Поиск профилей, системный DNS и SQLite работают на устройстве." : "Открыт браузерный макет. Нативные проверки доступны в APK."}</p><details><summary>Данные и хранение</summary><p>Запросы и ответы сохраняются в SQLite на устройстве. Для проверки профилей приложение обращается к выбранным сайтам. Удалённый API и облачная синхронизация не подключены.</p></details><details><summary>Возможности текущей версии</summary><p>Проверка публичных URL, DNS A / AAAA, история запросов. Граф показывает связь запроса с проверенными источниками. Поиск телефонов и почты, импорт файлов, WHOIS, Sherlock и Maigret не подключены.</p></details>${strip()}`;
+  return `${banner("НАСТРОЙКИ", "System preferences")}<div class="section-heading"><h2 class="section-title">О приложении</h2></div><div class="row"><span class="row-content"><strong>OSINT / 2002</strong><small>Android · 0.7.0-alpha</small></span></div><p class="notice">${native() ? "Поиск профилей, системный DNS и SQLite работают на устройстве." : "Открыт браузерный макет. Нативные проверки доступны в APK."}</p><details><summary>Данные и хранение</summary><p>Запросы и ответы сохраняются в SQLite на устройстве. Для проверки профилей приложение обращается к выбранным сайтам. Удалённый API и облачная синхронизация не подключены.</p></details><details><summary>Возможности текущей версии</summary><p>Проверка публичных URL, DNS A / AAAA, история запросов. Граф показывает связь запроса с проверенными источниками. Поиск телефонов и почты, импорт файлов, WHOIS, Sherlock и Maigret не подключены.</p></details>${strip()}`;
 }
 function render() {
   const page = location.hash.slice(1) || "home";
@@ -454,12 +454,54 @@ function randomizeSquare(square, initial = false) {
   const size = 24 + Math.random() * 30;
   square.style.width = `${size}px`;
   square.style.height = `${size}px`;
-  square.style.left = `${20 + Math.random() * 60}%`;
-  square.style.top = `${27 + Math.random() * 46}%`;
+  // Stratify placement so the left side never stays empty for an entire cycle.
+  const slot = [
+    ...square.parentElement.querySelectorAll(".ambient-square"),
+  ].indexOf(square);
+  square.style.left = `${5 + (slot % 3) * 31 + Math.random() * 23}%`;
+  square.style.top = `${18 + Math.floor(slot / 3) * 42 + Math.random() * 20}%`;
   if (initial) {
     const duration = 9 + Math.random() * 5;
     square.style.animationDuration = `${duration}s`;
     square.style.animationDelay = `${-Math.random() * duration}s`;
+  }
+}
+function randomizeVector(vector, initial = false) {
+  const field = vector.parentElement;
+  const width = field.clientWidth || 360;
+  const height = field.clientHeight || 180;
+  const side = Number(vector.dataset.side);
+  const x = Math.round(width * (0.25 + Math.random() * 0.5));
+  const y = Math.round(height * (0.25 + Math.random() * 0.5));
+  const footer = field.dataset.zone === "footer";
+  // Each region has left/right/top entries (bottom instead of top in the footer).
+  // Vector zero is always straight; the others use only horizontal/vertical legs.
+  const points =
+    side === 0
+      ? [
+          [-16, y],
+          [width + 16, y],
+        ]
+      : side === 1
+        ? [
+            [width + 16, y],
+            [x, y],
+            [x, footer ? -16 : height + 16],
+          ]
+        : [
+            [x, footer ? height + 16 : -16],
+            [x, y],
+            [-16, y],
+          ];
+  const path = points
+    .map((p, i) => `${i ? "L" : "M"}${p[0]} ${p[1]}`)
+    .join(" ");
+  vector.querySelector("path").setAttribute("d", path);
+  vector.querySelector("i").style.offsetPath = `path("${path}")`;
+  if (initial) {
+    const duration = 6 + Math.random() * 2;
+    vector.style.setProperty("--vector-duration", `${duration}s`);
+    vector.style.setProperty("--vector-delay", `${-Math.random() * duration}s`);
   }
 }
 function updateAmbientPlayback() {
@@ -480,6 +522,12 @@ function setupAmbient() {
       square.addEventListener("animationiteration", () =>
         randomizeSquare(square),
       );
+    });
+    field.querySelectorAll(".ambient-vector").forEach((vector) => {
+      randomizeVector(vector, true);
+      vector
+        .querySelector("path")
+        .addEventListener("animationiteration", () => randomizeVector(vector));
     });
   });
   if (typeof IntersectionObserver === "function") {

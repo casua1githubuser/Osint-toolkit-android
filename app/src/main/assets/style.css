@@ -1626,7 +1626,7 @@ summary,
 .photo-strip {
   isolation: isolate;
 }
-/* Sparse, compositor-friendly outline squares: no canvas, video or blur loop. */
+/* Bounded decoration; no per-frame JavaScript, canvas, video or blur loop. */
 .ambient-field {
   position: absolute;
   inset: 0;
@@ -1638,9 +1638,13 @@ summary,
   --square-alpha: 0.18;
 }
 .hero .ambient-field {
-  inset: 15% 0 0 48%;
+  inset: 0;
+  color: #477d9d;
+  --square-alpha: 0.52;
+  --vector-alpha: 0.52;
+}
+.hero .ambient-square:nth-child(3n) {
   color: #fff;
-  --square-alpha: 0.66;
 }
 .photo-strip[data-scene="home"] .ambient-field {
   --square-alpha: 0.38;
@@ -1656,6 +1660,67 @@ summary,
 }
 .ambient-field.is-paused .ambient-square {
   animation-play-state: paused;
+}
+.ambient-vector,
+.ambient-vector svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+.ambient-vector path {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1;
+  stroke-linejoin: miter;
+  stroke-dasharray: 100 100;
+  animation: vector-line var(--vector-duration) linear var(--vector-delay)
+    infinite;
+}
+.ambient-vector i {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: currentColor;
+  offset-anchor: center;
+  animation: vector-dot var(--vector-duration) linear var(--vector-delay)
+    infinite;
+}
+.ambient-field.is-paused .ambient-vector path,
+.ambient-field.is-paused .ambient-vector i {
+  animation-play-state: paused;
+}
+@keyframes vector-line {
+  from {
+    stroke-dashoffset: 100;
+    opacity: 0;
+  }
+  12%,
+  78% {
+    opacity: var(--vector-alpha, 0.24);
+  }
+  to {
+    stroke-dashoffset: 0;
+    opacity: 0;
+  }
+}
+@keyframes vector-dot {
+  from {
+    offset-distance: 0%;
+    opacity: 0;
+  }
+  12%,
+  78% {
+    opacity: var(--vector-alpha, 0.24);
+  }
+  to {
+    offset-distance: 100%;
+    opacity: 0;
+  }
 }
 @keyframes ambient-square {
   0%,
@@ -1722,7 +1787,7 @@ main {
   }
 }
 .page-banner .ambient-field {
-  inset: 0 0 0 48%;
+  inset: 0;
   --square-alpha: 0.2;
   color: #4f7a9b;
 }
