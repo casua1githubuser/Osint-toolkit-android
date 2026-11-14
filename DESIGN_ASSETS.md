@@ -32,9 +32,10 @@ labels use a modest CSS oblique style. The reference font is inspiration; no
 commercial font was extracted from the supplied picture.
 
 Motion parameters and primary platform references are in `docs/motion-notes.md`.
-`tools/package-preview.py [output-directory]` builds a self-contained preview:
-photographs become short Blob URLs so large data URLs do not exceed Chromium's
-CSS custom-property limit. Fonts remain embedded and no asset server is required.
+`tools/package-preview.py [output-directory]` builds a self-contained preview.
+Photographs are embedded directly in ordinary CSS background rules, once per
+asset, outside custom properties. No Blob URLs or JavaScript photo loader are
+used. Fonts remain embedded and no asset server is required.
 
 The implemented 0.4.0 revision additionally uses `images/module-scenes.png`: a
 three-cell photographic strip for profile search, the graph and DNS. Search uses

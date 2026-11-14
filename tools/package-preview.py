@@ -21,11 +21,23 @@ def collect_image_variable(match):
         raise ValueError('Image is outside the bundle')
     mime=mimetypes.guess_type(file)[0] or 'application/octet-stream'
     images[name]={'mime':mime,'data':base64.b64encode(asset.read_bytes()).decode()}
-    # Large data URLs exceed Chromium's custom-property token limit. The loader
-    # installs short Blob URLs before the app renders its first screen.
-    return f'{name}: none;'
+    return ''
 
 css=re.sub(r'(--[a-z-]*photo):\s*url\([\"\']?([^\"\')]+)[\"\']?\)\s*;',collect_image_variable,css)
+groups={name:[] for name in images}
+css=re.sub(r'/\*.*?\*/','',css,flags=re.S)
+def collect_background(match):
+    selector,body=match.groups()
+    photo=re.search(r'background-image:\s*var\((--[a-z-]*photo)\)\s*;',body)
+    if photo:
+        groups[photo.group(1)].append(selector.strip())
+        body=body[:photo.start()]+body[photo.end():]
+    return selector+'{'+body+'}'
+css=re.sub(r'([^{}]+)\{([^{}]*)\}',collect_background,css)
+for name in ['--photo','--module-photo','--page-photo']:
+    image=images[name]
+    selectors=','.join(dict.fromkeys(groups[name]))
+    css+='\n'+selectors+'{background-image:url("data:'+image['mime']+';base64,'+image['data']+'")}\n'
 def embed_asset(match):
     file=match.group(1).strip('"\'')
     if file.startswith('data:'):
@@ -39,17 +51,9 @@ def embed_asset(match):
 css=re.sub(r'url\(([^)]+)\)',embed_asset,css)
 html=re.sub(r'<link\s+rel="stylesheet"\s+href="style.css"\s*/?>',lambda _: '<style>'+css+'</style>',html)
 js=(assets/'app.js').read_text(encoding='utf-8')
-loader='''(() => {
- const images = '''+json.dumps(images)+''';
- for (const [name, image] of Object.entries(images)) {
-  const bytes = Uint8Array.from(atob(image.data), char => char.charCodeAt(0));
-  const url = URL.createObjectURL(new Blob([bytes], {type:image.mime}));
-  document.documentElement.style.setProperty(name, 'url("' + url + '")');
- }
-})();
-'''
-html=html.replace('<script src="app.js"></script>','<script>'+loader+js+'</script>')
+html=html.replace('<script src="app.js"></script>','<script>'+js+'</script>')
 assert set(images)=={'--photo','--module-photo','--page-photo'},'All photographic assets must be embedded'
 assert 'src="app.js"' not in html and 'href="style.css"' not in html
+assert 'URL.createObjectURL' not in html and not re.search(r'var\(--[a-z-]*photo\)',css)
 (output/'OSINT-2002-preview.html').write_text(html,encoding='utf-8')
 shutil.copyfile(root/'DESIGN_ASSETS.md',output/'DESIGN_ASSETS.md')
