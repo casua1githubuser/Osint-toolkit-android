@@ -1922,6 +1922,7 @@ summary {
 .bottom-nav a[href="#home"] svg {
   width: 32px;
   height: 18px;
+  stroke-width: 1.45;
 }
 .bottom-nav a span {
   white-space: nowrap;
