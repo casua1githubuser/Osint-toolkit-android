@@ -18,6 +18,10 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+    - name: Check frontend behavior
+      run: |
+        npm ci --prefix tests --no-audit --no-fund
+        npm test --prefix tests
     - name: Set up JDK 17
       uses: actions/setup-java@v4
       with:

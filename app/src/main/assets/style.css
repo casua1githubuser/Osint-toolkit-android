@@ -1275,3 +1275,11 @@ summary {
     font-size: 12px;
   }
 }
+.page-banner[data-image="search"]:before {
+  background-image: var(--photo);
+  background-size: 300% 300%;
+  background-position: 50% 0;
+}
+body:not([data-page="home"]) .header-aside {
+  visibility: hidden;
+}
