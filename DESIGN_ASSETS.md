@@ -20,6 +20,22 @@ fake progress, or made-up source totals. The splash has no artificial delay.
 
 ## Blue palette correction (0.3.1-alpha)
 
+The 0.5.0 revision adds `images/page-scenes.png`: an interior viewpoint of the
+same pedestrian bridge shown outside in the search strip, a close storage-hardware
+fragment for Databases, and curved concrete/glass architecture for Settings.
+These are distinct photographs generated using built-in imagegen; the prompt is
+in `docs/page-scenes-prompt.md`.
+
+The current UI font is Unbounded, an extended geometric variable typeface with
+Cyrillic, bundled with `fonts/Unbounded-OFL.txt`. Headings and selected accent
+labels use a modest CSS oblique style. The reference font is inspiration; no
+commercial font was extracted from the supplied picture.
+
+Motion parameters and primary platform references are in `docs/motion-notes.md`.
+`tools/package-preview.py [output-directory]` builds a self-contained preview:
+photographs become short Blob URLs so large data URLs do not exceed Chromium's
+CSS custom-property limit. Fonts remain embedded and no asset server is required.
+
 The implemented 0.4.0 revision additionally uses `images/module-scenes.png`: a
 three-cell photographic strip for profile search, the graph and DNS. Search uses
 silhouettes behind glass; the graph uses people interwoven visually with thin
