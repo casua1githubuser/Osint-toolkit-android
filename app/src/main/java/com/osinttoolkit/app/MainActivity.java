@@ -55,7 +55,12 @@ public class MainActivity extends Activity {
    if(layout.leftMargin!=left||layout.topMargin!=top||layout.rightMargin!=right||layout.bottomMargin!=bottom){
     layout.setMargins(left,top,right,bottom);web.setLayoutParams(layout);
    }
-   return insets;
+   // Insets are already represented by the viewport margins; do not let the
+   // WebView apply the same safe-area values to its HTML document a second time.
+   if(android.os.Build.VERSION.SDK_INT>=30)return android.view.WindowInsets.CONSUMED;
+   android.view.WindowInsets handled=insets.consumeSystemWindowInsets();
+   if(android.os.Build.VERSION.SDK_INT>=28)handled=handled.consumeDisplayCutout();
+   return handled;
   });
   root.requestApplyInsets();
   getWindow().getDecorView().setSystemUiVisibility(android.view.View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
