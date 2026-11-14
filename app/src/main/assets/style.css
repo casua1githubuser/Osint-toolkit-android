@@ -1,7 +1,7 @@
 @font-face {
-  font-family: "IBM Plex Sans";
-  src: url("fonts/IBMPlexSans.ttf") format("truetype");
-  font-weight: 100 700;
+  font-family: "Unbounded";
+  src: url("fonts/Unbounded.ttf") format("truetype");
+  font-weight: 200 900;
   font-style: normal;
   font-display: swap;
 }
@@ -15,7 +15,7 @@
   --subtle: #356d8333;
   --accent: #285e7c;
   --photo: url("images/editorial-atlas.png");
-  font-family: "IBM Plex Sans", Roboto, Arial, sans-serif;
+  font-family: "Unbounded", Roboto, Arial, sans-serif;
   color: var(--ink);
   background: var(--surface);
   font-size: 16px;
@@ -963,24 +963,24 @@ body {
 }
 .identity {
   font:
-    500 10.5px/1.5 "IBM Plex Sans",
+    500 10.5px/1.5 "Unbounded",
     sans-serif;
   letter-spacing: 0.045em;
 }
 .header-aside {
   font:
-    400 10px/1.5 "IBM Plex Sans",
+    400 10px/1.5 "Unbounded",
     sans-serif;
 }
 .hero-note {
   font:
-    500 9px/1.5 "IBM Plex Sans",
+    500 9px/1.5 "Unbounded",
     sans-serif;
   letter-spacing: 0.18em;
 }
 .eyebrow {
   font:
-    400 12px/1.6 "IBM Plex Sans",
+    400 12px/1.6 "Unbounded",
     sans-serif;
   letter-spacing: 0.18em;
 }
@@ -1014,7 +1014,7 @@ small {
 }
 .tile small {
   font:
-    400 12.5px/1.4 "IBM Plex Sans",
+    400 12.5px/1.4 "Unbounded",
     sans-serif;
   text-transform: none;
   letter-spacing: 0;
@@ -1167,7 +1167,7 @@ details p {
 }
 .badge {
   font:
-    400 12px/1.4 "IBM Plex Sans",
+    400 12px/1.4 "Unbounded",
     sans-serif;
   background: #d0e3ee;
   max-width: 48%;
@@ -1178,12 +1178,12 @@ details p {
 }
 .query-context {
   font:
-    14px/1.65 "IBM Plex Sans",
+    14px/1.65 "Unbounded",
     sans-serif;
 }
 .results-count {
   font:
-    12px/1.6 "IBM Plex Sans",
+    12px/1.6 "Unbounded",
     sans-serif;
 }
 .result-head {
@@ -1199,7 +1199,7 @@ details p {
 }
 .graph-legend {
   font:
-    12px/1.7 "IBM Plex Sans",
+    12px/1.7 "Unbounded",
     sans-serif;
 }
 .settings-row {
@@ -1310,5 +1310,232 @@ body:not([data-page="home"]) .header-aside {
   .bottom-nav {
     left: auto;
     width: auto;
+  }
+}
+
+/* Extended geometric Y2K type, with Cyrillic and no horizontal stretching. */
+:root {
+  --page-photo: url("images/page-scenes.png");
+  font-weight: 300;
+  font-size: 14px;
+}
+body {
+  line-height: 1.6;
+}
+h1 {
+  font-size: clamp(20px, 5.7vw, 27px);
+  font-weight: 400;
+  font-style: oblique 10deg;
+  letter-spacing: -0.045em;
+}
+.tile strong {
+  font-size: 12.5px;
+  font-weight: 450;
+  font-style: oblique 10deg;
+  letter-spacing: -0.04em;
+}
+.tile small {
+  font-family: "Unbounded", sans-serif;
+  font-size: 11.5px;
+  font-weight: 300;
+  line-height: 1.7;
+  letter-spacing: -0.025em;
+}
+.section-heading h2 {
+  font-size: 14px;
+  font-weight: 400;
+  letter-spacing: -0.03em;
+}
+.eyebrow,
+.hero-note {
+  font-family: "Unbounded", sans-serif;
+  font-weight: 300;
+  font-style: oblique 10deg;
+}
+.identity {
+  font-size: 8px;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+}
+.header-aside {
+  font-size: 8px;
+}
+.eyebrow {
+  font-size: 10px;
+  letter-spacing: 0.11em;
+}
+.form-label {
+  font-size: 13px;
+  font-weight: 350;
+}
+.source-row {
+  font-size: 14px;
+  font-weight: 300;
+}
+.chip {
+  font-size: 12px;
+}
+.primary,
+.secondary {
+  font-size: 13px;
+  font-weight: 350;
+  letter-spacing: -0.02em;
+}
+.primary span {
+  font-style: oblique 8deg;
+}
+.hint,
+.result-detail,
+details p {
+  font-size: 12px;
+  line-height: 1.85;
+  font-weight: 300;
+}
+.row strong,
+.result-head h2 {
+  font-size: 13px;
+  font-weight: 400;
+}
+small {
+  font-size: 12px;
+}
+.notice {
+  font-size: 12px;
+  line-height: 1.85;
+}
+.unavailable-row {
+  font-size: 12px;
+  flex-wrap: wrap;
+}
+.settings-row,
+summary {
+  font-size: 13px;
+}
+.text-button {
+  font-size: 12px;
+}
+.back-link {
+  font-size: 12px;
+}
+.bottom-nav {
+  grid-template-columns: repeat(5, minmax(max-content, 1fr));
+}
+.bottom-nav a {
+  font-size: 10px;
+  font-weight: 300;
+  padding-inline: 5px;
+}
+.bottom-nav a[href="#home"] svg {
+  width: 27px;
+  height: 27px;
+}
+.bottom-nav a span {
+  font-style: oblique 8deg;
+}
+.page-banner[data-image="search"]:before {
+  background-image: var(--page-photo);
+  background-size: 300% auto;
+  background-position: 0 50%;
+}
+.photo-strip[data-scene="databases"] {
+  background-image: var(--page-photo);
+  background-size: 300% auto;
+  background-position: 50% 50%;
+}
+.photo-strip[data-scene="settings"] {
+  background-image: var(--page-photo);
+  background-size: 300% auto;
+  background-position: 100% 50%;
+}
+.photo-strip[data-scene="dns"] {
+  background-image: var(--module-photo);
+  background-size: 300% auto;
+  background-position: 100% 50%;
+}
+.photo-strip[data-scene="history"] {
+  background-image: var(--photo);
+  background-size: 300% 300%;
+  background-position: 100% 50%;
+}
+.photo-strip[data-scene="splash"] {
+  background-image: var(--photo);
+  background-position: 0 0;
+}
+/* Balanced motion: fast touch response, short travel, soft non-bouncy settle. */
+button,
+a {
+  transition:
+    background-color 100ms ease-out,
+    transform 100ms cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 100ms ease-out;
+}
+button:active:not(:disabled),
+.tile:active {
+  transform: scale(0.985);
+}
+.bottom-nav a:active {
+  transform: translateY(1px);
+}
+.screen-enter {
+  animation: none;
+}
+@media (max-width: 374px) {
+  .tile strong {
+    font-size: 12px;
+  }
+  .tile small {
+    font-size: 11px;
+  }
+  .bottom-nav a {
+    font-size: 9.5px;
+  }
+  .page-banner h1 {
+    font-size: 20px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  button,
+  a {
+    transition: none !important;
+  }
+  button:active,
+  .tile:active {
+    transform: none !important;
+  }
+}
+.reduced-motion button:active,
+.reduced-motion .tile:active {
+  transform: none !important;
+}
+.tile small {
+  font-size: 12px;
+}
+.bottom-nav a {
+  font-size: 12px;
+}
+@media (max-width: 374px) {
+  .tile small {
+    font-size: 12px;
+  }
+  .bottom-nav a {
+    font-size: 12px;
+  }
+}
+.bottom-nav {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+.bottom-nav a {
+  min-width: 0;
+  padding-inline: 1px;
+  font-size: 10.5px;
+}
+.bottom-nav a span {
+  white-space: normal;
+  overflow-wrap: anywhere;
+  text-align: center;
+}
+@media (max-width: 374px) {
+  .bottom-nav a {
+    font-size: 9.5px;
   }
 }

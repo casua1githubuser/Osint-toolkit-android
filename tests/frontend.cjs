@@ -58,8 +58,9 @@ const submit = () =>
     ).size === 3,
   );
   ok(
-    "History has a direct navigation destination",
-    d.querySelector('.bottom-nav a[href="#history"]'),
+    "Home is the exact center of five navigation destinations",
+    d.querySelectorAll(".bottom-nav a").length === 5 &&
+      d.querySelectorAll(".bottom-nav a")[2].getAttribute("href") === "#home",
   );
   await go("search");
   setQuery("bad nickname");
@@ -141,10 +142,11 @@ const submit = () =>
   );
   await go("history");
   ok(
-    "History selects its own navigation item",
+    "History has an explicit storage breadcrumb",
     d
       .querySelector('.bottom-nav [aria-current="page"]')
-      .getAttribute("href") === "#history",
+      .getAttribute("href") === "#databases" &&
+      !!d.querySelector('.back-link[href="#databases"]'),
   );
   d.querySelector("[data-history]").click();
   await tick();
@@ -230,6 +232,59 @@ const submit = () =>
   ok(
     "No preview fixture labels shipped",
     !html.includes("Пример данных") && !code.includes("Пример данных"),
+  );
+  const motions = [];
+  let cancelled = 0;
+  let running = [];
+  w.matchMedia = () => ({ matches: false });
+  w.HTMLElement.prototype.getAnimations = () => running;
+  w.HTMLElement.prototype.animate = function (frames, options) {
+    const animation = {
+      cancel() {
+        cancelled++;
+      },
+    };
+    running = [animation];
+    motions.push({ frames, options });
+    return animation;
+  };
+  d.getAnimations = () => running;
+  await go("settings");
+  ok(
+    "Balanced entry motion is short and non-blocking",
+    motions.length === 1 &&
+      motions[0].options.duration === 200 &&
+      motions[0].frames[1].opacity === 1,
+  );
+  await go("databases");
+  ok(
+    "Rapid navigation cancels the preceding motion",
+    motions.length === 2 && cancelled >= 1,
+  );
+  d.querySelector('[data-db="local"]').click();
+  ok(
+    "Local UI refresh does not animate the entire page again",
+    motions.length === 2,
+  );
+  await go("settings");
+  const reduce = d.querySelector("#reduce-motion");
+  reduce.checked = true;
+  reduce.dispatchEvent(new w.Event("change"));
+  ok("Reduce motion cancels running animation", cancelled >= 3);
+  const beforeReduced = motions.length;
+  await go("search");
+  ok(
+    "App reduced-motion preference skips page movement",
+    motions.length === beforeReduced,
+  );
+  await go("settings");
+  d.querySelector("#reduce-motion").checked = false;
+  d.querySelector("#reduce-motion").dispatchEvent(new w.Event("change"));
+  w.matchMedia = () => ({ matches: true });
+  await go("home");
+  ok(
+    "System reduced-motion preference also skips movement",
+    motions.length === beforeReduced,
   );
   console.log(`${count} checks passed`);
   dom.window.close();

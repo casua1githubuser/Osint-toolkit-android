@@ -71,7 +71,8 @@ document.documentElement.classList.toggle(
 );
 const banner = (title, subtitle, img = "") =>
   `<div class="page-banner" data-image="${img || state.page}"><h1>${title}</h1><p class="eyebrow">/ ${subtitle}</p></div>`;
-const strip = () => '<div class="photo-strip" aria-hidden="true"></div>';
+const strip = () =>
+  `<div class="photo-strip" data-scene="${state.page}" aria-hidden="true"></div>`;
 const notice = (s, error = false) =>
   `<div class="notice${error ? " error" : ""}" role="${error ? "alert" : "status"}">${esc(s)}</div>`;
 function navigate(page) {
@@ -244,7 +245,7 @@ function graph() {
   return `${banner("ГРАФ СВЯЗЕЙ", "Relationship graph", "graph")}<p class="hint" style="margin-bottom:16px">Предварительный макет · ${data ? "связи текущего запроса" : "без данных"}</p><div class="graph-field"><div class="graph-label">N: ${data ? nodes.length + 1 : 0}<br>E: ${nodes.length}</div>${data ? `<svg class="graph-svg" viewBox="0 0 300 310" role="group" aria-label="Запрос и проверенные источники"><g transform="translate(150 155) scale(${state.zoom}) translate(-150 -155)">${nodes.map((n) => `<path d="M150 155L${n.x} ${n.y}" stroke="#7697a0" stroke-dasharray="3 3"/>`).join("")}<rect x="115" y="120" width="70" height="70" rx="10" fill="#285e7c"/><svg x="137" y="131" width="26" height="26" viewBox="0 0 24 24" stroke="#f6f8fa" fill="none" stroke-width="1.4"><path d="${paths[dns ? "globe" : "user"]}"/></svg><text x="150" y="178" text-anchor="middle" stroke="none" fill="#f6f8fa" font-size="11">${dns ? "ДОМЕН" : "ЗАПРОС"}</text>${nodes.map((n, i) => `<g class="graph-hit" role="button" tabindex="0" aria-label="${esc(n.title)}" data-node="${i}"><rect x="${n.x - 30}" y="${n.y - 30}" width="60" height="60" rx="7" fill="#f0f2f3"/><text x="${n.x}" y="${n.y + 4}" text-anchor="middle" stroke="none" fill="#123b49" font-size="12">${esc(n.title.length > 10 ? n.title.slice(0, 9) + "…" : n.title)}</text></g>`).join("")}</g></svg>` : `<div class="graph-center"><span class="graph-node">${icon("user")}</span><p class="graph-empty">Выполните поиск, чтобы увидеть запрос и проверенные источники.</p></div>`}<div class="graph-controls"><button data-zoom="in" aria-label="Увеличить" ${!data || state.zoom >= 1.6 ? "disabled" : ""}>${icon("plus")}</button><button data-zoom="out" aria-label="Уменьшить" ${!data || state.zoom <= 0.6 ? "disabled" : ""}>${icon("minus")}</button><button data-zoom="fit" aria-label="По размеру поля" ${data ? "" : "disabled"}>${icon("fit")}</button></div></div><p class="graph-legend">- - - ${dns ? "Домен → адрес из DNS-ответа" : "Запрос → проверенный URL"}.<br>Личные связи и владение аккаунтами не установлены.</p><div class="result-card"><div class="result-head"><span class="entity-icon">${icon(dns ? "globe" : "user")}</span><h2 class="mono">${esc(state.graphDetail !== null && nodes[state.graphDetail] ? nodes[state.graphDetail].title : center)}</h2></div><p class="result-detail">${esc(state.graphDetail !== null && nodes[state.graphDetail] ? nodes[state.graphDetail].detail : data ? "Источник связей — результаты последней проверки." : "Выберите существующий запрос из истории или начните новый поиск.")}</p></div><a class="secondary" href="#${data ? "results" : "search"}">${data ? "К результатам" : "Перейти к поиску"} ${icon("arrow")}</a>`;
 }
 function settings() {
-  return `${banner("НАСТРОЙКИ", "System preferences")}<div class="section-heading"><h2 class="section-title">Интерфейс</h2></div><label class="settings-row"><span>Уменьшить анимацию<br><small>Без переходов между экранами</small></span><input id="reduce-motion" type="checkbox" ${storage.get("reduced-motion") === "true" ? "checked" : ""}></label><div class="section-heading"><h2 class="section-title">О приложении</h2></div><div class="row"><span class="row-content"><strong>OSINT / 2002</strong><small>Android · 0.4.0-alpha</small></span></div><p class="notice">${native() ? "Поиск профилей, системный DNS и SQLite работают на устройстве." : "Открыт браузерный макет. Нативные проверки доступны в APK."}</p><details><summary>Данные и хранение</summary><p>Запросы и ответы сохраняются в SQLite на устройстве. Для проверки профилей приложение обращается к выбранным сайтам. Удалённый API и облачная синхронизация не подключены.</p></details><details><summary>Возможности текущей версии</summary><p>Проверка публичных URL, DNS A / AAAA, история запросов. Граф показывает связь запроса с проверенными источниками. Поиск телефонов и почты, импорт файлов, WHOIS, Sherlock и Maigret не подключены.</p></details>${strip()}`;
+  return `${banner("НАСТРОЙКИ", "System preferences")}<div class="section-heading"><h2 class="section-title">Интерфейс</h2></div><label class="settings-row"><span>Уменьшить анимацию<br><small>Без переходов между экранами</small></span><input id="reduce-motion" type="checkbox" ${storage.get("reduced-motion") === "true" ? "checked" : ""}></label><div class="section-heading"><h2 class="section-title">О приложении</h2></div><div class="row"><span class="row-content"><strong>OSINT / 2002</strong><small>Android · 0.5.0-alpha</small></span></div><p class="notice">${native() ? "Поиск профилей, системный DNS и SQLite работают на устройстве." : "Открыт браузерный макет. Нативные проверки доступны в APK."}</p><details><summary>Данные и хранение</summary><p>Запросы и ответы сохраняются в SQLite на устройстве. Для проверки профилей приложение обращается к выбранным сайтам. Удалённый API и облачная синхронизация не подключены.</p></details><details><summary>Возможности текущей версии</summary><p>Проверка публичных URL, DNS A / AAAA, история запросов. Граф показывает связь запроса с проверенными источниками. Поиск телефонов и почты, импорт файлов, WHOIS, Sherlock и Maigret не подключены.</p></details>${strip()}`;
 }
 function render() {
   const page = location.hash.slice(1) || "home";
@@ -269,26 +270,25 @@ function render() {
     graph,
     databases,
     history: () =>
-      `${banner("ИСТОРИЯ", "Query history", "history")}<div class="section-heading"><h2>Сохранённые запросы</h2><button class="text-button" data-action="refresh">Обновить</button></div><div id="history-list">${historyRows(30)}</div>`,
+      `${banner("ИСТОРИЯ", "Query history", "history")}<a class="back-link" href="#databases">${icon("arrow")}Хранилище / история</a><div class="section-heading"><h2>Сохранённые запросы</h2><button class="text-button" data-action="refresh">Обновить</button></div><div id="history-list">${historyRows(30)}</div>`,
     settings,
     splash: () =>
       `<div class="splash">${logo()}${strip()}<p class="eyebrow">Рабочее пространство</p><p class="hint">Локальный режим · Android</p><a class="secondary" href="#home">Открыть ${icon("arrow")}</a></div>`,
   };
   $("main").innerHTML = screens[state.page]();
-  $("main").className = "screen-enter";
+  $("main").className = "screen";
   document.body.dataset.page = state.page;
   const active =
     state.page === "dns" || state.page === "results"
       ? "search"
       : state.page === "history"
-        ? "history"
+        ? "databases"
         : state.page;
   document.querySelector(".bottom-nav").innerHTML = [
-    ["home", "home", "Главная"],
     ["search", "search", "Поиск"],
     ["graph", "graph", "Граф"],
+    ["home", "home", "Главная"],
     ["databases", "db", "Базы"],
-    ["history", "clock", "История"],
     ["settings", "settings", "Настройки"],
   ]
     .map(
@@ -344,6 +344,9 @@ function bind() {
         "reduced-motion",
         e.target.checked,
       );
+      if (e.target.checked && typeof document.getAnimations === "function") {
+        document.getAnimations().forEach((animation) => animation.cancel());
+      }
     };
   document.querySelectorAll("[data-zoom]").forEach(
     (b) =>
@@ -466,10 +469,31 @@ window.appBack = () => {
   }
   return false;
 };
+function animatePageEntry() {
+  const reduced =
+    document.documentElement.classList.contains("reduced-motion") ||
+    (typeof matchMedia === "function" &&
+      matchMedia("(prefers-reduced-motion: reduce)").matches);
+  if (!reduced && typeof $("main").animate === "function") {
+    if (typeof $("main").getAnimations === "function") {
+      $("main")
+        .getAnimations()
+        .forEach((animation) => animation.cancel());
+    }
+    $("main").animate(
+      [
+        { opacity: 0.5, transform: "translateY(7px)" },
+        { opacity: 1, transform: "translateY(0)" },
+      ],
+      { duration: 200, easing: "cubic-bezier(.16,1,.3,1)" },
+    );
+  }
+}
 addEventListener("hashchange", () => {
   render();
   scrollTo(0, 0);
   $("main").focus({ preventScroll: true });
+  animatePageEntry();
 });
 render();
 requestHistory();

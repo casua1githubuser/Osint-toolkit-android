@@ -86,7 +86,9 @@ public class MainActivity extends Activity {
      case "app.js":mime="application/javascript";break;
      case "images/editorial-atlas.png":mime="image/png";break;
      case "images/module-scenes.png":mime="image/png";break;
+     case "images/page-scenes.png":mime="image/png";break;
      case "fonts/IBMPlexSans.ttf":mime="font/ttf";break;
+     case "fonts/Unbounded.ttf":mime="font/ttf";break;
      default:return blocked();
     }
     try{return new android.webkit.WebResourceResponse(mime,"UTF-8",getAssets().open(file));}
