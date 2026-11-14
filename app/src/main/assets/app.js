@@ -78,6 +78,14 @@ function navigate(page) {
   if (location.hash === "#" + page) render();
   else location.hash = page;
 }
+function syncViewportWidth() {
+  const width = document.documentElement.clientWidth;
+  if (width > 0)
+    document.documentElement.style.setProperty(
+      "--app-viewport-width",
+      `${width}px`,
+    );
+}
 function bridge(method, ...args) {
   if (!native())
     throw new Error(
@@ -289,6 +297,7 @@ function render() {
     )
     .join("");
   bind();
+  syncViewportWidth();
 }
 function bind() {
   const form = $("query-form");
@@ -471,5 +480,7 @@ if (typeof ResizeObserver !== "undefined") {
       "--nav-height",
       `${Math.ceil(entry.target.getBoundingClientRect().height)}px`,
     );
+    syncViewportWidth();
   }).observe(document.querySelector(".bottom-nav"));
 }
+addEventListener("resize", syncViewportWidth);

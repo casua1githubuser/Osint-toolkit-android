@@ -1302,3 +1302,13 @@ body:not([data-page="home"]) .header-aside {
   white-space: nowrap;
   overflow-wrap: normal;
 }
+.bottom-nav {
+  width: min(var(--app-viewport-width, 100%), 520px);
+  left: calc(var(--app-viewport-width, 100vw) / 2);
+}
+@media (max-height: 480px) {
+  .bottom-nav {
+    left: auto;
+    width: auto;
+  }
+}
