@@ -1,4 +1,11 @@
 @font-face {
+  font-family: "Jura";
+  src: url("fonts/Jura.ttf") format("truetype");
+  font-weight: 300 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
   font-family: "Unbounded";
   src: url("fonts/Unbounded.ttf") format("truetype");
   font-weight: 200 900;
@@ -1799,4 +1806,96 @@ main {
   height: auto;
   object-fit: contain;
   object-position: top left;
+}
+
+/* Rounded, open geometric letters echo the drawn OSINT wordmark.
+   Editorial microcopy (identity, eyebrow, hero-note, year) keeps its styling. */
+main,
+.bottom-nav a {
+  font-family: "Jura", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+  letter-spacing: 0.025em;
+}
+main {
+  font-size: 16px;
+}
+main
+  :is(
+    p,
+    a,
+    button,
+    label,
+    input,
+    select,
+    small,
+    strong,
+    b,
+    summary,
+    h1,
+    h2,
+    h3,
+    .mono,
+    .meta,
+    .badge,
+    .graph-label,
+    .graph-center,
+    .graph-legend
+  ):not(.eyebrow, .hero-note) {
+  font-family: "Jura", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+  letter-spacing: 0.025em;
+}
+main
+  :is(h1, h2, h3, strong, b, summary, .form-label):not(.eyebrow, .hero-note) {
+  font-weight: 700;
+}
+.primary span,
+.bottom-nav a span {
+  font-style: normal;
+  letter-spacing: 0.025em;
+}
+.page-banner h1 {
+  font-size: clamp(24px, 6.4vw, 30px);
+}
+.tile strong,
+.section-heading h2 {
+  font-size: 16px;
+}
+.tile small,
+main small,
+.hint,
+.notice,
+.result-detail,
+.result-url,
+details p,
+.unavailable-row,
+.text-button,
+.back-link {
+  font-size: 14px;
+}
+.row strong,
+.result-head h2,
+.source-row,
+.primary,
+.secondary,
+.chip,
+.form-label,
+summary {
+  font-size: 16px;
+}
+.bottom-nav a {
+  font-size: 12px;
+}
+@media (max-width: 374px) {
+  .tile strong {
+    font-size: 14px;
+  }
+  .tile small {
+    font-size: 13px;
+  }
+  .bottom-nav a {
+    font-size: 11px;
+  }
 }
