@@ -20,6 +20,7 @@ import java.util.concurrent.Executors;
 public class MainActivity extends Activity {
  private WebView web;
  private SQLiteDatabase db;
+ private volatile boolean destroyed;
  private final ExecutorService workers=Executors.newFixedThreadPool(3);
  private static final String[] SITES={"https://github.com/","https://gitlab.com/","https://www.reddit.com/user/","https://www.pinterest.com/","https://www.tiktok.com/@"};
  private static final String[] NAMES={"GitHub","GitLab","Reddit","Pinterest","TikTok"};
@@ -28,32 +29,54 @@ public class MainActivity extends Activity {
   db=openOrCreateDatabase("osint.db",MODE_PRIVATE,null);
   db.execSQL("CREATE TABLE IF NOT EXISTS history(id INTEGER PRIMARY KEY AUTOINCREMENT,kind TEXT,query TEXT,results TEXT,created INTEGER)");
   web=new WebView(this);
-  web.setBackgroundColor(0xffe5e8e4);
+  web.setBackgroundColor(0xfff0f2f0);
   WebSettings s=web.getSettings(); s.setJavaScriptEnabled(true);s.setDomStorageEnabled(true);
   s.setAllowFileAccess(false);s.setAllowContentAccess(false);
   web.addJavascriptInterface(new Bridge(),"NativeOSINT");
   setContentView(web);
+  // Keep the WebView clear of status bars, gesture navigation and the keyboard.
+  web.setOnApplyWindowInsetsListener((view,insets)->{
+   view.setPadding(insets.getSystemWindowInsetLeft(),insets.getSystemWindowInsetTop(),
+    insets.getSystemWindowInsetRight(),insets.getSystemWindowInsetBottom());
+   return insets.consumeSystemWindowInsets();
+  });
+  web.requestApplyInsets();
+  getWindow().getDecorView().setSystemUiVisibility(android.view.View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+   |android.view.View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR);
   // Local asset loading without opening an HTTP port.
   web.setWebViewClient(new android.webkit.WebViewClient(){
    @Override public android.webkit.WebResourceResponse shouldInterceptRequest(WebView v,WebResourceRequest r){
     String u=r.getUrl().toString();
-    if(!u.startsWith("https://appassets.androidplatform.net/assets/"))return null;
+    if(!u.startsWith("https://appassets.androidplatform.net/assets/"))return blocked();
     String file=u.substring("https://appassets.androidplatform.net/assets/".length());
-    if(!file.equals("index.html"))return null;
-    try{return new android.webkit.WebResourceResponse("text/html","UTF-8",getAssets().open("index.html"));}
-    catch(Exception e){return null;}
+    String mime;
+    switch(file){
+     case "index.html":mime="text/html";break;
+     case "style.css":mime="text/css";break;
+     case "app.js":mime="application/javascript";break;
+     case "images/editorial-atlas.png":mime="image/png";break;
+     default:return blocked();
+    }
+    try{return new android.webkit.WebResourceResponse(mime,"UTF-8",getAssets().open(file));}
+    catch(Exception e){return blocked();}
    }
-   @Override public boolean shouldOverrideUrlLoading(WebView v,WebResourceRequest r){return true;}
+   @Override public boolean shouldOverrideUrlLoading(WebView v,WebResourceRequest r){
+    return !r.getUrl().toString().startsWith("https://appassets.androidplatform.net/assets/index.html#");
+   }
   });
   web.loadUrl("https://appassets.androidplatform.net/assets/index.html");
  }
+ private android.webkit.WebResourceResponse blocked(){
+  return new android.webkit.WebResourceResponse("text/plain","UTF-8",404,"Not Found",
+   java.util.Collections.emptyMap(),new ByteArrayInputStream(new byte[0]));
+ }
  private void send(String event,JSONObject payload){
-  runOnUiThread(()->web.evaluateJavascript("window.receiveNative("+JSONObject.quote(event)+","+payload.toString()+")",null));
+  runOnUiThread(()->{if(!destroyed)web.evaluateJavascript("window.receiveNative("+JSONObject.quote(event)+","+payload.toString()+")",null);});
  }
  private JSONObject err(Exception e){JSONObject j=new JSONObject();try{j.put("error",e.getClass().getSimpleName()+": "+e.getMessage());}catch(Exception ignored){}return j;}
  private void save(String kind,String query,String result){
   ContentValues v=new ContentValues();v.put("kind",kind);v.put("query",query);v.put("results",result);v.put("created",System.currentTimeMillis());
-  synchronized(db){db.insert("history",null,v);}
+  synchronized(db){if(db.isOpen())db.insert("history",null,v);}
  }
  private int status(String url) throws Exception {
   HttpURLConnection c=(HttpURLConnection)new URL(url).openConnection();
@@ -63,11 +86,26 @@ public class MainActivity extends Activity {
  }
  public final class Bridge {
   @JavascriptInterface public void search(String name){
-   if(!name.matches("[A-Za-z0-9_.-]{1,40}")){send("search",err(new IllegalArgumentException("Ник: 1–40 символов A-Z, 0-9, _ . -")));return;}
+   searchSelected(name,new JSONArray(java.util.Arrays.asList(NAMES)).toString());
+  }
+  @JavascriptInterface public void searchSelected(String name,String selectedJson){
+   if(destroyed)return;
+   if(name==null||!name.matches("[A-Za-z0-9_.-]{1,40}")){send("search",err(new IllegalArgumentException("Ник: 1–40 символов A-Z, 0-9, _ . -")));return;}
+   final java.util.Set<String> selected=new java.util.HashSet<>();
+   try{
+    JSONArray a=new JSONArray(selectedJson);
+    for(int i=0;i<a.length();i++){
+     String site=a.getString(i);
+     if(!java.util.Arrays.asList(NAMES).contains(site))throw new IllegalArgumentException("Неизвестный источник");
+     selected.add(site);
+    }
+    if(selected.isEmpty())throw new IllegalArgumentException("Выберите источник");
+   }catch(Exception e){send("search",err(e));return;}
    workers.execute(()->{
     try{
      JSONArray a=new JSONArray();
      for(int i=0;i<SITES.length;i++){
+      if(!selected.contains(NAMES[i]))continue;
       JSONObject o=new JSONObject();o.put("site",NAMES[i]);o.put("url",SITES[i]+name);
       try{
        int code=status(SITES[i]+name);
@@ -83,7 +121,8 @@ public class MainActivity extends Activity {
    });
   }
   @JavascriptInterface public void dns(String domain){
-   if(!domain.matches("(?i)(?=.{1,253}$)[a-z0-9-]+(\\.[a-z0-9-]+)+")){send("dns",err(new IllegalArgumentException("Неверный домен")));return;}
+   if(destroyed)return;
+   if(domain==null||!domain.matches("(?i)(?=.{1,253}$)(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?")){send("dns",err(new IllegalArgumentException("Неверный домен")));return;}
    workers.execute(()->{
     try{
      JSONArray addresses=new JSONArray();
@@ -94,9 +133,11 @@ public class MainActivity extends Activity {
    });
   }
   @JavascriptInterface public void history(){
+   if(destroyed)return;
    workers.execute(()->{
     JSONArray a=new JSONArray();
     synchronized(db){
+     if(!db.isOpen())return;
      try(Cursor c=db.rawQuery("SELECT kind,query,results,created FROM history ORDER BY id DESC LIMIT 30",null)){
       while(c.moveToNext()){JSONObject o=new JSONObject();try{
        o.put("kind",c.getString(0));o.put("query",c.getString(1));o.put("result",new JSONObject(c.getString(2)));o.put("created",c.getLong(3));
@@ -107,5 +148,5 @@ public class MainActivity extends Activity {
    });
   }
  }
- @Override protected void onDestroy(){workers.shutdownNow();if(db!=null)db.close();if(web!=null)web.destroy();super.onDestroy();}
+ @Override protected void onDestroy(){destroyed=true;workers.shutdownNow();if(db!=null){synchronized(db){db.close();}}if(web!=null)web.destroy();super.onDestroy();}
 }
