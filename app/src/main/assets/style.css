@@ -2084,10 +2084,16 @@ details[open] summary .ui-icon {
   font-size: 13px;
 }
 .pagination .secondary {
+  flex: 1 1 0;
+  width: auto;
   min-width: 44px;
   min-height: 44px;
   margin: 0;
   padding: 8px 12px;
+}
+.pagination > span {
+  flex: 0 0 auto;
+  white-space: nowrap;
 }
 .pagination .previous-icon {
   transform: rotate(180deg);
