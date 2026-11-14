@@ -90,6 +90,8 @@ public class MainActivity extends Activity {
      case "fonts/IBMPlexSans.ttf":mime="font/ttf";break;
      case "fonts/Unbounded.ttf":mime="font/ttf";break;
      case "fonts/Jura.ttf":mime="font/ttf";break;
+     case "fonts/OSINTWide-Regular.ttf":mime="font/ttf";break;
+     case "fonts/OSINTWide-Bold.ttf":mime="font/ttf";break;
      default:return blocked();
     }
     try{return new android.webkit.WebResourceResponse(mime,"UTF-8",getAssets().open(file));}
