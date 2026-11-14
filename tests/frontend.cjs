@@ -281,8 +281,14 @@ const submit = () =>
     motions.length === beforeReduced,
   );
   ok(
-    "Home has twelve decorative squares across both regions",
-    d.querySelectorAll(".ambient-square").length === 12 &&
+    "Home has six header and nine footer squares",
+    d.querySelectorAll(".ambient-square").length === 15 &&
+      d
+        .querySelector('.ambient-field[data-zone="footer"]')
+        .querySelectorAll(".ambient-square").length === 9 &&
+      d
+        .querySelector('.ambient-field[data-zone="footer"]')
+        .querySelectorAll(".ambient-vector").length === 3 &&
       [...d.querySelectorAll(".ambient-field")].every(
         (field) => field.getAttribute("aria-hidden") === "true",
       ),
@@ -307,7 +313,7 @@ const submit = () =>
     firstSquare.dispatchEvent(new w.Event("animationiteration"));
   ok(
     "Random cycles reuse a fixed number of elements",
-    d.querySelectorAll(".ambient-square").length === 12,
+    d.querySelectorAll(".ambient-square").length === 15,
   );
   Object.defineProperty(d, "hidden", { configurable: true, value: true });
   d.dispatchEvent(new w.Event("visibilitychange"));
