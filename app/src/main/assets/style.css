@@ -1920,8 +1920,8 @@ summary {
 }
 .bottom-nav a svg,
 .bottom-nav a[href="#home"] svg {
-  width: 21px;
-  height: 21px;
+  width: 32px;
+  height: 18px;
 }
 .bottom-nav a span {
   white-space: nowrap;
@@ -1932,4 +1932,29 @@ summary {
   .bottom-nav a {
     font-size: 9.5px;
   }
+}
+
+/* Shared icon/title/description baselines across the home card grid. */
+.tiles {
+  grid-auto-rows: 1fr;
+}
+.tile {
+  display: grid;
+  grid-template-rows: 32px 40px 1fr;
+  align-content: start;
+  align-items: start;
+  row-gap: 8px;
+  padding: 16px 12px;
+}
+.tile strong,
+.tile small {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  text-align: left;
+  overflow-wrap: break-word;
+}
+.tile small {
+  line-height: 1.55;
+  text-wrap: pretty;
 }
