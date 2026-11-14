@@ -5,16 +5,22 @@ and DNS A/AAAA resolution. No Termux, Python service or local server is required
 
 ## Search
 
-Version **0.11.0-alpha** bundles **1,000 sources** in nine categories using a
+Version **0.11.1-alpha** bundles **1,000 sources** in nine categories using a
 compatible subset of Maigret's catalog. Search by source name/tag, filter by
-category, select groups, and run up to eight checks concurrently. Progress and
+category, select groups, and run up to eight checks concurrently.
+The 2026-11-14 live audit enabled 167 sources for automatic checks; the other
+833 are explicitly manual and unchecked by default. Twitch, Instagram, X, VK
+and Kick have direct profile links. Twitch needs an authenticated official API
+for reliable automatic lookup; its generic HTTP 200 page is not a match.
+See [the audit report](docs/catalog-audit.md). Progress and
 stop controls are next to the username input. Cancelled runs preserve processed
 results. Catalog rules, source attribution and limitations are documented in
 [docs/source-catalog.md](docs/source-catalog.md).
 
 Results are sortable/filterable as **Успех**, **Проверьте вручную**, **Неуспех**.
-Positive markers count as a successful check; HTTP 200 alone remains manual
-review. Redirects, access restrictions and network failures stay ambiguous.
+Only twice-calibrated rules can report success, and each candidate must also
+pass a fresh random-username negative control. Generic HTTP 200 and profile
+markers alone remain manual review. Redirects, access restrictions and network failures stay ambiguous.
 A matching username never proves account ownership or personal identity.
 Every result card opens its HTTPS profile URL in an external browser.
 
@@ -61,6 +67,6 @@ bars, keyboard and cutouts around the WebView.
 - Third-party site accessibility and matching rules can change.
 - GitHub runner debug signing is ephemeral. Installing over a differently signed
   build may require uninstalling it; uninstalling removes local history.
-- applicationId com.osinttoolkit.app; versionCode 21; minSdk 26; targetSdk 35.
+- applicationId com.osinttoolkit.app; versionCode 22; minSdk 26; targetSdk 35.
 
 Fonts, icon sources/licenses and generation prompts are retained in the repo.

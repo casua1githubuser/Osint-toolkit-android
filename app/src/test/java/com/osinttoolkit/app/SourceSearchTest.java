@@ -56,4 +56,37 @@ public class SourceSearchTest {
   assertEquals("https://github.com/test_user",SourceCatalog.browserUrl("https://github.com/test_user"));
   for(String bad:new String[]{"javascript:alert(1)","file:///etc/passwd","http://example.org/","https://user:pass@example.org/","https://127.0.0.1/","https://a.LOCAL/"})try{SourceCatalog.browserUrl(bad);fail(bad);}catch(IllegalArgumentException expected){}
  }
+ private SourceCatalog.Source calibrated(boolean verified,boolean manual) throws Exception {
+  return new SourceCatalog.Source(new JSONObject().put("name","Fixture").put("url","https://example.org/{username}").put("checkType","status_code").put("verified",verified).put("manualOnly",manual));
+ }
+ private ProfileChecker responses(String requested,String control) {
+  return new ProfileChecker(){@Override public JSONObject probe(SourceCatalog.Source source,String name,Session session) throws JSONException {
+   return new JSONObject().put("site",source.name).put("url",source.url(name)).put("state",name.equals("fixture")?requested:control).put("status",200).put("evidence","status_only");
+  }};
+ }
+ @Test public void successRequiresCalibratedRuleAndDistinctNegativeControl() throws Exception {
+  JSONObject good=responses("candidate","not_found").check(calibrated(true,false),"fixture",new ProfileChecker.Session());
+  assertEquals("candidate",good.getString("state"));assertEquals("differential_profile",good.getString("evidence"));
+  for(String control:new String[]{"candidate","unknown"}){
+   JSONObject ambiguous=responses("candidate",control).check(calibrated(true,false),"fixture",new ProfileChecker.Session());
+   assertEquals("unknown",ambiguous.getString("state"));assertEquals("inconclusive_control",ambiguous.getString("evidence"));
+  }
+ }
+ @Test public void unvalidatedRulesCannotClaimSuccessOrAbsence() throws Exception {
+  for(String raw:new String[]{"candidate","not_found"})assertEquals("unknown",responses(raw,"not_found").check(calibrated(false,false),"fixture",new ProfileChecker.Session()).getString("state"));
+ }
+ @Test public void manualSourcesNeverMakeNetworkRequests() throws Exception {
+  ProfileChecker checker=new ProfileChecker(){@Override public JSONObject probe(SourceCatalog.Source s,String n,Session session){throw new AssertionError("Manual source made a request");}};
+  assertEquals("unknown",checker.check(calibrated(false,true),"fixture",new ProfileChecker.Session()).getString("state"));
+ }
+ @Test public void acceptedAndEmptyResponsesAreNotProfileEvidence() throws Exception {
+  for(int code:new int[]{201,202,204,206})assertEquals("unknown",ProfileChecker.classify(source("status_code","[]","[]"),code,"profile-name",false,"x"));
+ }
+ @Test public void popularSourcesAndBadMarkersRemainExplicitlyManual() throws Exception {
+  try(InputStream input=new FileInputStream(System.getProperty("catalog.path"))){
+   SourceCatalog c=new SourceCatalog(input);Set<String> required=new HashSet<>(Arrays.asList("Twitch","Instagram","X","VK","yamaya.ru"));
+   for(SourceCatalog.Source s:c.sites){if(required.remove(s.name)){assertTrue(s.name,s.manualOnly);assertFalse(s.verified);}if(s.verified)assertFalse(s.manualOnly);}
+   assertTrue(required.toString(),required.isEmpty());
+  }
+ }
 }

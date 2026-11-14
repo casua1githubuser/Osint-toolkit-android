@@ -94,7 +94,7 @@ const state = {
   query: "",
   domain: "",
   sources: CATALOG.sites.map((s) => s.name),
-  selected: CATALOG.sites.map((s) => s.name),
+  selected: CATALOG.sites.filter((s) => s.verified).map((s) => s.name),
   sourceFilter: "",
   sourceCategory: "",
   sourcePage: 0,
@@ -176,7 +176,7 @@ function sourceRows(selectable) {
       state.sourcePage * SOURCE_PAGE_SIZE,
       (state.sourcePage + 1) * SOURCE_PAGE_SIZE,
     );
-  return `<fieldset id="source-list" class="source-list" ${state.busy.search && selectable ? "disabled" : ""}><legend class="sr-only">${selectable ? "Выберите источники для поиска" : "Каталог источников"}</legend>${slice.map((s) => (selectable ? `<label class="source-row"><input type="checkbox" name="source" value="${esc(s.name)}" ${selected.has(s.name) ? "checked" : ""}><span class="source-title">${esc(s.name)}<small>${esc(s.category)}</small></span></label>` : `<div class="source-row">${icon("globe")}<span class="source-title">${esc(s.name)}<small>${esc(s.category)}</small></span></div>`)).join("") || '<p class="empty">Источники не найдены.</p>'}</fieldset>`;
+  return `<fieldset id="source-list" class="source-list" ${state.busy.search && selectable ? "disabled" : ""}><legend class="sr-only">${selectable ? "Выберите источники для поиска" : "Каталог источников"}</legend>${slice.map((s) => (selectable ? `<label class="source-row"><input type="checkbox" name="source" value="${esc(s.name)}" ${selected.has(s.name) ? "checked" : ""}><span class="source-title">${esc(s.name)}<small>${esc(s.category)} · ${s.verified ? "Автопроверка" : "Ручная проверка"}</small></span></label>` : `<div class="source-row">${icon("globe")}<span class="source-title">${esc(s.name)}<small>${esc(s.category)} · ${s.verified ? "Автопроверка" : "Ручная проверка"}</small></span></div>`)).join("") || '<p class="empty">Источники не найдены.</p>'}</fieldset>`;
 }
 function sourcePager() {
   const total = filteredSources().length,
@@ -187,7 +187,7 @@ function sourcePager() {
 function sourcePicker(selectable = true) {
   if (selectable && state.busy.search)
     return `<p class="notice">Выбрано ${state.selected.length} источников. Проверки выполняются на устройстве.</p>`;
-  return `<div id="source-picker" data-selectable="${selectable}"><div class="catalog-controls"><label>Найти площадку<input id="source-filter" type="search" value="${esc(state.sourceFilter)}" placeholder="Название или тег" autocomplete="off"></label><label>Категория<select id="source-category"><option value="">Все категории</option>${[
+  return `<div id="source-picker" data-selectable="${selectable}"><p class="hint" id="source-quality">${CATALOG.sites.filter(s => s.verified).length} источников прошли две контрольные проверки. Остальные доступны для ручной проверки и по умолчанию выключены.</p><div class="catalog-controls"><label>Найти площадку<input id="source-filter" type="search" value="${esc(state.sourceFilter)}" placeholder="Название или тег" autocomplete="off"></label><label>Категория<select id="source-category"><option value="">Все категории</option>${[
     ...new Set(CATALOG.sites.map((s) => s.category)),
   ]
     .sort()
@@ -367,7 +367,7 @@ function searchPage(dns = false) {
 function resultGroup(item) {
   if (
     item.state === "resolved" ||
-    (item.state === "candidate" && item.evidence === "presence_marker")
+    (item.state === "candidate" && item.evidence === "differential_profile")
   )
     return "success";
   return item.state === "not_found" ? "not_found" : "review";
@@ -406,7 +406,7 @@ function resultControls(items) {
     )}</select></label><label>Сортировка<select id="result-order">${Object.entries(
     {
       success: "Успех сначала",
-      review: "Проверьте вручную сначала",
+      review: "Сначала ручная проверка",
       not_found: "Неуспех сначала",
       source: "По источнику",
     },
@@ -417,7 +417,7 @@ function resultControls(items) {
     )
     .join(
       "",
-    )}</select></label></div><p class="hint">Успех — совпали признаки профиля. Проверьте вручную — ответ неоднозначен. Неуспех — профиль не найден. Совпадение никнейма не подтверждает личность.</p>`;
+    )}</select></label></div><p class="hint">Успех — профиль найден, а контрольный случайный никнейм не найден. Проверьте вручную — ответ неоднозначен. Неуспех — профиль не найден. Совпадение никнейма не подтверждает личность.</p>`;
 }
 function results() {
   const kind = state.resultKind || "search",
@@ -511,7 +511,7 @@ function graph() {
   return `${banner("ГРАФ СВЯЗЕЙ", "Relationship graph", "graph")}<p class="hint" style="margin-bottom:16px">Предварительный макет · ${data ? "связи текущего запроса" : "без данных"}</p>${data && (dns ? data.addresses : data.items).length > 8 ? notice("В графе показаны первые 8 источников. Полный список — в результатах.") : ""}<div class="graph-field"><div class="graph-label">N: ${data ? nodes.length + 1 : 0}<br>E: ${nodes.length}</div>${data ? `<svg class="graph-svg" viewBox="0 0 300 310" role="group" aria-label="Запрос и проверенные источники"><g transform="translate(150 155) scale(${state.zoom}) translate(-150 -155)">${nodes.map((n) => `<path d="M150 155L${n.x} ${n.y}" stroke="#7697a0" stroke-dasharray="3 3"/>`).join("")}<rect x="115" y="120" width="70" height="70" rx="10" fill="#285e7c"/>${icon(dns ? "globe" : "user", "graph-query-icon", 'x="134" y="130" width="32" height="24"')}<text x="150" y="178" text-anchor="middle" stroke="none" fill="#f6f8fa" font-size="11">${dns ? "ДОМЕН" : "ЗАПРОС"}</text>${nodes.map((n, i) => `<g class="graph-hit" role="button" tabindex="0" aria-label="${esc(n.title)}" data-node="${i}"><rect x="${n.x - 30}" y="${n.y - 30}" width="60" height="60" rx="7" fill="#f0f2f3"/><text x="${n.x}" y="${n.y + 4}" text-anchor="middle" stroke="none" fill="#123b49" font-size="12">${esc(n.title.length > 10 ? n.title.slice(0, 9) + "…" : n.title)}</text></g>`).join("")}</g></svg>` : `<div class="graph-center"><span class="graph-node">${icon("user")}</span><p class="graph-empty">Выполните поиск, чтобы увидеть запрос и проверенные источники.</p></div>`}<div class="graph-controls"><button data-zoom="in" aria-label="Увеличить" ${!data || state.zoom >= 1.6 ? "disabled" : ""}>${icon("plus")}</button><button data-zoom="out" aria-label="Уменьшить" ${!data || state.zoom <= 0.6 ? "disabled" : ""}>${icon("minus")}</button><button data-zoom="fit" aria-label="По размеру поля" ${data ? "" : "disabled"}>${icon("fit")}</button></div></div><p class="graph-legend">- - - ${dns ? "Домен → адрес из DNS-ответа" : "Запрос → проверенный URL"}.<br>Личные связи и владение аккаунтами не установлены.</p><div class="result-card"><div class="result-head"><span class="entity-icon">${icon(dns ? "globe" : "user")}</span><h2 class="mono">${esc(state.graphDetail !== null && nodes[state.graphDetail] ? nodes[state.graphDetail].title : center)}</h2></div><p class="result-detail">${esc(state.graphDetail !== null && nodes[state.graphDetail] ? nodes[state.graphDetail].detail : data ? "Источник связей — результаты последней проверки." : "Выберите существующий запрос из истории или начните новый поиск.")}</p></div><a class="secondary" href="#${data ? "results" : "search"}">${data ? "К результатам" : "Перейти к поиску"} ${icon("arrow")}</a>${strip()}`;
 }
 function settings() {
-  return `${banner("НАСТРОЙКИ", "System preferences")}<div class="section-heading"><h2 class="section-title">О приложении</h2></div><div class="row"><span class="row-content"><strong>OSINT / 2002</strong><small>Android · 0.11.0-alpha</small></span></div><p class="notice">${native() ? "Поиск профилей, системный DNS и SQLite работают на устройстве." : "Открыт браузерный макет. Нативные проверки доступны в APK."}</p><details><summary>${icon("chevron")}Данные и хранение</summary><p>Запросы и ответы сохраняются в SQLite на устройстве. Для проверки профилей приложение обращается к выбранным сайтам. Удалённый API и облачная синхронизация не подключены.</p></details><details><summary>${icon("chevron")}Возможности текущей версии</summary><p>Проверка публичных URL, DNS A / AAAA, история запросов. Граф показывает связь запроса с проверенными источниками. Каталог Maigret: ${CATALOG.count} площадок, категории, прогресс и остановка проверки. Поиск телефонов и почты, импорт файлов, WHOIS и Sherlock не подключены.</p></details>${strip()}`;
+  return `${banner("НАСТРОЙКИ", "System preferences")}<div class="section-heading"><h2 class="section-title">О приложении</h2></div><div class="row"><span class="row-content"><strong>OSINT / 2002</strong><small>Android · 0.11.1-alpha</small></span></div><p class="notice">${native() ? "Поиск профилей, системный DNS и SQLite работают на устройстве." : "Открыт браузерный макет. Нативные проверки доступны в APK."}</p><details><summary>${icon("chevron")}Данные и хранение</summary><p>Запросы и ответы сохраняются в SQLite на устройстве. Для проверки профилей приложение обращается к выбранным сайтам. Удалённый API и облачная синхронизация не подключены.</p></details><details><summary>${icon("chevron")}Возможности текущей версии</summary><p>Проверка публичных URL, DNS A / AAAA, история запросов. Граф показывает связь запроса с проверенными источниками. Каталог Maigret: ${CATALOG.count} площадок, категории, прогресс и остановка проверки. Поиск телефонов и почты, импорт файлов, WHOIS и Sherlock не подключены.</p></details>${strip()}`;
 }
 function render() {
   const page = location.hash.slice(1) || "home";

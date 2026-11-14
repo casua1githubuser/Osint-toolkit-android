@@ -74,6 +74,8 @@ const submit = () =>
       d.querySelectorAll(".bottom-nav a")[2].getAttribute("href") === "#home",
   );
   await go("search");
+  ok("Only twice-calibrated sources are selected by default", state().selected.length > 0 && state().selected.length < 1000 && state().selected.every(name => w.OSINT_SOURCE_CATALOG.sites.find(s => s.name === name).verified));
+  ok("Twitch is available as a clearly marked manual source", w.OSINT_SOURCE_CATALOG.sites.some(s => s.name === "Twitch" && !s.verified) && !state().selected.includes("Twitch") && d.querySelector("#source-quality").textContent.includes("ручной"));
   setQuery("bad nickname");
   submit();
   ok(
@@ -100,7 +102,7 @@ const submit = () =>
         site: "GitHub",
         url: "https://github.com/example-user",
         state: "candidate",
-        evidence: "presence_marker",
+        evidence: "differential_profile",
         status: 200,
       },
       {
@@ -318,7 +320,7 @@ const submit = () =>
       url: "https://example.org/profile/" + i,
       status: 200,
       state: i % 3 === 0 ? "candidate" : i % 3 === 1 ? "unknown" : "not_found",
-      evidence: i % 3 === 0 ? "presence_marker" : "none",
+      evidence: i % 3 === 0 ? "differential_profile" : "none",
       detail: i % 3 === 0 ? "Requires review" : "Fixture insufficient markers",
     })),
   };
@@ -436,6 +438,10 @@ const submit = () =>
     "HTTP 200 without profile evidence stays in manual review",
     d.querySelector(".result-card .badge").textContent === "Проверьте вручную",
   );
+  await go("search");
+  w.receiveNative("search", {...statusOnly, items: [{...statusOnly.items[0], evidence: "presence_marker"}]});
+  await tick();
+  ok("Generic markers in old saved results cannot claim success", d.querySelector(".result-card .badge").textContent === "Проверьте вручную");
   const motions = [];
   const motionEnds = [];
   let cancelled = 0;

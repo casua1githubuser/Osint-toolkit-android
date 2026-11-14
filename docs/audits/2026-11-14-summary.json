@@ -1,0 +1,5031 @@
+{
+  "date": "2026-11-14",
+  "environment": "Windows / Java 21 / current workstation network; not an Android-device test",
+  "catalogCount": 1000,
+  "primarySources": 1005,
+  "primaryChecks": 3000,
+  "holdoutSources": 370,
+  "holdoutChecks": 1110,
+  "checksExcludeAdditionalRuntimeControlRequests": true,
+  "automaticSources": 167,
+  "manualSources": 833,
+  "randomUsernameCandidates": [
+    "Pinterest",
+    "TikTok",
+    "GaiaOnline",
+    "Acomics",
+    "yamaya.ru",
+    "arcade-zockerbande.de",
+    "backloggd.com",
+    "bbs.aw-ol.com",
+    "Twitch"
+  ],
+  "holdoutFalseSuccesses": 0,
+  "states": {
+    "not_found": 1052,
+    "unknown": 1416,
+    "candidate": 532
+  },
+  "sources": [
+    {
+      "name": "GitHub",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "GitLab",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Reddit",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Pinterest",
+      "audit": "false_positive",
+      "automatic": false
+    },
+    {
+      "name": "TikTok",
+      "audit": "false_positive",
+      "automatic": false
+    },
+    {
+      "name": "Twitch",
+      "audit": "false_positive",
+      "automatic": false
+    },
+    {
+      "name": "Instagram",
+      "audit": "manual",
+      "automatic": false
+    },
+    {
+      "name": "X",
+      "audit": "manual",
+      "automatic": false
+    },
+    {
+      "name": "VK",
+      "audit": "manual",
+      "automatic": false
+    },
+    {
+      "name": "Kick",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Facebook",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "YouTube",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "LinkedIn",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "GooglePlayStore",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Amazon",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Telegram",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "CSDN",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Tumblr",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "Flickr",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "SoundCloud",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "SourceForge",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "Launchpad",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "linktr.ee",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "SlideShare",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Behance",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Blogger",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "CNET",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "TripAdvisor",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Wix",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Bandcamp",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Myspace",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "ThemeForest",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "GoodReads",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Weforum",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Freepik",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Academia.edu",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "OpenStreetMap",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "LiveJournal",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Dribbble",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Kickstarter",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Fandom",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Xing",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "Patreon",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "DeviantART",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Gofundme",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "Zhihu",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Giphy",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Slack",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "BuzzFeed",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "W3Schools",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "Naver",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "Snapchat",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "OK",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "NPM-Package",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Slashdot",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "Steam",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "DigitalOcean",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "About.me",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "Instructables",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "Ameblo",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Laracast",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Paypal",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Itch.io",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "last.fm",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Gumroad",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Douban",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Figma",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "iStock",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "TradingView",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Discogs",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Jimdo",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Codepen",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "kofi",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Rottentomatoes",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Smugmug",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "DEV Community",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "IBM Video",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "ReverbNation",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Gitee",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "ProductHunt",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "note",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "LiveInternet",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Gitea",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Genius",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "HubPages",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Artstation",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Flipboard",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Pbase",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "Geeksfor Geeks",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "codeberg.org",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Habr",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Redbubble",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Diigo",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Windy",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Codecanyon",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Minecraft",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "Codecademy",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "PCGamer",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Dreamstime",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "OpenSea",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Speakerdeck",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Wattpad",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Letterboxd",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "MyAnimeList",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Roblox",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Flightradar24",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Max",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "TVTropes",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Tistory",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "GamesRadar",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Geocaching",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "Gog",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Coub",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "beacons.ai",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "IFTTT",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Odysee",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Taplink",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Freelancer.com",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "Donorbox",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Hack MD",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "Venmo",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Teletype",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Steemit",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "CTAN",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "OpenCollective",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "DailyKos",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Giantbomb",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "jAlbum.net",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Newgrounds",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Slides",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Ultimate-Guitar",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "ChaturBate",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "HackerOne",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "MyMiniFactory",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "CreativeMarket",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "OpenSource",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Couchsurfing",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Imgflip",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Hackaday",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "LibraryThing",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Fodors",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Designs99",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Periscope",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Freesound",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Metal-archives",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Kongregate",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "AlternativeTo",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Pikabu",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Lichess",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Speedrun.com",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Hackster",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "Xvideos",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Fur Affinity",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "ItemFix",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "AllMyLinks",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "Nintendo Life",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Untappd",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Audiojungle",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "eBaumsWorld",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Tinkoff Invest",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "MercadoLivre",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Tinder",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Velog",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "domestika.org",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Setlist",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Star Citizen",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Tweakers",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Kwork",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Jigsawplanet",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Namuwiki",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "GaiaOnline",
+      "audit": "false_positive",
+      "automatic": false
+    },
+    {
+      "name": "lnk.bio",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Rutracker",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Memrise",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "PlanetMinecraft",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Muse Score",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Yummly",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Americanthinker",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "RubyGems",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "WebNode",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "TheOdysseyOnline",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "mssg.me",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Nairaland Forum",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Drive2",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Wowhead",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Empowher",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Fotki",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Paltalk",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "NICommunityForum",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Ccm",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "VideoHive",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Clubhouse",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Proza.ru",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Globalvoices",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "xHamster",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Polymarket",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "write.as",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Warrior Forum",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "are.na",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Wykop",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "ResidentAdvisor",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Sporcle",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Coroflot",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "VSCO",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Anime-planet",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Stihi.ru",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Exposure",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "LyricsTranslate",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Guru",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Bookcrossing",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "YouPorn",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Gutefrage",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "LiveLib",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Depop",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Coderwall",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Otzovik",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Observable",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Codementor",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "N4g",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Lomography",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "pixelfed.social",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "Weedmaps",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Redtube",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Neoseeker",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Liberapay",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "FilmWeb",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Spatial",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "NN.RU",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Huntingnet",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Trinixy",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Mydramalist",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Pinkbike",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Thechive",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Goldderby",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Acomics",
+      "audit": "false_positive",
+      "automatic": false
+    },
+    {
+      "name": "iRecommend.RU",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Flyertalk",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Akniga",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Brusheezy",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Cont",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Garden",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Avforums",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Advego",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Trakt",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "TrueAchievements",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Physicsforums",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Overclockers",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Open Game Art",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Lobsters",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "TryHackMe",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "iFunny",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "picturepush.com",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Hot UKdeals",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Eksisozluk",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Codewars",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "Tiendanube",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Dcinside",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Smule",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "shor.by",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Asciinema",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Linuxfr",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "cfd-online",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "fixya",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "Spark",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "gloria.tv",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Ficwad",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Tripline",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Dealabs",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Dou",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Wishlistr",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "mel.fm",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "DeepDreamGenerator",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "1x",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "Picuki",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Pokecommunity",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Eintracht",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "goodgame.ru",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Pling",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "many.link",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "sessionize.com",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "osu!",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Mydealz",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "B17",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "FL.ru",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "YouPic",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Filmow",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Infourok",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Platzi",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "partnerkin.com",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Chatujme.cz",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "ManifoldMarkets",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "Steamidfinder",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Iphones.ru",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Hive Blog",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Illustrators",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "PromptBase",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Spletnik",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Fredmiranda",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "LOR",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Exophase",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "1337x",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "fediverse.party",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "clarity.fm",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "smart-lab.ru",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "profi.ru",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Pandia",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "EasyEDA",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Zora",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "DonationsAlerts",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "InterPals",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "Myinstants",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Mybuilder",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Ani World",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Oper",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "author.today",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Mywed",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "Freelancehunt",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Atcoder",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Motherless",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Jetpunk",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "Icobench",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Rappad",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "NationStates Nation",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Vjudge",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Salon24.pl",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Ariva",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "TheSimsResource",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Tripster",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Vgtimes",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Windowsforum",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Topmate",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Typeracer",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "Erome",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Image Fap",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Trashbox.ru",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Hometheaterforum",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "VLR",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "HackingWithSwift",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Partyflock",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Trisquel",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Pokemon Showdown",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "MoiKrug",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "mynickname.com",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "ImgInn",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Suomi24",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Govloop",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Wakatime",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Designspiration",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Politforums",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "NameMC",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Baby.ru",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Truelancer",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Icheckmovies",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Likee",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Tl",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Crevado",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Mylot",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "E621",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Gvectors",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Gingerbread",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "CashMe",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Shazoo",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Etxt",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Intigriti",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "7dach",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Hotcopper",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "GuruShots",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "bitpapa.com",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Weasyl",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "d3",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Touristlink",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Nick-name.ru",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Fragment",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "massagerepublic.com",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Old-games",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Nothing Community",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Clozemaster",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Vsemayki",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "999.md",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Hackthissite",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Modx_pro",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Football",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "FortniteTracker",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Heavy R",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "1001tracklists",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Forest",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Pronouns.page",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Au",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Professionali",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Listography",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Bdoutdoors",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Shikimori",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Aminus3",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "eGPU",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Fluther",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Sbazar.cz",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Kosmetista",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Allhockey",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Postila",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Vapenews",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Snbforums",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "oshwlab.com",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Showme",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Lori",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Stereo",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Pr0gramm",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Bikepost",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "4stor",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Mamuli",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Pentester Lab",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Snooth",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "DefensiveCarry",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Chollometro",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Hpc",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "HSX",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "Bobrdobr",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Blipfoto",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Tellonym.me",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Nitro Type",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "SoylentNews",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Proshkolu",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Avtomarket",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Thefirearmsforum",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Shophelp",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Pepper PL",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Proglib",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "DMOJ",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Truesteamachievements",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Sysadmins",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Spells8",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Promodescuentos",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "drupal.ru",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "2d-3d",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "House-Mixes.com",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "ngl.link",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Hudson Rock",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "Preisjaeger",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "mywishboard.com",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "CSSBattle",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "Queer",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "TamTam",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Gpodder",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Clapper",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Planetaexcel",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Autolada",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "md",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Dissenter",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "21buttons",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Imood",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Elakiri",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Kuharka",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Forumophilia",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Nixp",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "Qbn",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "ForumKinopoisk",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Pyha",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "homsk.com",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "Gardrops",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "hunting",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Cyber Defenders",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "TurPravda",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "dolap",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Omoimot",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "XShaker",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Newreporter",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "Realmeye-graveyard",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "IssueHunt",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Cad",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Kashalot",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Xbox Gamertag",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Angara",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Serveradmin",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Pychess",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "yamaya.ru",
+      "audit": "false_positive",
+      "automatic": false
+    },
+    {
+      "name": "Prokoni",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "donate.stream",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "APClips",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "xgm.guru",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Nesiditsa",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Mixupload",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "forums.drom.ru",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Psyera",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "Spaces",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Lenov",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Pixwox",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "crafta.ua",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Votetags",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "W3challs",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "Gentlemint",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Fishingsib",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "ImgUp.cz",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Dumpor",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Maccentre",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "kloomba.com",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Coders Rank",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "Carmasters",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Status Cafe",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "Writercenter",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Empretienda AR",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Painters-online",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Caduser",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "S-forum",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Admire Me",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Minecraft-statistic",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "Connosr",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "LiveTrack24",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Interfaith",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Vezha",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "11x2",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "2Dimensions",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "3asq.com",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "3d-artmaker.de",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "3dcadforums",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "438punk.house",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "7ya",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "810video.com",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "8tracks.com",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "a60188094.vanillacommunities.com",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Aback",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "absurdopedia.wiki",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "add-groups.com",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "addons.thunderbird.net",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "Addons.wago",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "AdvancedCustomFields",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "adybov.ru/forum",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "aep-emu.de",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "aetherhub",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "aibusters.net",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "Airbit",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "AirNFTs",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "akdia.altenkirchen.de",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Alabay",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "algowiki-project.org",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "alimero.ru",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "All-mods",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "allav.me",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "allo-le-g.fr",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Alura",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "Amateur.tv",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Ameba",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "amenzb.moe",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "anar.chi.st",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "AnimeGo",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Anonup",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "answermug.com/forums",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Antipunk",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "anvil.works",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "aoifansub.com/forum",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "ApexLegends",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "app.samsungfood.com",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "Appian",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Appinn",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "applefritter.com",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "applicationengineering.vanillacommunities.com",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "Aptoide",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "ar.orthodoxwiki.org",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "arabeyes.org",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "arcade-zockerbande.de",
+      "audit": "false_positive",
+      "automatic": false
+    },
+    {
+      "name": "architizer.com",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "archive.transformativeworks.org",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Archlinux",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "arcraiders.wiki",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Arduino",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Arduino Forum",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "argun.tc",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Arhrock",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "arowanaclub.ca",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "artfol.me",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Artistsnclients",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "ask.kahero.co",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "ask.ocsinventory-ng.org",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "ask.veye.cc",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "AskTUG",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "asquero.com",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "atitd.wiki",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "ativosdigitais.com/social",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "attackofthebteamwiki.com",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "ausglam.space",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Autofrage",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Automania",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "AvidCommunity",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "avone.me",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "avtoturistu.ru",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "awakening.wiki",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "awd.ru",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "awoiaf.westeros.org",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "AWS Skills Profile",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "ayask.ir/forum",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "backloggd.com",
+      "audit": "false_positive",
+      "automatic": false
+    },
+    {
+      "name": "Bahamut",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Baidu",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Bandlab",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "bangladeshonlinenews.com",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Bangumi",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "bangumi.tv",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "banished-wiki.com",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "bark.video",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "Barnacl",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "baseball-reference.com",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "basenjiforums.com",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "basiliskstew.com",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "bbpress.org",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "bbs.aw-ol.com",
+      "audit": "false_positive",
+      "automatic": false
+    },
+    {
+      "name": "bbs.eoivisa.com",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "bbs.itying.com",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "bbs.mgcn.com",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "bbs.mofang.com.tw",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "bbs.mountblade.com.cn",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "bbs.q4dn.net",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "bbs.zkaq.cn",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Bbshave",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "bbw.wiki",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "BeatStars",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "ben10club.org",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "Bentbox",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "BeReal",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "BestGore",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Bestweapon",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "betawiki.net",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "beton.wiki",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Bezuzyteczna",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "bg-wiki.com",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "bg3.wiki",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Bgforum",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "Bible.com",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "big-8.org",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Biggerpockets",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "bigshoulders.city",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "biography.wiki",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "biohack",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "bioinformaticsonline.com",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "bisq.wiki",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "bitcoin.it",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Bitwarden",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "blaseball.wiki",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "blazblue.wiki",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Blitz Tactics",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "blog.taursnd.haus",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "blogcircle.jp",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Blogi.pl",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "blogs.klerk.ru",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "blogz.zaclys.com",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "bnebrak.com",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "bntpal.com",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "bol-chat.de",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "bolha.network",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "bookafly.com",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "books.superawesomecorp.space",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Borsch.gallery",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "boryspil.in.ua",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "bouquins.zbeul.fr",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "brainfiller.com/arcflashforum",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "brandschutz-wiki.de",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "breakers.tv",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "breakintochat.com",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "brogue.wiki",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Bugcrowd",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "buggedplanet.info",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "bulbapedia.bulbagarden.net",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "bulbapp.com",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Byond",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "caddy.community",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "callcentersindia.co.in",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Caringbridge",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "carpfishing.ru",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Carrd.co",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Cash.app",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Castingcallclub",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "casualdiscourse.com",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "catmaze.wiki",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "CD-Action",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Cda.pl",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "celica-club.lv/forums",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Chamsko.pl",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "chaturbator.su",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "chatwars-wiki.de",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "cheshirecatsclan.eu",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "chiefdelphi.com",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Chiphell",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "choice.community",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Chomikuj.pl",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "ciberlandia.pt",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Cifra Club",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "cigarettespedia.com",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Citizen4",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "cityslife.de/forum",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "clanxperience.com",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "classifieds.hellobee.com",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "climate-thinking.de",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "clip.place",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "cloudromance.com",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "club-almera.ru",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "club.7ya.ru",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "clubs.pmleague.com/phpBB3",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "cnblogs.com",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "CNode.js",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "Cocos Community",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "Coddy",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "code.alienscience.org",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "code.brunner.ninja",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "code.cacert.org",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "code.crosse.org",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "code.cuddles.rs",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "code.foo-projects.org",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "code.hackerspace.pl",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "code.lm7.fr",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "code.orbitsolutions.dev",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "code.sean.farm",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "code.wejust.rest",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Codédex",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "coinfolk.net",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Coinvote",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "collectors.com",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "colorid.es",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "commons.commondreams.org",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "community.aliceblueonline.com",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "community.anaplan.com",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "community.appdrag.com",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "community.appfarm.io",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "community.cartalk.com",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "community.ch2i.eu",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "community.darkscribes.com",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "community.dropbox.com",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "community.firecore.com",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "community.flexradio.com",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "community.flic.io",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "community.foundant.com",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "community.freeter.io",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "community.gamedev.tv",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "community.gaytor.rent",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "community.gemsofwar.com",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "community.glowforge.com",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "community.home-assistant.io",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "community.i-doit.com",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "community.infiniteflight.com",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "community.intersystems.com",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "community.kodular.io",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "community.letsencrypt.org",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "community.live2d.com",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "community.meteoblue.com",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "community.mycroft.ai",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "community.mydevices.com",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "community.nodebb.org",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "community.openrent.co.uk",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "community.qonto.com",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "community.quicken.com",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "community.quickfile.co.uk",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "community.roonlabs.com",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "community.rstudio.com",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "community.rti.com",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "community.saillogger.com",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "community.spectrum.net",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "community.startupnation.com",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "community.telltale.com",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "community.tempest.earth",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "community.uneca.org",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "community.unix.com",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "community.watchguard.com",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "community.worldradioleague.com",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "community.zoiper.com",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "computerfairi.es",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "conanpedia.com",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "connect.superhuman.com",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "conserves-maison.com",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "consumerrights.wiki",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "cooked.wiki",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "corelab.mkcl.org",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Cracked Forum",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "cracked.com",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "creationwiki.org",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "credly.com",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Crowdin",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "cruiserswiki.org",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "CryptomatorForum",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "cs-fc.ru",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "cs.cmu.edu",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "cuddly.tube",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "culprits.telepedia.net",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Cults3d",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Curse Forge",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "cyber.harvard.edu",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "cyclowiki.org",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "cymbal.wiki",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Cytoid.io",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "dacianova.net",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "dahisandalghabraa.com",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "dalek.zone",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "dandwiki.com",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Dangerousthings.com",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "dariawiki.org",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Dasauge",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "ddstv.fr/forum",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "de.maddraxikon.com",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "de.velo.wiki",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "DEFCAD",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "defensewiki.ibj.org",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Demotywatory",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Derevnyaonline",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "desmotivaciones.es",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "det.social",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "detectiveconanworld.com",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Detstrana",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "dev.bukkit.org",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "dev.narayana.im",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "dev.noccylabs.info",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "dev.taixin-semi.com",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "dev.tildefriends.net",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "develop.consumerium.org",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "developers.maxon.net",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "developpez.net/forums",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Devtribe",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "diff.wiki",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "dillyofapickle.com",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "DimensionalMe",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "dioxitube.com",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "directory.fsf.org",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Discord.bio",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "discourse.huel.com",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "discourse.julialang.org",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "discourse.mc-stan.org",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "discourse.nodered.org",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "discourse.snowplowanalytics.com",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "discoursedb.org",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "discuss.circleci.com",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "discuss.elastic.co",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "discuss.fringe.games",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "discuss.huel.com",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "discuss.ipfs.io",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "discuss.kotlinlang.org",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "discuss.kubernetes.io",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "discuss.pixls.us",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "discuss.prosemirror.net",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "discuss.pytorch.org",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "discussions.ubisoft.com",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Diveforum",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "Division2",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "diy-il.forum",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Diário do Comércio",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Djagi",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "djskt.lnk.to",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "dnd-wiki.org",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "docs.girofle.cloud",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "doctissimo",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "dogcraft.net",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Dojoverse",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "dosgamesarchive.com",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "dotawiki.de",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "dt125r.co.uk",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "dubaiforums.com",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "dubstepforum.com",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "eaa.org.pl/eaa",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "eamon.wiki",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "echobeach.nl",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "edns.domains/iotex",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "edueda.net",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "eectuning.org/forums",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "eggplant.place",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "eichsfeldforum.de",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "elgg.org",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "elibrary.tips",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "elixirforum.com",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "ellinikos-stratos.com",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "emergent.wiki",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "emgu.com",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "emoforum.de",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "emoji.gg",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "en.ecgpedia.org",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "en.illogicopedia.org",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "en.uncyclopedia.co",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "en.wiki.bluespice.com",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "en.wikidebates.org",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "en.wikifur.com",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "encyc.org",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "encyclo.rouedutemps.fr",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Engadget",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "ennstalwiki.at",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Enot-poloskun",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "enpedia.org",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "entomologiitaliani.net/public/forum/phpBB3",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Eporner",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "es.vikidia.org",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "es.wikineos.com",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "escritura.social",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "ESET",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "evoclub.in.ua",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "exceptionalmediocrity.net",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "exedra.wiki",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "exploretalent.com",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "exquisite.tube",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "eyou.social",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "f.haeder.net",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "f2.freeivr.co.il",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "fa.wikishia.net",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Fabswingers",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "fair.tube",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Faktopedia",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "fallenlondon.wiki",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Fameswap",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Fancentro",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "fanfiktion.de",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "fanscout.com",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Fansly",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Faqusha",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "farmafir.net/phpBB3",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "farwalker.wiki",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "fatjockey.com",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "fatt.wiki",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "faunaclassifieds.com",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "fbrc.nodebb.com",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "Fclmnews",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "fedi.thechangebook.org",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "fedimovie.com",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "fediverse.tv",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "fembotwiki.com",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "feminismus.jeannette-hollmann.de",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "feministwiki.org",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "ffm.bio",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "ffrtt.ru/forum",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "ffxivpro.com/forum",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "fgo.wiki",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Ficwriter",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "FIFA FORUMS",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "filmix.gg",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "Finanzfrage",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "finmessage.com",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "finta.pl",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "flarumde.com",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "flipsnack.com",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "flirtic.ee",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "forge.cadoles.com",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "forge.cbaines.net",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "forge.codesys.com",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "forge.hackers.town",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "forge.ocamlcore.org",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "forge.superkamiguru.org",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "forgejo.it",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "forgejo.vanten-s.com",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "foro.hardlimit.com",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "foro.speccy.org",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "foro.valencianistas.ru",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "foroapuestas.forobet.com",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "forobolso.uy",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "forodvd.com",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "forum-wine.info",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "forum-x.com",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "forum.71squared.com",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "forum.aaeon-community.com",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "forum.aceinna.com",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "forum.aigato.vn",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "forum.arages.de",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "forum.arch-linux.cz",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "forum.awog.at",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "forum.banana-pi.org",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "forum.bearbattery.com",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "forum.bonsaimirai.com",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "forum.brettspielnetz.de",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "forum.bricsys.com",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "forum.brodec.org",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "forum.bsmz.org",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "forum.centrala-termica.ro",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "forum.cfx.re",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "forum.chitanka.info",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "forum.chroniques-mondesoublies.com",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "forum.church.tools",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "forum.cigar.com",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "forum.cloudron.io",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "forum.cnnr.fr",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "forum.cockroachlabs.com",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "forum.cogsci.nl",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "forum.comcept.eu",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "forum.construim-romania.ro",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "forum.copaindescopeaux.fr",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "forum.core-electronics.com.au",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "forum.creaticode.com",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "forum.d2learn.org",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "forum.digitalradio-in-deutschland.de",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "forum.dlink.ru",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "forum.domoticz.com",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "forum.dt125.cz",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "forum.elli-e.de",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "forum.esrplan.ru",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "forum.evolvelab.io",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "forum.fedilab.app",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "forum.ffxiv-rp.fr",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "forum.fizz.ca",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "forum.fpsclassico.com",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "forum.freecodecamp.org",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "forum.gbadev.net",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "forum.geekdom.com",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "forum.gitlab.com",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "forum.golangbridge.org",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "forum.gonm.org",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "forum.gui-o.com",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "forum.hac-foot.com",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "forum.hamichlol.org.il",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "forum.hebat-malek.com",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "forum.hise.audio",
+      "audit": "verified",
+      "automatic": true
+    },
+    {
+      "name": "forum.illusionweb.ru",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "forum.infotdgeova.it",
+      "audit": "inconclusive",
+      "automatic": false
+    },
+    {
+      "name": "forum.investsteel.ru",
+      "audit": "verified",
+      "automatic": true
+    }
+  ]
+}

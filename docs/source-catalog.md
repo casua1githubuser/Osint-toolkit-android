@@ -1,13 +1,14 @@
 # Username sources and search execution
 
-Version 0.11.0 bundles 1,000 checks on 1,000 distinct HTTPS hosts. The native
+Version 0.11.1 bundles 1,000 checks on 1,000 distinct HTTPS hosts. The native
 `source-catalog.json` and public UI `source-catalog.js` are generated together by
 `tools/import-maigret.py`; frontend regressions verify their names match exactly.
 
 Upstream: [Maigret data at 244bc2924c45b649faeba86cd63cff06522384be](https://github.com/soxoj/maigret/blob/244bc2924c45b649faeba86cd63cff06522384be/maigret/resources/data.json).
 Its MIT license is bundled in the APK and standalone preview. The normalized
 catalog records the input SHA-256. Five legacy URL checks retain their existing
-order; 995 compatible entries are selected from Maigret, preferring its stored
+order; five popular platforms have explicit direct links; the remaining 990
+compatible entries are selected from Maigret, preferring its stored
 traffic rank and then name. Rank is an upstream ordering hint, not a current
 availability guarantee.
 
@@ -24,13 +25,17 @@ Body reads have an additional deadline. Redirects are not followed. Non-public
 network addresses are rejected. Cancellation disconnects active requests and
 cancels queued tasks; processed entries are saved as a partial result.
 
-- **Успех**: a configured positive profile marker matched an HTTP 2xx response.
+- **Успех**: a rule passed two live calibration rounds and the requested profile
+  differs from a newly generated absent-username control in this search.
 - **Проверьте вручную**: HTTP-only candidate, absence-only heuristic, missing
   markers, redirect, blocking, timeout or incompatible username format.
 - **Неуспех**: HTTP 404/410 or an explicit configured absence marker.
 
 All are profile-check outcomes; username equality does not establish identity.
-Challenge/login pages stay ambiguous. A missing positive marker stays ambiguous
+Challenge/login pages stay ambiguous. Generic profile markers alone cannot
+produce success. Manual/uncalibrated sources make no automated requests and
+are deselected by default. Only 167 of the 1,000 entries passed both rounds;
+the other 833 are explicitly manual. See [the audit](catalog-audit.md). A missing positive marker stays ambiguous
 rather than being interpreted as a negative. Truncated absence-only pages also
 stay ambiguous. Older stored candidates lacking evidence remain manual review.
 
@@ -43,6 +48,8 @@ another search finishes in the background.
 
 Checks use ASCII usernames of 1–40 characters (`A-Z`, digits, `_`, `.`, `-`), with
 source-specific regex rules where available. Dot segments are rejected. Live
-availability and site rules can change; no claim is made that all 1,000 sites
-were tested live. Native unit tests cover the catalog and classifications; UI
+availability and site rules can change. All 1,000 original entries and five
+new popular sources were probed on 2026-11-14; 370 underwent a separate runtime
+holdout round. Zero holdout random names produced success. This does not
+guarantee zero false positives for every future query or network. Native unit tests cover the catalog and classifications; UI
 tests cover large selection, cancellation, paging, sorting and external links.

@@ -9,7 +9,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.zip.GZIPInputStream;
 import org.json.*;
 
-public final class ProfileChecker {
+public class ProfileChecker {
  public static final int BODY_LIMIT=131072;
  public static final class Session {
   public final AtomicBoolean cancelled=new AtomicBoolean();
@@ -19,7 +19,7 @@ public final class ProfileChecker {
  }
  public static String classify(SourceCatalog.Source source,int code,String body,boolean truncated,String username) {
   if(code==404||code==410)return "not_found";
-  if(code<200||code>=300)return "unknown";
+  if(code!=200)return "unknown";
   String lower=body.toLowerCase(Locale.ROOT);
   for(String marker:new String[]{"<title>just a moment","cf-chl-","attention required! | cloudflare","<title>sign in","<title>log in","<title>login","please verify you are a human"})if(lower.contains(marker))return "unknown";
   if("status_code".equals(source.checkType))return "candidate";
@@ -31,6 +31,30 @@ public final class ProfileChecker {
   return !truncated&&!source.absence.isEmpty()?"candidate":"unknown";
  }
  public JSONObject check(SourceCatalog.Source source,String username,Session session) throws JSONException {
+  if(source.manualOnly)return new JSONObject().put("site",source.name).put("url",source.url(username)).put("state","unknown").put("evidence","none").put("detail","Надёжность автопроверки не подтверждена; откройте профиль вручную");
+  JSONObject result=probe(source,username,session);
+  if(!source.verified){
+   if(!result.optString("state").equals("unknown"))result.put("detail","Правило не прошло контрольную проверку; проверьте профиль вручную");
+   return result.put("state","unknown").put("evidence","unvalidated_rule");
+  }
+  if(!result.optString("state").equals("candidate"))return result;
+  String control=controlUsername(source);
+  if(control==null||control.equals(username))return result.put("state","unknown").put("evidence","none").put("detail","Не удалось подобрать контрольный никнейм");
+  JSONObject negative=probe(source,control,session);
+  result.put("controlState",negative.optString("state")).put("controlStatus",negative.optInt("status",0));
+  if(!session.cancelled.get()&&negative.optString("state").equals("not_found"))return result.put("evidence","differential_profile").put("detail","Профиль отличается от отсутствующего: контрольный случайный никнейм не найден");
+  return result.put("state","unknown").put("evidence","inconclusive_control").put("detail",negative.optString("state").equals("candidate")?"Источник считает найденным и случайный никнейм; результат не подтверждён":"Контрольная проверка неоднозначна; откройте профиль вручную");
+ }
+ public static String controlUsername(SourceCatalog.Source source){
+  for(int i=0;i<48;i++){
+   String uuid=UUID.randomUUID().toString().replace("-","");int length=10+i%9;
+   String name=i%2==0?"qz"+uuid.substring(0,length-2):Long.toString(ThreadLocalRandom.current().nextLong(1000000000L,999999999999999999L)).substring(0,Math.min(length,10));
+   if(source.usernamePattern==null||source.usernamePattern.matcher(name).find())return name;
+  }
+  return null;
+ }
+ /** One bounded request; also used by the reproducible catalog audit harness. */
+ public JSONObject probe(SourceCatalog.Source source,String username,Session session) throws JSONException {
   JSONObject result=new JSONObject().put("site",source.name).put("url",source.url(username));
   if(session.cancelled.get())return result.put("state","unknown").put("detail","Проверка остановлена");
   if(source.usernamePattern!=null&&!source.usernamePattern.matcher(username).find())return result.put("state","unknown").put("detail","Формат никнейма не подходит этому источнику");

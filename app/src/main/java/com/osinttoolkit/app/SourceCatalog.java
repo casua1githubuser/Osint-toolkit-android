@@ -11,10 +11,12 @@ public final class SourceCatalog {
   public final String name,template,checkType;
   public final List<String> presence,absence;
   public final Pattern usernamePattern;
+  public final boolean verified,manualOnly;
   public Source(JSONObject data) throws JSONException {
    name=data.getString("name");template=data.getString("url");checkType=data.getString("checkType");
    if(!template.startsWith("https://")||!template.contains("{username}"))throw new IllegalArgumentException("Invalid source URL");
    presence=strings(data.optJSONArray("presence"));absence=strings(data.optJSONArray("absence"));
+   verified=data.optBoolean("verified",false);manualOnly=data.optBoolean("manualOnly",false);
    String regex=data.optString("regex","");usernamePattern=regex.isEmpty()?null:Pattern.compile(regex);
   }
   public String url(String username) {
