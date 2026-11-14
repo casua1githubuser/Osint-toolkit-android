@@ -1925,8 +1925,15 @@ summary {
   stroke-width: 2;
   shape-rendering: geometricPrecision;
 }
-.bottom-nav .nav-icon path {
+.bottom-nav .nav-icon path,
+.tile .module-icon path {
   vector-effect: non-scaling-stroke;
+}
+.tile .module-icon {
+  width: 40px;
+  height: 28px;
+  stroke-width: 2;
+  shape-rendering: geometricPrecision;
 }
 .bottom-nav a span {
   white-space: nowrap;
